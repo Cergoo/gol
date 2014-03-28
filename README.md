@@ -75,6 +75,16 @@ Easy atomic counter type
 ## err
 Editable error implementation
 
+## fastbuf
+io.Writer implementation  
+
+###Comparition benchmark test
+<pre>
+Write
+fastbuf:      5000000        550 ns/op       0 B/op	       0 allocs/op
+bytes.Buffer: 1000000       1099 ns/op       0 B/op	       0 allocs/op
+</pre>
+
 ## filepath
 Filepath util
     

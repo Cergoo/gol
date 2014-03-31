@@ -31,7 +31,7 @@ const (
 )
 
 // constructor
-func NewSessionEngin(timeLiveInCache, lenID uint8, stor TStor) *TSession {
+func NewSessionEngin(lenID uint8, stor TStor) *TSession {
 	t := new(TSession)
 	t.gen = genid.NewHTTPGen(lenID)
 	t.stor = stor

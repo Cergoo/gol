@@ -120,7 +120,7 @@ Additional reflection functions pack
 Cookie based session engin implementation  
 
 // Constructor session engin  
-`func NewSessionEngin(timeLiveInCache, lenID uint8, stor TStor) *TSession` 
+`func NewSessionEngin(lenID uint8, stor TStor) *TSession` 
 
 // Create new session  
 `func (t *TSession) New(w http.ResponseWriter, data interface{}) (id string)`  

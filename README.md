@@ -115,3 +115,18 @@ Additional reflection functions pack
 
 // Return true if keys map1 == keys map2. It panics if v's Kind is not map.   
 `func MapKeysEq(map1, map2 interface{}) bool`
+
+## session
+Cookie based session engin implementation  
+
+// Constructor session engin  
+`func NewSessionEngin(timeLiveInCache, lenID uint8, stor TStor) *TSession` 
+
+// Create new session  
+`func (t *TSession) New(w http.ResponseWriter, data interface{}) (id string)`  
+
+// Delete session  
+`func (t *TSession) Del(w http.ResponseWriter, r *http.Request)`
+
+// Get session  
+`func (t *TSession) Get(w http.ResponseWriter, r *http.Request) interface{}`

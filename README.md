@@ -130,3 +130,12 @@ Cookie based session engin implementation
 
 // Get session  
 `func (t *TSession) Get(w http.ResponseWriter, r *http.Request) interface{}`
+
+## test  
+Test helper functions
+
+// Equivalence check   
+`func (t *TT) Eq(id string, a, b interface{})`  
+
+## tplEngin\plural
+Plural form rules

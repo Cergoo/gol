@@ -1,5 +1,5 @@
 /*
-  fork plural github.com/vube/i18n
+	fork plural github.com/vube/i18n
 
 	plural form rules
 	(c) 2014 Cergoo

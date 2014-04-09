@@ -141,16 +141,20 @@ func Load(patch string) Ti18n {
 }
 
 func initAfterParse(lang *tlang, name string) {
-	var e bool
+	var (
+		e   bool
+		key string
+	)
 	// phrase loop
 	for _, item := range lang.phrase {
 		// tag loop
 		for _, itemTag := range item.Items {
 			switch v := itemTag.(type) {
 			case *tTagPlural:
-				v.text, e = lang.plural[v.text[0]]
+				key = v.text[0]
+				v.text, e = lang.plural[key]
 				if !e {
-					err.Panic(err.New("Err parse:"+name+" Not found plural key: "+v.text[0], 0))
+					err.Panic(err.New("Err parse:"+name+" Not found plural key: "+key, 0))
 				}
 			}
 		}

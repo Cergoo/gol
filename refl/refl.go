@@ -24,7 +24,7 @@ func MapKeysEq(map1, map2 interface{}) bool {
 	if rv1.Len() != rv2.Len() {
 		return false
 	}
-	r1keys := rv1.MapKeys()	
+	r1keys := rv1.MapKeys()
 	for _, val := range r1keys {
 		if !rv2.MapIndex(val).IsValid() {
 			return false

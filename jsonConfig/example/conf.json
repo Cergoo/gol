@@ -1,14 +1,14 @@
 /*
-	example json config supported comment
+	"example json config supported comment"
 */
 
 {
 	// comment 0
 	"portudp": ":9090", // comment 1
-	"readtimeout": "5 /* n,mn,n,mn n,m",
+	"readtimeout": "5 /* n,mn\",n,mn n,m",
 	"maxheader": "26",
 // comment2
-	"initbucketscount": "10000", // comment2     
+	"initbucketscount": "10000", // comment2
 	// ifreadthenlive true,
 	"duration": "mm// knkjnkjnkjn //lkk;",
 /* comment 3 */
@@ -17,7 +17,7 @@
 	comment 4
 	comment 4
    */
-	"porttcp": ":2000",  // comment 5
+/* "1 */	"porttcp": ":2000",  // comme"nt" 5
 	"workerscount": "2"  // comment 6
 // comment 7
 }

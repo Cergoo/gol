@@ -15,19 +15,22 @@ import (
 	"gol/err"
 	"gol/filepath"
 	"gol/jsonConfig"
+	"gol/refl"
 	"gol/tplEngin/parser"
 	"gol/tplEngin/plural"
 	"io/ioutil"
 	"strconv"
+	"strings"
 )
 
 // types dictionarys define
 type (
 	Ti18n map[string]*tlang
 	tlang struct {
-		pluralRule plural.PluralRule       //
-		plural     map[string][]string     // количествозависимое произношение
-		phrase     map[string]*parser.Ttpl // строковые фразы
+		pluralRule  plural.PluralRule       // language plural rule
+		plural      map[string][]string     // plural pronunciation
+		phraseMap   map[string]*parser.Ttpl // phrases map store
+		phraseSlice []*parser.Ttpl          // phrases slice store
 	}
 
 	tTagText   []byte
@@ -57,31 +60,27 @@ func (t *TReplacer) Lang() string {
 	return t.langName
 }
 
-// Get phrase
+// Print. Get phrase from map store. Use if Load (mapAccess)
 func (t *TReplacer) P(key string, context ...interface{}) []byte {
-	phrase, e := t.lang.phrase[key]
+	tpl, e := t.lang.phraseMap[key]
 	if !e {
 		return []byte(key)
 	}
-	if int(phrase.ContextLen) > len(context) {
-		err.Panic(err.New("i18n Mismatch context len: lang:'"+t.Lang()+"', key:'"+key+"' ("+strconv.Itoa(int(phrase.ContextLen))+" , "+strconv.Itoa(len(context))+")", 0))
-	}
+	return t.p(tpl, context, key)
 
-	var result string
-	for _, item := range phrase.Items {
-		switch v := item.(type) {
-		case tTagText:
-			result += string(v)
-		case tTagVar:
-			result += fmt.Sprint(context[v])
-		case *tTagPlural:
-			result += v.text[t.lang.pluralRule(context[v.count].(float64))]
-		}
-	}
-	return []byte(result)
 }
 
-// Get plural
+// Print faste. Get phrase from slice store. Use if Load (sliceAccess)
+func (t *TReplacer) Pf(key int, context ...interface{}) []byte {
+	if len(t.lang.phraseSlice) < key {
+		return []byte(strconv.Itoa(key) + " key not found in '" + t.langName + "'")
+	}
+	tpl := t.lang.phraseSlice[key]
+	return t.p(tpl, context, strconv.Itoa(key))
+
+}
+
+// Get plural. Use if Load (pluralAccess)
 func (t *TReplacer) Plural(key string, count float64) string {
 	v, e := t.lang.plural[key]
 	if e {
@@ -91,7 +90,7 @@ func (t *TReplacer) Plural(key string, count float64) string {
 }
 
 // Create language resources
-func Load(patch string) Ti18n {
+func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n {
 	type (
 		tmpLang struct {
 			PluralRule string
@@ -100,18 +99,39 @@ func Load(patch string) Ti18n {
 		}
 	)
 
+	if pluralAccess == mapAccess == sliceAccess == false {
+		err.Panic(err.New("Error: pluralAccess, mapAccess, sliceAccess == false", 0))
+	}
+
 	// создаётся временная структура и в неё парсится json
 	tmpLangs := make(map[string]*tmpLang)
 	fileList, e := ioutil.ReadDir(patch)
 	err.Panic(e)
 
-	var name string
+	var (
+		name   string
+		parts  []string
+		tpl    *parser.Ttpl
+		id     int
+		valPre map[string]string
+		keyPre string
+	)
+
 	for _, item := range fileList {
 		vtmpLang := new(tmpLang)
 		vtmpLang.Plural = make(map[string][]string)
 		jsonConfig.Load(patch+"/"+item.Name(), &vtmpLang)
 		name, _ = filepath.Ext(item.Name())
 		tmpLangs[name] = vtmpLang
+	}
+
+	// chek equivalent all lang resurce
+	for key, val := range tmpLangs {
+		if valPre != nil && !refl.MapKeysEq(valPre, val.Phrase) {
+			err.Panic(err.New("lang prase not equivalent: "+keyPre+", "+key, 0))
+		}
+		valPre = val.Phrase
+		keyPre = key
 	}
 
 	i18n := make(Ti18n)
@@ -128,16 +148,59 @@ func Load(patch string) Ti18n {
 		if lang.pluralRule == nil && len(lang.plural) > 0 {
 			err.Panic(err.New("Not found plural rule: '"+item.PluralRule+"'", 0))
 		}
-		lang.phrase = make(map[string]*parser.Ttpl)
+		lang.phraseMap = make(map[string]*parser.Ttpl)
+		lang.phraseSlice = make([]*parser.Ttpl, len(item.Phrase))
 		for keyPhrase, itemPhrase := range item.Phrase {
-			lang.phrase[keyPhrase] = parser.Parse([]byte(itemPhrase), toparse)
+			tpl = parser.Parse([]byte(itemPhrase), toparse)
+			keyPhrase = strings.TrimSpace(keyPhrase)
+			parts = strings.SplitN(keyPhrase, " ", 2)
+			if sliceAccess {
+				id, e = strconv.Atoi(parts[0])
+				err.Panic(e)
+				lang.phraseSlice[id] = tpl
+			}
+			if len(parts) > 1 {
+				lang.phraseMap[strings.TrimSpace(parts[1])] = tpl
+			} else {
+				lang.phraseMap[keyPhrase] = tpl
+			}
 		}
 
 		initAfterParse(lang, key)
+
+		if !sliceAccess {
+			lang.phraseSlice = nil
+		}
+		if !pluralAccess {
+			lang.plural = nil
+		}
+		if !mapAccess {
+			lang.phraseMap = nil
+		}
 		i18n[key] = lang
 	}
 
 	return i18n
+}
+
+// Get phrase
+func (t *TReplacer) p(tpl *parser.Ttpl, context []interface{}, key string) []byte {
+	if int(tpl.ContextLen) > len(context) {
+		err.Panic(err.New("i18n Mismatch context len: lang:'"+t.Lang()+"', key:'"+key+"' ("+strconv.Itoa(int(tpl.ContextLen))+" , "+strconv.Itoa(len(context))+")", 0))
+	}
+
+	var result string
+	for _, item := range tpl.Items {
+		switch v := item.(type) {
+		case tTagText:
+			result += string(v)
+		case tTagVar:
+			result += fmt.Sprint(context[v])
+		case *tTagPlural:
+			result += v.text[t.lang.pluralRule(context[v.count].(float64))]
+		}
+	}
+	return []byte(result)
 }
 
 func initAfterParse(lang *tlang, name string) {
@@ -146,7 +209,7 @@ func initAfterParse(lang *tlang, name string) {
 		key string
 	)
 	// phrase loop
-	for _, item := range lang.phrase {
+	for _, item := range lang.phraseMap {
 		// tag loop
 		for _, itemTag := range item.Items {
 			switch v := itemTag.(type) {

@@ -102,10 +102,13 @@ Generate ID pkg
 `func (t HTTPGenID) NewID() string`
 
 ## jsonConfig
-Support comments in json config files. Comments text includes in json should not contain chars " and '    
+Support comments in json config files.    
 
-// Load from json file to var interface{}     
+// Load & remove comments from source .json file  
 `func Load(fromPath string, toVar interface{})`
+
+// Remove comments from source .json  
+`func RemoveComment(source []byte) (result []byte)`     
 
 ## refl
 Additional reflection functions pack  
@@ -148,11 +151,12 @@ i18n pkg.
 
 ### Feature:
 Load from .json format store language resource.  
-Support tag: include context and plural. Example: `Field {{0}} must be filled {{1}} {{plural appel 1}}`   
+Support tag: include context and plural. Example: `Field {{0}} must be filled {{1}} {{plural appel 1}}`.   
+Support map (type key string) and slice (type key int) access to phrase.  
 See tplEngin\i18n\exaple for more details.
 
 // Create language resources  
-`func Load(patch string) Ti18n`
+`func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n`
 
 // Create new replacer from language resources  
 `func (t Ti18n) NewReplacer(langName string) *TReplacer`
@@ -160,8 +164,11 @@ See tplEngin\i18n\exaple for more details.
 // Get lang  
 `func (t *TReplacer) Lang() string`
 
-// Get phrase  
+// Print. Get phrase from map store. Use if Load (mapAccess)  
 `func (t *TReplacer) P(key string, context ...interface{}) []byte`
 
-// Get plural  
+// Print faste. Get phrase from slice store. Use if Load (sliceAccess)  
+`func (t *TReplacer) Pf(key int, context ...interface{}) []byte`  
+
+// Get plural. Use if Load (pluralAccess)  
 `func (t *TReplacer) Plural(key string, count float64) string`

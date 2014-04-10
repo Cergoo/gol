@@ -6,11 +6,7 @@ import (
 )
 
 func main() {
-	//m := make(map[string]string)
-	type (
-		t1
-	)
-	m := make([][2]string, 10)
+	m := make(map[string]string)
 	jsonConfig.Load("conf.json", &m)
 	fmt.Println(m)
 }

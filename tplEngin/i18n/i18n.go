@@ -63,20 +63,18 @@ func (t *TReplacer) Lang() string {
 // Print. Get phrase from map store. Use if Load (mapAccess)
 func (t *TReplacer) P(key string, context ...interface{}) []byte {
 	tpl, e := t.lang.phraseMap[key]
-	if !e {
-		return []byte(key)
+	if e {
+		return t.p(tpl, context, key)
 	}
-	return t.p(tpl, context, key)
-
+	return nil
 }
 
 // Print faste. Get phrase from slice store. Use if Load (sliceAccess)
 func (t *TReplacer) Pf(key int, context ...interface{}) []byte {
-	if len(t.lang.phraseSlice) < key {
-		return []byte(strconv.Itoa(key) + " key not found in '" + t.langName + "'")
+	if len(t.lang.phraseSlice) > key {
+		return t.p(t.lang.phraseSlice[key], context, strconv.Itoa(key))
 	}
-	tpl := t.lang.phraseSlice[key]
-	return t.p(tpl, context, strconv.Itoa(key))
+	return nil
 
 }
 

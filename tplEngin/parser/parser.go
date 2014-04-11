@@ -29,6 +29,7 @@ type (
 	Ttpl struct {
 		Items      []interface{} // items of template
 		ContextLen uint16        // expected length of context
+		Id         uint16
 	}
 )
 

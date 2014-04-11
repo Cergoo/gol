@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	lang := i18n.Load("lang", true, true, true)
+	lang := i18n.Load("lang", true)
 
 	fmt.Println("ru")
 	replacer := lang.NewReplacer("ru")

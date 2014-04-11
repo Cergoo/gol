@@ -156,7 +156,7 @@ Support map (type key string) and slice (type key int) access to phrase.
 See tplEngin\i18n\exaple for more details.
 
 // Create language resources  
-`func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n`
+`func Load(patch string, pluralAccess bool) Ti18n`
 
 // Create new replacer from language resources  
 `func (t Ti18n) NewReplacer(langName string) *TReplacer`
@@ -164,10 +164,10 @@ See tplEngin\i18n\exaple for more details.
 // Get lang  
 `func (t *TReplacer) Lang() string`
 
-// Print. Get phrase from map store. Use if Load (mapAccess)  
+// Print. Get phrase from map store.
 `func (t *TReplacer) P(key string, context ...interface{}) []byte`
 
-// Print faste. Get phrase from slice store. Use if Load (sliceAccess)  
+// Print faste. Get phrase from slice store.  
 `func (t *TReplacer) Pf(key int, context ...interface{}) []byte`  
 
 // Get plural. Use if Load (pluralAccess)  

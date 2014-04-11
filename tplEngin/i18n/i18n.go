@@ -90,7 +90,7 @@ func (t *TReplacer) Plural(key string, count float64) string {
 }
 
 // Create language resources
-func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n {
+func Load(patch string, pluralAccess bool) Ti18n {
 	type (
 		tmpLang struct {
 			PluralRule string
@@ -98,10 +98,6 @@ func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n {
 			Phrase     map[string]string
 		}
 	)
-
-	if pluralAccess == mapAccess == sliceAccess == false {
-		err.Panic(err.New("Error: pluralAccess, mapAccess, sliceAccess == false", 0))
-	}
 
 	// создаётся временная структура и в неё парсится json
 	tmpLangs := make(map[string]*tmpLang)
@@ -154,11 +150,11 @@ func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n {
 			tpl = parser.Parse([]byte(itemPhrase), toparse)
 			keyPhrase = strings.TrimSpace(keyPhrase)
 			parts = strings.SplitN(keyPhrase, " ", 2)
-			if sliceAccess {
-				id, e = strconv.Atoi(parts[0])
-				err.Panic(e)
-				lang.phraseSlice[id] = tpl
-			}
+			id, e = strconv.Atoi(parts[0])
+			err.Panic(e)
+			tpl.Id = uint16(id)
+			lang.phraseSlice[id] = tpl
+
 			if len(parts) > 1 {
 				lang.phraseMap[strings.TrimSpace(parts[1])] = tpl
 			} else {
@@ -167,15 +163,8 @@ func Load(patch string, pluralAccess, mapAccess, sliceAccess bool) Ti18n {
 		}
 
 		initAfterParse(lang, key)
-
-		if !sliceAccess {
-			lang.phraseSlice = nil
-		}
 		if !pluralAccess {
 			lang.plural = nil
-		}
-		if !mapAccess {
-			lang.phraseMap = nil
 		}
 		i18n[key] = lang
 	}

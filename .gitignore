@@ -1,7 +1,8 @@
 /cache/example/example
 /cache/example/example.exe
-/cache/example/benchmark
-/cache/example/benchmark.exe
+/cache/benchmark/benchmark
+/cache/benchmark/benchmark.exe
+/cache/test/f
 
 /cookie/example/example
 /cookie/example/example.exe

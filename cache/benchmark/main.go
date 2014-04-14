@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"gol/cache"
 	gocache "github.com/pmylund/go-cache"
+	"gol/cache"
+	"gol/hash"
 	"strconv"
 	"sync"
 	"testing"
@@ -19,7 +20,7 @@ var (
 
 func init() {
 	count = 1000
-	_cache = cache.New(count, true, 10*time.Minute, nil)
+	_cache = cache.New(hash.HashFAQ6, count, true, 10*time.Minute, nil)
 	go_cache = gocache.New(5*time.Minute, 10*time.Minute)
 }
 

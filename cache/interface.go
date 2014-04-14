@@ -10,7 +10,7 @@ type (
 		Get(string) interface{}
 		Set(string, interface{}) bool
 		Del(string) (val interface{})
-		Inc(string, interface{}) (interface{}, error)
+		Inc(string, float64) interface{}
 		Save(io.Writer) error
 		SaveFile(string) error
 		Load(io.Reader) error

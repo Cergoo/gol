@@ -16,20 +16,22 @@ Automatic lifetime management of records can be enabled or disabled. LRU caches 
 - save/load operation supported
 - mechanism of managing the lifetime data: time expirations (set for the entire cache) and options "if read then life"
 - support callback function on a timer remove automatically
-- items count limiter.
+- items count limiter
+- use your hash function.
 
-### Comparition benchmark test 
-go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cache)
+### Comparition benchmark test  
+go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cache)  
+go version go1.2.1  
 <pre>
 Set
-Cergoo.cache:     1000    1784210 ns/op   24000 B/op	    3000 allocs/op
-go-cache:         500     4907160 ns/op   50224 B/op	    4007 allocs/op
+Cergoo.cache:    5000	    646846 ns/op   24000 B/op	    3000 allocs/op
+go-cache:        2000	   1101513 ns/op   66227 B/op	    4011 allocs/op
 Get
-Cergoo.cache:     1000    1726763 ns/op   24000 B/op	    3000 allocs/op
-go-cache:         500     3358540 ns/op   16000 B/op	    2000 allocs/op
+Cergoo.cache:    5000	    546850 ns/op   24000 B/op	    3000 allocs/op
+go-cache:        5000	    546850 ns/op   16000 B/op	    2000 allocs/op
 Inc
-Cergoo.cache:     1000    2460046 ns/op   24000 B/op	    3000 allocs/op
-go-cache:         500     3575477 ns/op   16000 B/op	    2000 allocs/op
+Cergoo.cache:    5000	    612472 ns/op   24000 B/op	    3000 allocs/op
+go-cache:        5000	    590598 ns/op   16000 B/op	    2000 allocs/op
 </pre>
 
 ## cookie
@@ -100,6 +102,18 @@ Generate ID pkg
  
 // Generate random strind http compatible.       
 `func (t HTTPGenID) NewID() string`
+
+## hash
+Hash functions library
+
+// FAQ6 hash  
+`func HashFAQ6(str []byte) (h uint32)`  
+
+// Rot13 hash  
+`func HashRot13(str []byte) (h uint32)`  
+
+// Ly hash  
+`func HashLy(str []byte) (h uint32)`  
 
 ## jsonConfig
 Support comments in json config files.    

@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"gol/cache"
+	"gol/hash"
 	"strconv"
 	"time"
 )
 
 func main() {
-	n := cache.New(0, true, 80*time.Minute, nil)
+	n := cache.New(hash.HashFAQ6, 0, true, 0*time.Minute, nil)
 	for t := 0; t < 100008; t++ {
 		n.Set("ind uhgyug e x try"+strconv.Itoa(t), uint8(10))
-		//fmt.Print("ind uhgyug e x try"+strconv.Itoa(t), "\n")
 	}
 	//fmt.Print(n.Get("ind uhgyug e x try1"))
 	fmt.Print(n.Get("ind uhgyug e x try1001"))

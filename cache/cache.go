@@ -8,7 +8,6 @@ package cache
 import (
 	"encoding/gob"
 	"fmt"
-	. "gol/cache/hash"
 	"gol/counter"
 	"io"
 	"os"
@@ -32,8 +31,13 @@ type (
 		sync.RWMutex
 	}
 
+	t_hash struct {
+		ht   []*t_bucket         // hash table
+		hash func([]byte) uint32 // hash function
+	}
+
 	t_cache struct {
-		t              *[]*t_bucket      // hash table
+		t              *t_hash           // hash table
 		duration       time.Duration     // duration janitor
 		ifreadthenlive bool              // ifreadthenlive enable
 		count          counter.T_counter // limit items count in cache, 0 - unlimit
@@ -43,19 +47,33 @@ type (
 	}
 )
 
+// Key to ID function
+func (t *t_hash) keyToID(key []byte) uint32 {
+	return t.hash(key) % uint32(len(t.ht))
+}
+
 /*
 	Constructor new cache
 	ifreadthenlive - if item read then item live
 	duration - time to clear items, if 0 then never
 */
-func New(init_bucketscount int, ifreadthenlive bool, duration time.Duration, callback func(key *string, val *interface{})) Cache {
+func New(
+	hash func([]byte) uint32,
+	init_bucketscount int,
+	ifreadthenlive bool,
+	duration time.Duration,
+	callback func(key *string, val *interface{})) Cache {
+
 	const growcountgo = 14
 	if init_bucketscount < 1 {
 		init_bucketscount = 1000
 	}
-	buckets := make([]*t_bucket, init_bucketscount)
-	for i := range buckets {
-		buckets[i] = &t_bucket{
+
+	ht := new(t_hash)
+	ht.ht = make([]*t_bucket, init_bucketscount)
+	ht.hash = hash
+	for i := range ht.ht {
+		ht.ht[i] = &t_bucket{
 			items: make([]*t_item, 0, growcountgo+4),
 		}
 	}
@@ -63,7 +81,7 @@ func New(init_bucketscount int, ifreadthenlive bool, duration time.Duration, cal
 	t := &t_cache{
 		duration:       duration,
 		ifreadthenlive: ifreadthenlive,
-		t:              &buckets,
+		t:              ht,
 		growcountgo:    growcountgo,
 		callback:       callback,
 	}
@@ -88,9 +106,9 @@ func (t *t_cache) Len() I_counter {
 // Get statistics records Bucket
 func (t *t_cache) GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int) {
 	var i int
-	ht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	tmp1 := make(map[int]int)
-	for _, bucket := range ht {
+	for _, bucket := range ht.ht {
 		bucket.RLock()
 		tmp1[len(bucket.items)]++
 		bucket.RUnlock()
@@ -113,8 +131,8 @@ func (t *t_cache) GetBucketsStat() (countitem uint64, countbucket uint32, stat [
 
 // Get item value or nil
 func (t *t_cache) Get(key string) (val interface{}) {
-	ht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht[Keytoid([]byte(key), len(ht))]
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	bucket := ht.ht[ht.keyToID([]byte(key))]
 	bucket.RLock()
 	for _, v := range bucket.items {
 		if v.Key == key {
@@ -134,8 +152,8 @@ func (t *t_cache) Set(key string, val interface{}) (r bool) {
 	var (
 		v *t_item
 	)
-	ht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht[Keytoid([]byte(key), len(ht))]
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	bucket := ht.ht[ht.keyToID([]byte(key))]
 	bucket.Lock()
 	// Update
 	for _, v = range bucket.items {
@@ -166,8 +184,8 @@ func (t *t_cache) Set(key string, val interface{}) (r bool) {
 // Get and Delete item key
 func (t *t_cache) Del(key string) (val interface{}) {
 	var endi int
-	ht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht[Keytoid([]byte(key), len(ht))]
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	bucket := ht.ht[ht.keyToID([]byte(key))]
 	bucket.Lock()
 	for i, v := range bucket.items {
 		if v.Key == key {
@@ -190,55 +208,47 @@ func (t *t_cache) Del(key string) (val interface{}) {
 	Incremet and Decrement any type
 	return modified value, error message or nil
 */
-func (t *t_cache) Inc(key string, n interface{}) (val interface{}, err error) {
-	ht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht[Keytoid([]byte(key), len(ht))]
-
-	defer func() {
-		if e := recover(); e != nil {
-			bucket.Unlock()
-			err = fmt.Errorf("%v", e)
-		}
-	}()
+func (t *t_cache) Inc(key string, n float64) interface{} {
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	bucket := ht.ht[ht.keyToID([]byte(key))]
 
 	bucket.Lock()
 	for _, v := range bucket.items {
 		if v.Key == key {
-			switch v.Val.(type) {
+			switch value := v.Val.(type) {
 			case int:
-				v.Val = v.Val.(int) + n.(int)
+				v.Val = value + int(n)
 			case int8:
-				v.Val = v.Val.(int8) + n.(int8)
+				v.Val = value + int8(n)
 			case int16:
-				v.Val = v.Val.(int16) + n.(int16)
+				v.Val = value + int16(n)
 			case int32:
-				v.Val = v.Val.(int32) + n.(int32)
+				v.Val = value + int32(n)
 			case int64:
-				v.Val = v.Val.(int64) + n.(int64)
+				v.Val = value + int64(n)
 			case uint:
-				v.Val = v.Val.(uint) + n.(uint)
-			case uintptr:
-				v.Val = v.Val.(uintptr) + n.(uintptr)
+				v.Val = value + uint(n)
 			case uint8:
-				v.Val = v.Val.(uint8) + n.(uint8)
+				v.Val = value + uint8(n)
 			case uint16:
-				v.Val = v.Val.(uint16) + n.(uint16)
+				v.Val = value + uint16(n)
 			case uint32:
-				v.Val = v.Val.(uint32) + n.(uint32)
+				v.Val = value + uint32(n)
 			case uint64:
-				v.Val = v.Val.(uint64) + n.(uint64)
+				v.Val = value + uint64(n)
 			case float32:
-				v.Val = v.Val.(float32) + n.(float32)
+				v.Val = value + float32(n)
 			case float64:
-				v.Val = v.Val.(float64) + n.(float64)
+				v.Val = value + n
 			}
+
 			v.r = 1
 			bucket.Unlock()
-			return v.Val, nil
+			return v.Val
 		}
 	}
 	bucket.Unlock()
-	return nil, nil
+	return nil
 }
 
 // Write the cache's items (using Gob) to an io.Writer.
@@ -248,17 +258,17 @@ func (t *t_cache) Save(w io.Writer) (err error) {
 		bucket *t_bucket
 	)
 	enc := gob.NewEncoder(w)
-	ht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 
 	defer func() {
 		if x := recover(); x != nil {
-			for _, bucket = range ht {
+			for _, bucket = range ht.ht {
 				bucket.RUnlock()
 			}
 			err = fmt.Errorf("Error registering item types with Gob library")
 		}
 	}()
-	for _, bucket = range ht {
+	for _, bucket = range ht.ht {
 		bucket.RLock()
 		for _, item = range bucket.items {
 			gob.Register(item.Val)
@@ -322,38 +332,42 @@ func (t *t_cache) grow() {
 		i, j int
 		val  *t_item
 	)
-	oldht := *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	oldlen := len(oldht)
+
+	oldht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	oldlen := len(oldht.ht)
+
 	newlen := oldlen << 1
-	newht := make([]*t_bucket, newlen)
-	copy(newht, oldht)
+	newht := new(t_hash)
+	newht.ht = make([]*t_bucket, newlen)
+	copy(newht.ht, oldht.ht)
 	for i = oldlen; i < newlen; i++ {
-		newht[i] = &t_bucket{items: newht[j].items}
-		newht[i].RLock()
+		newht.ht[i] = &t_bucket{items: newht.ht[j].items}
+		newht.ht[i].RLock()
 		j++
 	}
-	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)), unsafe.Pointer(&newht))
+	newht.hash = oldht.hash
+	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)), unsafe.Pointer(newht))
 	// rehash
 
 	j = 0
 	for i = oldlen; i < newlen; i++ {
 		itemsold := make([]*t_item, 0, t.growcountgo+4)
 		itemsnew := make([]*t_item, 0, t.growcountgo+4)
-		newht[j].Lock()
-		newht[i].RUnlock()
-		newht[i].Lock()
-		for _, val = range newht[i].items {
-			if Keytoid([]byte(val.Key), newlen) == uint32(i) {
+		newht.ht[j].Lock()
+		newht.ht[i].RUnlock()
+		newht.ht[i].Lock()
+		for _, val = range newht.ht[i].items {
+			if newht.keyToID([]byte(val.Key)) == uint32(i) {
 				itemsnew = append(itemsnew, val)
 			} else {
 				itemsold = append(itemsold, val)
 			}
 		}
 
-		newht[j].items = itemsold
-		newht[j].Unlock()
-		newht[i].items = itemsnew
-		newht[i].Unlock()
+		newht.ht[j].items = itemsold
+		newht.ht[j].Unlock()
+		newht.ht[i].items = itemsnew
+		newht.ht[i].Unlock()
 		j++
 	}
 	// only sigleton runed grow hash table
@@ -363,7 +377,7 @@ func (t *t_cache) grow() {
 func (t *t_cache) janitor(stop <-chan bool) {
 	var (
 		i, lenbucket int
-		ht           []*t_bucket
+		ht           *t_hash
 		bucket       *t_bucket
 		count_del    uint32
 	)
@@ -375,8 +389,8 @@ func (t *t_cache) janitor(stop <-chan bool) {
 		default:
 			time.Sleep(t.duration)
 			count_del = 0
-			ht = *(*[]*t_bucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-			for _, bucket = range ht {
+			ht = (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+			for _, bucket = range ht.ht {
 				bucket.Lock()
 				lenbucket = len(bucket.items)
 				for i = 0; i < lenbucket; {

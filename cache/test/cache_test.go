@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	cache1 = cache.New(hash.HashFAQ6, 0, true, 0*time.Second, nil)
+	cache1 = cache.New(hash.HashFAQ6, 0, true, 5*time.Second, nil)
 	for i := 0; i < 1000; i++ {
 		cache1.Set("item"+strconv.Itoa(i), i)
 	}

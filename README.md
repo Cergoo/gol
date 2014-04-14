@@ -114,6 +114,9 @@ Hash functions library
 
 // Ly hash  
 `func HashLy(str []byte) (h uint32)`  
+  
+// Rs hash  
+`func HashRs(str []byte) (h uint32)`  
 
 ## jsonConfig
 Support comments in json config files.    

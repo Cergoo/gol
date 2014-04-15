@@ -3,7 +3,7 @@
 */
 
 {
-"pluralRule": "2A", 
+"pluralRule": "2A",
 "plural": {
   "public": ["public", "publics"],
   "apple": ["apple", "apples"],

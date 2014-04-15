@@ -14,17 +14,22 @@ var (
 
 func init() {
 	cache1 = cache.New(hash.HashFAQ6, 0, true, 5*time.Second, nil)
-	for i := 0; i < 1000; i++ {
-		cache1.Set("item"+strconv.Itoa(i), i)
-	}
 }
 
 func Test_Get(t *testing.T) {
-	v := cache1.Get("item1")
-	if v != 1 {
-		t.Error("err")
-		return
+	var v int
+	for i := 0; i < 100000; i++ {
+		cache1.Set("item"+strconv.Itoa(i), i)
 	}
+
+	for i := 0; i < 100000; i++ {
+		v = cache1.Get("item" + strconv.Itoa(i)).(int)
+		if v != i {
+			t.Error("err")
+			return
+		}
+	}
+
 }
 
 func Test_Inc(t *testing.T) {
@@ -77,7 +82,7 @@ func Test_SaveLoad(t *testing.T) {
 }
 
 func Test_Len(t *testing.T) {
-	if cache1.Len().Get() != 999 {
+	if cache1.Len().Get() != 99999 {
 		t.Error("err")
 		return
 	}
@@ -85,7 +90,7 @@ func Test_Len(t *testing.T) {
 
 func Test_janitar(t *testing.T) {
 	time.Sleep(12 * time.Second)
-	if cache1.Len().Get() == 999 {
+	if cache1.Len().Get() == 99999 {
 		t.Error("err")
 		return
 	}

@@ -204,10 +204,7 @@ func (t *t_cache) Del(key string) (val interface{}) {
 	return
 }
 
-/*
-	Incremet and Decrement any type
-	return modified value, error message or nil
-*/
+// Incremet and Decrement any type, return modified value or nil
 func (t *t_cache) Inc(key string, n float64) interface{} {
 	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	bucket := ht.ht[ht.keyToID([]byte(key))]
@@ -335,38 +332,36 @@ func (t *t_cache) grow() {
 
 	oldht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	oldlen := len(oldht.ht)
-
 	newlen := oldlen << 1
 	newht := new(t_hash)
 	newht.ht = make([]*t_bucket, newlen)
-	copy(newht.ht, oldht.ht)
+	copy(newht.ht, oldht.ht) // possible since it links
 	for i = oldlen; i < newlen; i++ {
-		newht.ht[i] = &t_bucket{items: newht.ht[j].items}
-		newht.ht[i].RLock()
+		newht.ht[i] = &t_bucket{}
+		newht.ht[i].Lock()
 		j++
 	}
 	newht.hash = oldht.hash
 	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)), unsafe.Pointer(newht))
+	oldht = nil
 	// rehash
 
-	j = 0
-	for i = oldlen; i < newlen; i++ {
+	j = oldlen
+	for i = 0; i < oldlen; i++ {
 		itemsold := make([]*t_item, 0, t.growcountgo+4)
 		itemsnew := make([]*t_item, 0, t.growcountgo+4)
-		newht.ht[j].Lock()
-		newht.ht[i].RUnlock()
 		newht.ht[i].Lock()
 		for _, val = range newht.ht[i].items {
 			if newht.keyToID([]byte(val.Key)) == uint32(i) {
-				itemsnew = append(itemsnew, val)
-			} else {
 				itemsold = append(itemsold, val)
+			} else {
+				itemsnew = append(itemsnew, val)
 			}
 		}
 
-		newht.ht[j].items = itemsold
+		newht.ht[j].items = itemsnew
 		newht.ht[j].Unlock()
-		newht.ht[i].items = itemsnew
+		newht.ht[i].items = itemsold
 		newht.ht[i].Unlock()
 		j++
 	}

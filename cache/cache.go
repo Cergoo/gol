@@ -327,14 +327,14 @@ func (t *t_cache) LoadFile(fname string) error {
 	Grow hash table procedure
 	old hash table (n buckets)	->	new hash table	(n*2 buckets)
 	example:
-	0	0		0Lock	0		0		0		0
-	1	1		1		1Lock	1		1		1
-	2	2		2		2		2Lock	2		2
-	3	3		3		3		3		3Lock	3
-		4Lock	4Lock	4		4		4		4
-		5Lock	5Lock	5Lock	5		5		5
-		6Lock	6Lock	6Lock	6Lock	6		6
-		7Lock	7Lock	7Lock	7Lock	7Lock	7
+	0    0     	 0Lock   0       0       0       0
+	1    1    	 1       1Lock   1       1       1
+	2    2       2       2       2Lock   2       2
+	3    3       3       3       3       3Lock   3
+	     4Lock   4Lock   4       4       4       4
+	     5Lock   5Lock   5Lock   5       5       5
+	     6Lock   6Lock   6Lock   6Lock   6       6
+	     7Lock   7Lock   7Lock   7Lock   7Lock   7
 */
 func (t *t_cache) grow() {
 	var (

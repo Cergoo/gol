@@ -184,14 +184,11 @@ Test helper functions
     // Equivalence check   
     func (t *TT) Eq(id string, a, b interface{})  
 
-## tplEngin\plural
-Plural form rules
-
 ## tplEngin\parser
 Parser util from i18n & tpl pkg
 
 ## tplEngin\i18n
-i18n pkg. 
+i18n pkg.
 
 ### Feature:
 Load from .json format store language resource.  
@@ -216,3 +213,7 @@ See tplEngin\i18n\exaple for more details.
 
     // Get plural. Use if Load (pluralAccess)  
     func (t *TReplacer) Plural(key string, count float64) string
+    
+## tplEngin\i18n\plural
+Plural form rules
+

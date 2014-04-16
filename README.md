@@ -35,44 +35,45 @@ go-cache:        5000	    590598 ns/op   16000 B/op	    2000 allocs/op
 </pre>
 
 ## cookie
-// Create new *http.Cookie  
-`func NewCookie(name, value string, options *Options) *http.Cookie`
 
-// Set cookie  
-`func SetCookie(w http.ResponseWriter, name, value string, options *Options)`
+    // Create new *http.Cookie  
+    func NewCookie(name, value string, options *Options) *http.Cookie
 
-// Del cookie   
-`func DelCookie(w http.ResponseWriter, name string)`
+    // Set cookie  
+    func SetCookie(w http.ResponseWriter, name, value string, options *Options)
+
+    // Del cookie   
+    func DelCookie(w http.ResponseWriter, name string)
 
 ## counter 
 Easy atomic counter type  
 
-// Get current count value  
-`func (t *T_counter) Get() uint64`  
+    // Get current count value  
+    func (t *T_counter) Get() uint64  
 
-// Set current count value  
-`func (t *T_counter) Set(v uint64)`  
+    // Set current count value  
+    func (t *T_counter) Set(v uint64)  
 
-// Increment  
-`func (t *T_counter) Inc() uint64`  
+    // Increment  
+    func (t *T_counter) Inc() uint64  
 
-// Decrement  
-`func (t *T_counter) Dec() uint64`  
+    // Decrement  
+    func (t *T_counter) Dec() uint64  
 
-// Add value    
-`func (t *T_counter) Add(v uint64, dec bool) uint64`  
+    // Add value    
+    func (t *T_counter) Add(v uint64, dec bool) uint64  
 
-// Get current limit value  
-`func (t *T_counter) GetLimit() uint64`  
+    // Get current limit value  
+    func (t *T_counter) GetLimit() uint64  
 
-// Set new limit value  
-`func (t *T_counter) SetLimit(v uint64)` 
+    // Set new limit value  
+    func (t *T_counter) SetLimit(v uint64) 
 
-// Check limit value  
-`func (t *T_counter) Check() bool` 
+    // Check limit value  
+    func (t *T_counter) Check() bool 
 
-// Check limit value  
-`func (t *T_counter) Check1(v uint64) bool`  
+    // Check limit value  
+    func (t *T_counter) Check1(v uint64) bool  
 
 ## err
 Editable error implementation
@@ -90,72 +91,98 @@ bytes.Buffer: 1000000       1099 ns/op       0 B/op	       0 allocs/op
 ## filepath
 Filepath util
     
-//	modified function Ext standart "path/filepath" pkg  
-`func Ext(fullname string) (name, ext string)`
+    // modified function Ext standart "path/filepath" pkg  
+    func Ext(fullname string) (name, ext string)
 
 ## genid
 Generate ID pkg  
   
-// NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
-// Max id length 64, the actual length can be less per unit.      
-`func NewHTTPGen(length uint8) HTTPGenID`
+    // NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
+    // Max id length 64, the actual length can be less per unit.      
+    func NewHTTPGen(length uint8) HTTPGenID
  
-// Generate random strind http compatible.       
-`func (t HTTPGenID) NewID() string`
+    // Generate random strind http compatible.       
+    func (t HTTPGenID) NewID() string
 
 ## hash
 Hash functions library
 
-// FAQ6 hash  
-`func HashFAQ6(str []byte) (h uint32)`  
+    // FAQ6 hash  
+    func HashFAQ6(str []byte) (h uint32)  
 
-// Rot13 hash  
-`func HashRot13(str []byte) (h uint32)`  
+    // Rot13 hash  
+    func HashRot13(str []byte) (h uint32)  
 
-// Ly hash  
-`func HashLy(str []byte) (h uint32)`  
+    // Ly hash  
+    func HashLy(str []byte) (h uint32)  
   
-// Rs hash  
-`func HashRs(str []byte) (h uint32)`  
+    // Rs hash  
+    func HashRs(str []byte) (h uint32)  
 
 ## jsonConfig
 Support comments in json config files.    
 
-// Load & remove comments from source .json file  
-`func Load(fromPath string, toVar interface{})`
+    // Load & remove comments from source .json file  
+    func Load(fromPath string, toVar interface{})
 
-// Remove comments from source .json  
-`func RemoveComment(source []byte) (result []byte)`     
+    // Remove comments from source .json  
+    func RemoveComment(source []byte) (result []byte)     
 
 ## refl
-Additional reflection functions pack  
-  
-// A resize to slice all types. It panics if v's Kind is not slice.    
-`func SliceResize(pointToSlice interface{}, newCap int)`
+Additional reflection functions pack
 
-// Return true if keys map1 == keys map2. It panics if v's Kind is not map.   
-`func MapKeysEq(map1, map2 interface{}) bool`
+    // Caller  
+    type (  
+      FuncMap   map[string]reflect.Value  
+      FuncSlice []reflect.Value
+    )
+    
+    // Add to function map
+    func (t FuncMap) Add(name string, f interface{})
+    
+    // Add to function slice
+    func (t *FuncSlice) Add(id int, f interface{})
+    
+    // Call and return interface{}
+    func (t FuncMap) Calli(name string, params ...interface{}) []interface{}
+    
+    // Call and return interface{}
+    func (t FuncSlice) Calli(id int, params ...interface{}) []interface{} 
+
+    // Call function from a function map
+    func (t FuncMap) Call(name string, params ...interface{}) []reflect.Value
+    
+    // Call function from a function slice
+    func (t FuncSlice) Call(id int, params ...interface{}) []reflect.Value
+
+    // Other reflection functions
+          
+    // A resize to slice all types. It panics if v's Kind is not slice.    
+    func SliceResize(pointToSlice interface{}, newCap int)
+
+    // Return true if keys map1 == keys map2. It panics if v's Kind is not map.
+    func MapKeysEq(map1, map2 interface{}) bool
 
 ## session
 Cookie based session engin implementation  
 
-// Constructor session engin  
-`func NewSessionEngin(lenID uint8, stor TStor) *TSession` 
+    // Constructor session engin  
+    func NewSessionEngin(lenID uint8, stor TStor) *TSession 
 
-// Create new session  
-`func (t *TSession) New(w http.ResponseWriter, data interface{}) (id string)`  
+    // Create new session  
+    func (t *TSession) New(w http.ResponseWriter, data interface{}) (id string)  
 
-// Delete session  
-`func (t *TSession) Del(w http.ResponseWriter, r *http.Request)`
+    // Delete session  
+    func (t *TSession) Del(w http.ResponseWriter, r *http.Request)
 
-// Get session  
-`func (t *TSession) Get(w http.ResponseWriter, r *http.Request) interface{}`
+    // Get session  
+    func (t *TSession) Get(w http.ResponseWriter, r *http.Request) interface{}
 
 ## test  
 Test helper functions
 
-// Equivalence check   
-`func (t *TT) Eq(id string, a, b interface{})`  
+    // Equivalence check   
+    func (t *TT) Eq(id string, a, b interface{})  
 
 ## tplEngin\plural
 Plural form rules
@@ -172,20 +199,20 @@ Support tag: include context and plural. Example: `Field {{0}} must be filled {{
 Support map (type key string) and slice (type key int) access to phrase.  
 See tplEngin\i18n\exaple for more details.
 
-// Create language resources  
-`func Load(patch string, pluralAccess bool) Ti18n`
+    // Create language resources  
+    func Load(patch string, pluralAccess bool) Ti18n
 
-// Create new replacer from language resources  
-`func (t Ti18n) NewReplacer(langName string) *TReplacer`
+    // Create new replacer from language resources  
+    func (t Ti18n) NewReplacer(langName string) *TReplacer
 
-// Get lang  
-`func (t *TReplacer) Lang() string`
+    // Get lang  
+    func (t *TReplacer) Lang() string
 
-// Print. Get phrase from a map store.  
-`func (t *TReplacer) P(key string, context ...interface{}) []byte`
+    // Print. Get phrase from a map store.  
+    func (t *TReplacer) P(key string, context ...interface{}) []byte
 
-// Print faste. Get phrase from a slice store.    
-`func (t *TReplacer) Pf(key int, context ...interface{}) []byte`  
+    // Print faste. Get phrase from a slice store.    
+    func (t *TReplacer) Pf(key int, context ...interface{}) []byte  
 
-// Get plural. Use if Load (pluralAccess)  
-`func (t *TReplacer) Plural(key string, count float64) string`
+    // Get plural. Use if Load (pluralAccess)  
+    func (t *TReplacer) Plural(key string, count float64) string

@@ -131,7 +131,8 @@ Support comments in json config files.
 ## refl
 Additional reflection functions pack
 
-    // Caller  
+    /* Universal caller of functions */  
+    
     type (  
       FuncMap   map[string]reflect.Value  
       FuncSlice []reflect.Value
@@ -143,10 +144,10 @@ Additional reflection functions pack
     // Add to function slice
     func (t *FuncSlice) Add(id int, f interface{})
     
-    // Call and return interface{}
+    // Call from map and return interface{}
     func (t FuncMap) Calli(name string, params ...interface{}) []interface{}
     
-    // Call and return interface{}
+    // Call from slice and return interface{}
     func (t FuncSlice) Calli(id int, params ...interface{}) []interface{} 
 
     // Call function from a function map
@@ -155,7 +156,7 @@ Additional reflection functions pack
     // Call function from a function slice
     func (t FuncSlice) Call(id int, params ...interface{}) []reflect.Value
 
-    // Other reflection functions
+    /* Other reflection functions */
           
     // A resize to slice all types. It panics if v's Kind is not slice.    
     func SliceResize(pointToSlice interface{}, newCap int)

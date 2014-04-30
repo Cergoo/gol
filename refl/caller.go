@@ -39,7 +39,7 @@ func (t *FuncSlice) Add(f interface{}) int {
 		err.Panic(err.New(errNotFunction, 0))
 	}
 	*t = append(*t, v)
-	return len(*t)
+	return len(*t) - 1
 }
 
 // Call and return interface{}

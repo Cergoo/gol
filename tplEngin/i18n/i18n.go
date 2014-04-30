@@ -149,9 +149,10 @@ func Load(patch string, pluralAccess bool) Ti18n {
 			keyPhrase = strings.TrimSpace(keyPhrase)
 			parts = strings.SplitN(keyPhrase, " ", 2)
 			id, e = strconv.Atoi(parts[0])
-			err.Panic(e)
-			tpl.Id = uint16(id)
-			lang.phraseSlice[id] = tpl
+			if e == nil {
+				tpl.Id = uint16(id)
+				lang.phraseSlice[id] = tpl
+			}
 
 			if len(parts) > 1 {
 				lang.phraseMap[strings.TrimSpace(parts[1])] = tpl

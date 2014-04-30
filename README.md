@@ -141,8 +141,8 @@ Additional reflection functions pack
     // Add to function map
     func (t FuncMap) Add(name string, f interface{})
     
-    // Add to function slice
-    func (t *FuncSlice) Add(id int, f interface{})
+    // Add to function slice, return element id
+    func (t *FuncSlice) Add(f interface{}) int 
     
     // Call from map and return interface{}
     func (t FuncMap) Calli(name string, params ...interface{}) []interface{}

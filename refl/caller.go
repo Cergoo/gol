@@ -32,13 +32,14 @@ func (t FuncMap) Add(name string, f interface{}) {
 	t[name] = v
 }
 
-// Add to function slice
-func (t *FuncSlice) Add(id int, f interface{}) {
+// Add to function slice, return element id
+func (t *FuncSlice) Add(f interface{}) int {
 	v := reflect.ValueOf(f)
 	if v.Kind() != reflect.Func {
 		err.Panic(err.New(errNotFunction, 0))
 	}
 	*t = append(*t, v)
+	return len(*t)
 }
 
 // Call and return interface{}

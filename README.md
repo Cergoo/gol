@@ -21,7 +21,7 @@ Automatic lifetime management of records can be enabled or disabled. LRU caches 
 
 ### Comparition benchmark test  
 go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cache)  
-go version go1.2.1  
+go version go1.2.1, single thread  
 <pre>
 Set
 Cergoo.cache:    5000	    646846 ns/op   24000 B/op	    3000 allocs/op
@@ -81,6 +81,12 @@ Editable error implementation
 ## fastbuf
 io.Writer implementation  
 
+    // write to buf
+    func (t *Buf) Write(p []byte) (n int, err error)
+    
+    // get all buf and clear buf
+    func (t *Buf) Flush() (r []byte)  
+
 ###Comparition benchmark test
 <pre>
 Write
@@ -98,8 +104,8 @@ Filepath util
 Generate ID pkg  
   
     // NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
-    // Max id length 64, the actual length can be less per unit.      
-    func NewHTTPGen(length uint8) HTTPGenID
+    // the actual length can be less per unit.      
+    func NewHTTPGen(length uint16) HTTPGenID
  
     // Generate random strind http compatible.       
     func (t HTTPGenID) NewID() string

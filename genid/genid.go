@@ -15,14 +15,14 @@ import (
 )
 
 type (
-	HTTPGenID uint8
+	HTTPGenID uint16
 )
 
 /*
 	NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3
-	max id length 64, the actual length can be less per unit
+	the actual length can be less per unit
 */
-func NewHTTPGen(length uint8) HTTPGenID {
+func NewHTTPGen(length uint16) HTTPGenID {
 	return HTTPGenID(math.Ceil(float64(3 * length / 4)))
 }
 

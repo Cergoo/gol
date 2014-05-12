@@ -186,10 +186,17 @@ Cookie based session engin implementation
     func (t *TSession) Get(w http.ResponseWriter, r *http.Request) interface{}
 
 ## test  
-Test helper functions
+Test helper functions is a simple assertion wrapper for Go's built in "testing" package   
+fork jmervine/GoT
+
+    // constructor
+    func New(t *testing.T) *TT
 
     // Equivalence check   
-    func (t *TT) Eq(id string, a, b interface{})  
+    func (t *TT) Eq(id string, a, b interface{})
+    
+    // No Equivalent check
+    func (t *TT) NoEq(id string, a, b interface{})  
 
 ## tplEngin\parser
 Parser util from i18n & tpl pkg

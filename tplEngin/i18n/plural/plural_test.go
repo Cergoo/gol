@@ -5,9 +5,10 @@ import (
 	"testing"
 )
 
-var t1 test.TT
+var t1 *test.TT
 
 func Test_main(t *testing.T) {
+	t1 = test.New(t)
 	//_________________	isInt
 
 	// positive test cases
@@ -663,9 +664,5 @@ func Test_main(t *testing.T) {
 	t1.Eq("test12_pluralRuleRu", pluralRuleRu(float64(22)), 2)
 	t1.Eq("test13_pluralRuleRu", pluralRuleRu(float64(1.5)), 2)
 	t1.Eq("test14_pluralRuleRu", pluralRuleRu(float64(101.1)), 2)
-
-	if t1 {
-		t.Error("err")
-	}
 
 }

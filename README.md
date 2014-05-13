@@ -221,11 +221,8 @@ See tplEngin\i18n\exaple for more details.
 
     // Print. Get phrase from a map store.  
     func (t *TReplacer) P(key string, context ...interface{}) []byte
-
-    // Print faste. Get phrase from a slice store.    
-    func (t *TReplacer) Pf(key int, context ...interface{}) []byte  
-
-    // Get plural. Use if Load (pluralAccess)  
+    
+    // Get plural. Use if Load (if pluralAccess)  
     func (t *TReplacer) Plural(key string, count float64) string
     
 ## tplEngin\i18n\plural

@@ -4,10 +4,6 @@
 	under terms of ISC license
 */
 
-/*
- == 32
-*/
-
 package i18n
 
 import (
@@ -20,17 +16,15 @@ import (
 	"gol/tplEngin/parser"
 	"io/ioutil"
 	"strconv"
-	"strings"
 )
 
 // types dictionarys define
 type (
 	Ti18n map[string]*tlang
 	tlang struct {
-		pluralRule  plural.PluralRule       // language plural rule
-		plural      map[string][]string     // plural pronunciation
-		phraseMap   map[string]*parser.Ttpl // phrases map store
-		phraseSlice []*parser.Ttpl          // phrases slice store
+		pluralRule plural.PluralRule       // language plural rule
+		plural     map[string][]string     // plural pronunciation
+		items      map[string]*parser.Ttpl // tags
 	}
 
 	tTagText   []byte
@@ -60,22 +54,13 @@ func (t *TReplacer) Lang() string {
 	return t.langName
 }
 
-// Print. Get phrase from map store. Use if Load (mapAccess)
+// Print. Get phrase from map store.
 func (t *TReplacer) P(key string, context ...interface{}) []byte {
-	tpl, e := t.lang.phraseMap[key]
-	if e {
-		return t.p(tpl, context, key)
+	tpl := t.lang.items[key]
+	if tpl == nil {
+		return nil
 	}
-	return nil
-}
-
-// Print faste. Get phrase from slice store. Use if Load (sliceAccess)
-func (t *TReplacer) Pf(key int, context ...interface{}) []byte {
-	if len(t.lang.phraseSlice) > key {
-		return t.p(t.lang.phraseSlice[key], context, strconv.Itoa(key))
-	}
-	return nil
-
+	return t.p(tpl, context)
 }
 
 // Get plural. Use if Load (pluralAccess)
@@ -104,9 +89,7 @@ func Load(patch string, pluralAccess bool) Ti18n {
 
 	var (
 		name   string
-		parts  []string
 		tpl    *parser.Ttpl
-		id     int
 		valPre map[string]string
 		keyPre string
 	)
@@ -137,28 +120,16 @@ func Load(patch string, pluralAccess bool) Ti18n {
 
 	for key, item := range tmpLangs {
 		lang := new(tlang)
+		lang.items = make(map[string]*parser.Ttpl)
 		lang.plural = item.Plural
 		lang.pluralRule = plural.PluralRules[item.PluralRule]
 		if lang.pluralRule == nil && len(lang.plural) > 0 {
 			err.Panic(err.New("Not found plural rule: '"+item.PluralRule+"'", 0))
 		}
-		lang.phraseMap = make(map[string]*parser.Ttpl)
-		lang.phraseSlice = make([]*parser.Ttpl, len(item.Phrase))
+
 		for keyPhrase, itemPhrase := range item.Phrase {
 			tpl = parser.Parse([]byte(itemPhrase), toparse)
-			keyPhrase = strings.TrimSpace(keyPhrase)
-			parts = strings.SplitN(keyPhrase, " ", 2)
-			id, e = strconv.Atoi(parts[0])
-			if e == nil {
-				tpl.Id = uint16(id)
-				lang.phraseSlice[id] = tpl
-			}
-
-			if len(parts) > 1 {
-				lang.phraseMap[strings.TrimSpace(parts[1])] = tpl
-			} else {
-				lang.phraseMap[keyPhrase] = tpl
-			}
+			lang.items[keyPhrase] = tpl
 		}
 
 		initAfterParse(lang, key)
@@ -172,9 +143,9 @@ func Load(patch string, pluralAccess bool) Ti18n {
 }
 
 // Get phrase
-func (t *TReplacer) p(tpl *parser.Ttpl, context []interface{}, key string) []byte {
+func (t *TReplacer) p(tpl *parser.Ttpl, context []interface{}) []byte {
 	if int(tpl.ContextLen) > len(context) {
-		err.Panic(err.New("i18n Mismatch context len: lang:'"+t.Lang()+"', key:'"+key+"' ("+strconv.Itoa(int(tpl.ContextLen))+" , "+strconv.Itoa(len(context))+")", 0))
+		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.ContextLen))+" , "+strconv.Itoa(len(context))+")", 0))
 	}
 
 	var result string
@@ -191,13 +162,14 @@ func (t *TReplacer) p(tpl *parser.Ttpl, context []interface{}, key string) []byt
 	return []byte(result)
 }
 
+// Init plural tag
 func initAfterParse(lang *tlang, name string) {
 	var (
 		e   bool
 		key string
 	)
 	// phrase loop
-	for _, item := range lang.phraseMap {
+	for _, item := range lang.items {
 		// tag loop
 		for _, itemTag := range item.Items {
 			switch v := itemTag.(type) {

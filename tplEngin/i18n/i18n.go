@@ -154,9 +154,7 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 				existLang.plural[key] = val
 			}
 		}
-
 	}
-
 }
 
 // Get phrase
@@ -165,18 +163,18 @@ func (t *TReplacer) p(tpl *parser.Ttpl, context []interface{}) []byte {
 		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.ContextLen))+" , "+strconv.Itoa(len(context))+")", 0))
 	}
 
-	var result string
+	var result []byte
 	for _, item := range tpl.Items {
 		switch v := item.(type) {
 		case tTagText:
-			result += string(v)
+			result = append(result, v...)
 		case tTagVar:
-			result += fmt.Sprint(context[v])
+			result = append(result, []byte(fmt.Sprint(context[v]))...)
 		case *tTagPlural:
-			result += v.text[t.lang.pluralRule(context[v.count].(float64))]
+			result = append(result, []byte(v.text[t.lang.pluralRule(context[v.count].(float64))])...)
 		}
 	}
-	return []byte(result)
+	return result
 }
 
 // Init plural tag
@@ -201,21 +199,12 @@ func initAfterParse(lang *tlang, name string) {
 	}
 }
 
-//  pars string to context id
-func parseInt(source string) uint16 {
-	i, e := strconv.Atoi(source)
-	if e != nil || i < 0 {
-		err.Panic(err.New("error parse to uint16: '"+source+"'", 0))
-	}
-	return uint16(i)
-}
-
 // parse plural tag
 func parseTagPlural(source []string) (tag *tTagPlural, contextLen uint16) {
 	if len(source) < 2 {
 		err.Panic(err.New("error parsing to Plural Tag", 0))
 	}
-	tag = &tTagPlural{parseInt(source[1]), []string{source[0]}}
+	tag = &tTagPlural{parser.ParseInt(source[1]), []string{source[0]}}
 	contextLen = tag.count
 	return
 }
@@ -238,7 +227,7 @@ func parseTag(source []byte) (tag interface{}, contextLen uint16) {
 	case "plural":
 		tag, contextLen = parseTagPlural(list[1:])
 	default:
-		contextLen = parseInt(list[0])
+		contextLen = parser.ParseInt(list[0])
 		tag = tTagVar(contextLen)
 	}
 	return

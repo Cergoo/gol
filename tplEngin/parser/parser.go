@@ -8,6 +8,8 @@ package parser
 
 import (
 	"bytes"
+	"gol/err"
+	"strconv"
 )
 
 type (
@@ -131,4 +133,13 @@ func Parse(source []byte, toparse *ToParse) *Ttpl {
 		tpl.Items = append(tpl.Items, toparse.ParseText(lpart))
 	}
 	return tpl
+}
+
+//  pars string to context id
+func ParseInt(source string) uint16 {
+	i, e := strconv.Atoi(source)
+	if e != nil || i < 0 {
+		err.Panic(err.New("error parse to uint16: '"+source+"'", 0))
+	}
+	return uint16(i)
 }

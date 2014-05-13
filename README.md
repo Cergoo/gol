@@ -198,9 +198,6 @@ fork jmervine/GoT
     // No Equivalent check
     func (t *TT) NoEq(id string, a, b interface{})  
 
-## tplEngin\parser
-Parser util from i18n & tpl pkg
-
 ## tplEngin\i18n
 i18n pkg.
 
@@ -210,8 +207,11 @@ Support tag: include context and plural. Example: `Field {{0}} must be filled {{
 Support map (type key string) and slice (type key int) access to phrase.  
 See tplEngin\i18n\exaple for more details.
 
-    // Create language resources  
-    func Load(patch string, pluralAccess bool) Ti18n
+    // Create language obj
+    func New() Ti18n
+    
+    // Loade language resources  
+    func Load(patch string, pluralAccess bool)
 
     // Create new replacer from language resources  
     func (t Ti18n) NewReplacer(langName string) *TReplacer
@@ -222,9 +222,11 @@ See tplEngin\i18n\exaple for more details.
     // Print. Get phrase from a map store.  
     func (t *TReplacer) P(key string, context ...interface{}) []byte
     
-    // Get plural. Use if Load (if pluralAccess)  
+    // Get plural. Use if Load (pluralAccess==true)  
     func (t *TReplacer) Plural(key string, count float64) string
     
 ## tplEngin\i18n\plural
 Plural form rules
 
+## tplEngin\parser
+Parser util from i18n & tpl pkg

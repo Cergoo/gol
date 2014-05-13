@@ -72,8 +72,13 @@ func (t *TReplacer) Plural(key string, count float64) string {
 	return ""
 }
 
-// Create language resources
-func Load(patch string, pluralAccess bool) Ti18n {
+// Create language obj
+func New() Ti18n {
+	return make(Ti18n)
+}
+
+// Loade language resources
+func (t Ti18n) Load(patch string, pluralAccess bool) {
 	type (
 		tmpLang struct {
 			PluralRule string
@@ -105,13 +110,12 @@ func Load(patch string, pluralAccess bool) Ti18n {
 	// chek equivalent all lang resurce
 	for key, val := range tmpLangs {
 		if valPre != nil && !refl.MapKeysEq(valPre, val.Phrase) {
-			err.Panic(err.New("lang prase not equivalent: "+keyPre+", "+key, 0))
+			err.Panic(err.New("Lang phrase not equivalent: "+keyPre+", "+key, 0))
 		}
 		valPre = val.Phrase
 		keyPre = key
 	}
 
-	i18n := make(Ti18n)
 	toparse := new(parser.ToParse)
 	toparse.Delimiter[0] = []byte("{{")
 	toparse.Delimiter[1] = []byte("}}")
@@ -136,10 +140,23 @@ func Load(patch string, pluralAccess bool) Ti18n {
 		if !pluralAccess {
 			lang.plural = nil
 		}
-		i18n[key] = lang
+
+		existLang := t[key]
+		if existLang == nil {
+			t[key] = lang
+		} else {
+			// add phrase
+			for key, val := range lang.items {
+				existLang.items[key] = val
+			}
+			// add plural
+			for key, val := range lang.plural {
+				existLang.plural[key] = val
+			}
+		}
+
 	}
 
-	return i18n
 }
 
 // Get phrase

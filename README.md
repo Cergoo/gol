@@ -5,10 +5,8 @@ under terms of ISC license
 
 ## cache
 Cache is an in-memory key:value store/cache similar to memcached that is suitable for applications running on a single machine.    
-The package is the implementation of hashmap for organizing in-memory key-value data store, has the ability to limit the count of records and automatic lifetime management records which makes it possible to use it to arrange caches.      
-Automatic lifetime management of records can be enabled or disabled. LRU caches are affected by the problem leaching records in intensive add, i.e. the records  permanently pushed do not linger in the cach. This package does not implement the LRU. In this implementation the time life records indicated for all the generated cache, specified time value is the size of time interval during which a new record is guaranteed to live in the cache. Then have a record of lives at least one time interval maximum of two time interval + can be implemented for the "if it's read then it lives" if a record is requested that her life is prolonged for the next time interval.  
+The package is the implementation of hashmap for organizing in-memory key-value data store. Automatic lifetime management of records can be enabled or disabled. LRU caches are affected by the problem leaching records in intensive add, i.e. the records  permanently pushed do not linger in the cach. This package does not implement the LRU. In this implementation the time life records indicated for all the generated cache, specified time value is the size of time interval during which a new record is guaranteed to live in the cache. Then have a record of lives at least one time interval maximum of two time interval + can be implemented for the "if it's read then it lives" if a record is requested that her life is prolonged for the next time interval.  
     
-
 ### Feature:
 - thread-safe
 - faste and high availability
@@ -169,6 +167,9 @@ Additional reflection functions pack
 
     // Return true if keys map1 == keys map2. It panics if v's Kind is not map.
     func MapKeysEq(map1, map2 interface{}) bool
+    
+    // Copy fields from struct "v" to map[string]interface{} "m"
+    func StructToMap(v interface{}, m map[string]interface{}, prefix string)
 
 ## session
 Cookie based session engin implementation  

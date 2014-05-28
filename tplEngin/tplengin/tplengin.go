@@ -101,7 +101,6 @@ func (t *Ttpl) Load(patch string) {
 		fileSource, e = ioutil.ReadFile(patch + "/" + item.Name())
 		t.tpl[base+item.Name()] = parser.Parse(fileSource, toparse)
 	}
-	fmt.Printf("%v", t.tpl["/maintpls/1.tpl"])
 }
 
 //************** control blok begin
@@ -179,6 +178,7 @@ func (t *Ttpl) InitBeforeUse() {
 	t.tagIncludeCon_ChortToFullName()
 	chekloop(t.tpl)
 	t.tagIncludeCon_Init()
+	//fmt.Printf("%v", t.tpl["/maintpls/1.tpl"])
 }
 
 //************** control blok end
@@ -242,11 +242,24 @@ func parseTagi18n(source []string) interface{} {
 		m[1] = source[1]
 	}
 	if source[0][0] == 46 {
-		m[0] = source[0][1:]
+		if len(source[0]) > 1 {
+			m[0] = source[0][1:]
+		} else {
+			m[0] = "."
+		}
 		return tTagi18nVar(m)
 	}
 	m[0] = source[0]
 	return tTagi18nCon(m)
+}
+
+//************** replacer blok begin
+
+func getVarfromContext(key string, v map[string]interface{}) interface{} {
+	if key == "." {
+		return v
+	}
+	return v[key]
 }
 
 func (t *TReplaser) Replace(name string, v map[string]interface{}, rezult []byte) []byte {
@@ -268,11 +281,13 @@ func (t *TReplaser) replace(tpl *parser.Ttpl, v map[string]interface{}, rezult [
 			rezult = append(rezult, tag...)
 		case tTagVar:
 			rezult = append(rezult, []byte(fmt.Sprint(v[string(tag)]))...)
-		case tTagIncludeCon:
-			rezult = append(rezult, t.replace(tag.tpl, v[tag.contextVar].(map[string]interface{}), rezult)...)
+		case *tTagIncludeCon:
+			rezult = t.replace(tag.tpl, getVarfromContext(tag.contextVar, v).(map[string]interface{}), rezult)
 		case tTagIncludeVar:
-			rezult = append(rezult, t.Replace(tag[0], v[tag[1]].(map[string]interface{}), rezult)...)
+			rezult = t.Replace(tag[0], getVarfromContext(tag[1], v).(map[string]interface{}), rezult)
 		}
 	}
 	return rezult
 }
+
+//************** replacer blok end

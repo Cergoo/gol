@@ -1,0 +1,1 @@
+{{! comment}} tpl2 {{.a}} tpl2 {{i18n message1 f1}}

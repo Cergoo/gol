@@ -1,0 +1,19 @@
+/*
+  en
+*/
+
+{
+"pluralRule": "2A",
+"plural": {
+  "public": ["public", "publics"],
+  "apple": ["apple", "apples"],
+  "home": ["home", "homes"],
+  "%": ["percentage", "percentages"]
+},
+"phrase": {
+  "message": "Field &laquo;email&raquo; must be filled",
+  "message1": "Field {{0}} must be filled {{1}} {{plural apple 1}}",
+  "message2": "Field must be filled",
+  "save": "Save"
+}
+}

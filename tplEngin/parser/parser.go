@@ -110,7 +110,7 @@ func Parse(source []byte, toparse *ToParse) *Ttpl {
 	)
 
 	tpl := new(Ttpl)
-	tpl.Items = make([]interface{}, 1)
+	tpl.Items = make([]interface{}, 0)
 
 	lpart, tag, end, success = FindTag(source, toparse.Delimiter)
 	for success {

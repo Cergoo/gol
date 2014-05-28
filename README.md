@@ -168,8 +168,8 @@ Additional reflection functions pack
     // Return true if keys map1 == keys map2. It panics if v's Kind is not map.
     func MapKeysEq(map1, map2 interface{}) bool
     
-    // Copy fields from struct "v" to map[string]interface{} "m"
-    func StructToMap(v interface{}, m map[string]interface{}, prefix string)
+    // If "v" is struct copy fields to map[string]interface{} "m" and return true else return false
+    func StructToMap(v interface{}, m map[string]interface{}, prefix string) bool
 
 ## session
 Cookie based session engin implementation  

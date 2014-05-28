@@ -33,7 +33,7 @@ func MapKeysEq(map1, map2 interface{}) bool {
 	return true
 }
 
-// If "v" is struct copy fields to map[string]interface{} "m" and return true else return false
+// If "v" is struct copy fields to "m" map[string]interface{} and return true else return false
 func StructToMap(v interface{}, m map[string]interface{}, prefix string) bool {
 	objVal := reflect.ValueOf(v)
 	if objVal.Kind() == reflect.Ptr && objVal.Elem().Kind() == reflect.Struct {

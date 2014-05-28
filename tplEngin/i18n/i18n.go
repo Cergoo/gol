@@ -9,12 +9,13 @@ package i18n
 import (
 	"fmt"
 	"gol/err"
-	"gol/filepath"
+	gfilepath "gol/filepath"
 	"gol/jsonConfig"
 	"gol/refl"
 	"gol/tplEngin/i18n/plural"
 	"gol/tplEngin/parser"
 	"io/ioutil"
+	"path/filepath"
 	"strconv"
 )
 
@@ -54,7 +55,7 @@ func (t *TReplacer) Lang() string {
 	return t.langName
 }
 
-// Print. Get phrase from map store.
+// Print phrase from map store.
 func (t *TReplacer) P(key string, context ...interface{}) []byte {
 	tpl := t.lang.items[key]
 	if tpl == nil {
@@ -102,8 +103,8 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 	for _, item := range fileList {
 		vtmpLang := new(tmpLang)
 		vtmpLang.Plural = make(map[string][]string)
-		jsonConfig.Load(patch+"/"+item.Name(), &vtmpLang)
-		name, _ = filepath.Ext(item.Name())
+		jsonConfig.Load(patch+string(filepath.Separator)+item.Name(), &vtmpLang)
+		name, _ = gfilepath.Ext(item.Name())
 		tmpLangs[name] = vtmpLang
 	}
 

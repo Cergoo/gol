@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"gol/fastbuf"
 	"gol/tplEngin/tplengin"
 )
 
@@ -16,7 +17,7 @@ func main() {
 	context["a"] = 10
 	context["f1"] = []interface{}{"MyText", float64(12)}
 
-	rezult := make([]byte, 0)
-	rezult = r.Replace("/maintpls/1.tpl", context, rezult)
-	fmt.Println(string(rezult))
+	buf := &fastbuf.Buf{}
+	r.Replace("/maintpls/1.tpl", context, buf)
+	fmt.Println(string(buf.Flush()))
 }

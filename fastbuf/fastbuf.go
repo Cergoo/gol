@@ -10,6 +10,11 @@ type (
 	Buf []byte
 )
 
+// constructor io.writer implementation
+func New() *Buf {
+	return &Buf{}
+}
+
 // write to buf
 func (t *Buf) Write(p []byte) (n int, err error) {
 	*t = append(*t, p...)

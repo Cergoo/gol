@@ -23,12 +23,15 @@ import (
 	"fmt"
 	"github.com/looplab/tarjan"
 	"gol/err"
+	"gol/golbytes"
 	"gol/refl"
 	"gol/tplEngin/i18n"
 	"gol/tplEngin/parser"
+	"io"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
+	"text/template"
 )
 
 // types dictionarys define
@@ -42,7 +45,8 @@ type (
 	// текс
 	tTagText []byte
 	// id передаваемого контекста
-	tTagVar string
+	tTagVar        string
+	tTagVarHtmlEsc string
 	// extendet tags
 	tTagFunc []interface{}
 	// id фразы языкового ресурса 0- resurce name, 1- context name type []string
@@ -207,8 +211,11 @@ func parseTag(source []byte) (tag interface{}, contextLen uint16) {
 	default:
 		// переменная контекста
 		// либо функция (расширенные теги)
-		if list[0][0] == 46 {
+		slice := []byte(list[0])
+		if golbytes.HeadEqual(slice, []byte(".")) {
 			tag = tTagVar(list[0][1:])
+		} else if golbytes.HeadEqual(slice, []byte("@.")) {
+			tag = tTagVarHtmlEsc(list[0][2:])
 		} else {
 			tag = parseTagFunc(list)
 		}
@@ -262,32 +269,33 @@ func getVarfromContext(key string, v map[string]interface{}) interface{} {
 	return v[key]
 }
 
-func (t *TReplaser) Replace(name string, v map[string]interface{}, rezult []byte) []byte {
+func (t *TReplaser) Replace(name string, v map[string]interface{}, writer io.Writer) {
 	tpl := t.tpl.tpl[name]
 	if tpl == nil {
 		err.Panic(err.New("Err, tpl '"+name+"' not found", 0))
 	}
-	return t.replace(tpl, v, rezult)
+	t.replace(tpl, v, writer)
 }
 
-func (t *TReplaser) replace(tpl *parser.Ttpl, v map[string]interface{}, rezult []byte) []byte {
+func (t *TReplaser) replace(tpl *parser.Ttpl, v map[string]interface{}, writer io.Writer) {
 	for i := range tpl.Items {
 		switch tag := tpl.Items[i].(type) {
 		case tTagi18nCon:
-			rezult = append(rezult, t.i18n.P(tag[0], v[tag[1]].([]interface{})...)...)
+			writer.Write(t.i18n.P(tag[0], v[tag[1]].([]interface{})...))
 		case tTagi18nVar:
-			rezult = append(rezult, t.i18n.P(v[tag[0]].(string), v[tag[1]])...)
+			writer.Write(t.i18n.P(v[tag[0]].(string), v[tag[1]].([]interface{})...))
 		case tTagText:
-			rezult = append(rezult, tag...)
+			writer.Write(tag)
 		case tTagVar:
-			rezult = append(rezult, []byte(fmt.Sprint(v[string(tag)]))...)
+			fmt.Fprint(writer, v[string(tag)])
+		case tTagVarHtmlEsc:
+			template.HTMLEscape(writer, []byte(fmt.Sprint(v[string(tag)])))
 		case *tTagIncludeCon:
-			rezult = t.replace(tag.tpl, getVarfromContext(tag.contextVar, v).(map[string]interface{}), rezult)
+			t.replace(tag.tpl, getVarfromContext(tag.contextVar, v).(map[string]interface{}), writer)
 		case tTagIncludeVar:
-			rezult = t.Replace(tag[0], getVarfromContext(tag[1], v).(map[string]interface{}), rezult)
+			t.Replace(tag[0], getVarfromContext(tag[1], v).(map[string]interface{}), writer)
 		}
 	}
-	return rezult
 }
 
 //************** replacer blok end

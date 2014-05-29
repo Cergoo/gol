@@ -108,6 +108,9 @@ Generate ID pkg
     // Generate random strind http compatible.       
     func (t HTTPGenID) NewID() string
 
+## golbytes
+Additional []byte functions
+
 ## hash
 Hash functions library
 
@@ -231,3 +234,8 @@ Plural form rules
 
 ## tplEngin\parser
 Parser util from i18n & tpl pkg
+
+## tplEngin\tplengin
+Attention! Work not complete.
+Templare engin.
+  

@@ -108,9 +108,6 @@ Generate ID pkg
     // Generate random strind http compatible.       
     func (t HTTPGenID) NewID() string
 
-## golbytes
-Additional []byte functions
-
 ## hash
 Hash functions library
 
@@ -207,8 +204,7 @@ i18n pkg.
 
 ### Feature:
 Load from .json format store language resource.  
-Support tag: include context and plural. Example: `Field {{0}} must be filled {{1}} {{plural appel 1}}`.   
-Support map (type key string) and slice (type key int) access to phrase.  
+Support tag: include context and plural. Example: `Field {{0}} must be filled {{1}} {{plural appel 1}}`.     
 See tplEngin\i18n\exaple for more details.
 
     // Create language obj
@@ -236,6 +232,7 @@ Plural form rules
 Parser util from i18n & tpl pkg
 
 ## tplEngin\tplengin
-Attention! Work not complete.
 Templare engin.
+Attention! Work not complete.
+
   

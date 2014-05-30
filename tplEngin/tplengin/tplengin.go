@@ -20,10 +20,10 @@
 package tplengin
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/looplab/tarjan"
 	"gol/err"
-	"gol/golbytes"
 	"gol/refl"
 	"gol/tplEngin/i18n"
 	"gol/tplEngin/parser"
@@ -37,9 +37,9 @@ import (
 // types dictionarys define
 type (
 	Ttpl struct {
-		I18n i18n.Ti18n              // языковой ресурс
-		tpl  map[string]*parser.Ttpl // распарсеные шаблоны
-		f    refl.FuncMap            // функции (is a extension tags)
+		I18n i18n.Ti18n             // языковой ресурс
+		tpl  map[string]parser.Ttpl // распарсеные шаблоны
+		f    refl.FuncMap           // функции (is a extension tags)
 	}
 
 	// текс
@@ -54,8 +54,8 @@ type (
 	tTagi18nVar [2]string
 	// static include temlate
 	tTagIncludeCon struct {
-		tpl        *parser.Ttpl // распарсеный шаблон
-		contextVar string       // id передаваемого контекста
+		tpl        parser.Ttpl // распарсеный шаблон
+		contextVar string      // id передаваемого контекста
 	}
 	tTagIncludeVar [2]string
 	//
@@ -69,7 +69,7 @@ type (
 func New() *Ttpl {
 	tpl := new(Ttpl)
 	tpl.I18n = i18n.New()
-	tpl.tpl = make(map[string]*parser.Ttpl)
+	tpl.tpl = make(map[string]parser.Ttpl)
 	tpl.f = make(refl.FuncMap)
 	return tpl
 }
@@ -113,8 +113,8 @@ func (t *Ttpl) Load(patch string) {
 func (t *Ttpl) tagIncludeCon_ChortToFullName() {
 	for key, val := range t.tpl {
 		base := "/" + strings.SplitN(key, "/", 3)[1] + "/"
-		for key1 := range val.Items {
-			switch v := val.Items[key1].(type) {
+		for key1 := range val {
+			switch v := val[key1].(type) {
 			case tTagIncludeVar:
 				if v[0][0] == 46 {
 					// убираем точку
@@ -122,7 +122,7 @@ func (t *Ttpl) tagIncludeCon_ChortToFullName() {
 				} else if v[0][0] != 47 {
 					// короткое имя преобразуем в полное
 					v[0] = base + v[0]
-					val.Items[key1] = v
+					val[key1] = v
 				}
 			}
 		}
@@ -132,8 +132,8 @@ func (t *Ttpl) tagIncludeCon_ChortToFullName() {
 // 3. for a tTagIncludeCon init before use
 func (t *Ttpl) tagIncludeCon_Init() {
 	for key, val := range t.tpl {
-		for key1 := range val.Items {
-			switch v := val.Items[key1].(type) {
+		for key1 := range val {
+			switch v := val[key1].(type) {
 			case tTagIncludeVar:
 				// не полное имя и не имя переменной контекста - значит короткое имя
 				if v[0][0] == 47 {
@@ -141,7 +141,7 @@ func (t *Ttpl) tagIncludeCon_Init() {
 					if tpl == nil {
 						err.Panic(err.New("Err parse from tpl: '"+key+"' include tag. Not found tpl: '"+v[0]+"'", 0))
 					}
-					val.Items[key1] = &tTagIncludeCon{tpl: tpl, contextVar: v[1]}
+					val[key1] = &tTagIncludeCon{tpl: tpl, contextVar: v[1]}
 				}
 			}
 		}
@@ -149,14 +149,14 @@ func (t *Ttpl) tagIncludeCon_Init() {
 }
 
 // 2. Контроль зацикливаний тега tTagIncludeCon
-func chekloop(tpls map[string]*parser.Ttpl) {
+func chekloop(tpls map[string]parser.Ttpl) {
 	var (
 		key   string
 		mitem = []interface{}{}
 	)
 	matrix := make(map[interface{}][]interface{}, len(tpls))
 	for key = range tpls {
-		for _, item := range tpls[key].Items {
+		for _, item := range tpls[key] {
 			switch v := item.(type) {
 			case tTagIncludeVar:
 				if key == v[0] {
@@ -191,7 +191,7 @@ func parseText(source []byte) interface{} {
 	return tTagText(source)
 }
 
-func parseTag(source []byte) (tag interface{}, contextLen uint16) {
+func parseTag(source []byte) (tag interface{}) {
 	defer func() {
 		if e := recover(); e != nil {
 			v := e.(*err.OpenErr)
@@ -212,9 +212,9 @@ func parseTag(source []byte) (tag interface{}, contextLen uint16) {
 		// переменная контекста
 		// либо функция (расширенные теги)
 		slice := []byte(list[0])
-		if golbytes.HeadEqual(slice, []byte(".")) {
+		if bytes.HasPrefix(slice, []byte(".")) {
 			tag = tTagVar(list[0][1:])
-		} else if golbytes.HeadEqual(slice, []byte("@.")) {
+		} else if bytes.HasPrefix(slice, []byte("@.")) {
 			tag = tTagVarHtmlEsc(list[0][2:])
 		} else {
 			tag = parseTagFunc(list)
@@ -277,9 +277,9 @@ func (t *TReplaser) Replace(name string, v map[string]interface{}, writer io.Wri
 	t.replace(tpl, v, writer)
 }
 
-func (t *TReplaser) replace(tpl *parser.Ttpl, v map[string]interface{}, writer io.Writer) {
-	for i := range tpl.Items {
-		switch tag := tpl.Items[i].(type) {
+func (t *TReplaser) replace(tpl parser.Ttpl, v map[string]interface{}, writer io.Writer) {
+	for i := range tpl {
+		switch tag := tpl[i].(type) {
 		case tTagi18nCon:
 			writer.Write(t.i18n.P(tag[0], v[tag[1]].([]interface{})...))
 		case tTagi18nVar:

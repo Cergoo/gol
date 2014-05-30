@@ -23,9 +23,13 @@ import (
 type (
 	Ti18n map[string]*tlang
 	tlang struct {
-		pluralRule plural.PluralRule       // language plural rule
-		plural     map[string][]string     // plural pronunciation
-		items      map[string]*parser.Ttpl // tags
+		pluralRule plural.PluralRule   // language plural rule
+		plural     map[string][]string // plural pronunciation
+		items      map[string]*titem   // tpl
+	}
+	titem struct {
+		items        parser.Ttpl // tags
+		contextCount int         // context var count
 	}
 
 	tTagText   []byte
@@ -95,7 +99,6 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 
 	var (
 		name   string
-		tpl    *parser.Ttpl
 		valPre map[string]string
 		keyPre string
 	)
@@ -125,7 +128,7 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 
 	for key, item := range tmpLangs {
 		lang := new(tlang)
-		lang.items = make(map[string]*parser.Ttpl)
+		lang.items = make(map[string]*titem)
 		lang.plural = item.Plural
 		lang.pluralRule = plural.PluralRules[item.PluralRule]
 		if lang.pluralRule == nil && len(lang.plural) > 0 {
@@ -133,8 +136,7 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 		}
 
 		for keyPhrase, itemPhrase := range item.Phrase {
-			tpl = parser.Parse([]byte(itemPhrase), toparse)
-			lang.items[keyPhrase] = tpl
+			lang.items[keyPhrase] = &titem{items: parser.Parse([]byte(itemPhrase), toparse), contextCount: -1}
 		}
 
 		initAfterParse(lang, key)
@@ -159,13 +161,13 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 }
 
 // Get phrase
-func (t *TReplacer) p(tpl *parser.Ttpl, context []interface{}) []byte {
-	if int(tpl.ContextLen) > len(context) {
-		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.ContextLen))+" , "+strconv.Itoa(len(context))+")", 0))
+func (t *TReplacer) p(tpl *titem, context []interface{}) []byte {
+	if int(tpl.contextCount) > len(context) {
+		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.contextCount))+" , "+strconv.Itoa(len(context))+")", 0))
 	}
 
 	var result []byte
-	for _, item := range tpl.Items {
+	for _, item := range tpl.items {
 		switch v := item.(type) {
 		case tTagText:
 			result = append(result, v...)
@@ -187,34 +189,40 @@ func initAfterParse(lang *tlang, name string) {
 	// phrase loop
 	for _, item := range lang.items {
 		// tag loop
-		for _, itemTag := range item.Items {
+		for _, itemTag := range item.items {
 			switch v := itemTag.(type) {
 			case *tTagPlural:
 				key = v.text[0]
+				if int(v.count) > item.contextCount {
+					item.contextCount = int(v.count)
+				}
 				v.text, e = lang.plural[key]
 				if !e {
 					err.Panic(err.New("Err parse:"+name+" Not found plural key: "+key, 0))
 				}
+			case tTagVar:
+				if int(v) > item.contextCount {
+					item.contextCount = int(v)
+				}
 			}
 		}
+		item.contextCount++
 	}
 }
 
 // parse plural tag
-func parseTagPlural(source []string) (tag *tTagPlural, contextLen uint16) {
+func parseTagPlural(source []string) *tTagPlural {
 	if len(source) < 2 {
-		err.Panic(err.New("error parsing to Plural Tag", 0))
+		err.Panic(err.New("error parsing to Plural Tag: "+fmt.Sprint(source), 0))
 	}
-	tag = &tTagPlural{parser.ParseInt(source[1]), []string{source[0]}}
-	contextLen = tag.count
-	return
+	return &tTagPlural{parser.ParseInt(source[1]), []string{source[0]}}
 }
 
 func parseText(source []byte) interface{} {
 	return tTagText(source)
 }
 
-func parseTag(source []byte) (tag interface{}, contextLen uint16) {
+func parseTag(source []byte) interface{} {
 	defer func() {
 		if e := recover(); e != nil {
 			v := e.(*err.OpenErr)
@@ -226,10 +234,8 @@ func parseTag(source []byte) (tag interface{}, contextLen uint16) {
 	list := parser.SplitWord(source, 32)
 	switch list[0] {
 	case "plural":
-		tag, contextLen = parseTagPlural(list[1:])
+		return parseTagPlural(list[1:])
 	default:
-		contextLen = parser.ParseInt(list[0])
-		tag = tTagVar(contextLen)
+		return tTagVar(parser.ParseInt(list[0]))
 	}
-	return
 }

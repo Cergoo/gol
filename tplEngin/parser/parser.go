@@ -21,17 +21,11 @@ type (
 		ParseTag  - function of parse tag
 	*/
 	ToParse struct {
-		Delimiter [2][]byte
-		ParseText func([]byte) interface{}
-		ParseTag  func([]byte) (interface{}, uint16)
+		Delimiter           [2][]byte
+		ParseText, ParseTag func([]byte) interface{}
 	}
-	/*
-		template struct
-	*/
-	Ttpl struct {
-		Items      []interface{} // items of template
-		ContextLen uint16        // expected length of context
-	}
+
+	Ttpl []interface{} // items of template
 )
 
 /*
@@ -100,29 +94,22 @@ func StrPrefix(a []byte, b string) []byte {
 /*
 	Universal parse metode, return template
 */
-func Parse(source []byte, toparse *ToParse) *Ttpl {
+func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	var (
 		success     bool
 		lpart, tag  []byte
 		end, newend int
-		contextId   uint16
 		ptag        interface{}
 	)
-
-	tpl := new(Ttpl)
-	tpl.Items = make([]interface{}, 0)
 
 	lpart, tag, end, success = FindTag(source, toparse.Delimiter)
 	for success {
 		if len(lpart) > 0 {
-			tpl.Items = append(tpl.Items, toparse.ParseText(lpart))
+			tpl = append(tpl, toparse.ParseText(lpart))
 		}
-		ptag, contextId = toparse.ParseTag(tag)
-		if contextId > tpl.ContextLen {
-			tpl.ContextLen = contextId
-		}
+		ptag = toparse.ParseTag(tag)
 		if ptag != nil {
-			tpl.Items = append(tpl.Items, ptag)
+			tpl = append(tpl, ptag)
 		}
 
 		lpart, tag, newend, success = FindTag(source[end:], toparse.Delimiter)
@@ -130,9 +117,10 @@ func Parse(source []byte, toparse *ToParse) *Ttpl {
 	}
 	lpart = source[end:]
 	if len(lpart) > 0 {
-		tpl.Items = append(tpl.Items, toparse.ParseText(lpart))
+		tpl = append(tpl, toparse.ParseText(lpart))
 	}
-	return tpl
+
+	return
 }
 
 //  pars string to context id

@@ -12,12 +12,11 @@ The package is the implementation of hashmap for organizing in-memory key-value 
 - faste and high availability
 - increment/decrement command supported
 - save/load operation supported
-- mechanism of managing the lifetime data: time expirations (set for the entire cache) and options "if read then life"
-- support callback function on a timer remove automatically
+- mechanism of managing the lifetime data: time expirations (set for the entire cache) and options "if read then life", support callback function on a remove 
 - items count limiter
 - use your hash function.
 
-### Comparition benchmark test  
+### Benchmark test  
 go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cache)  
 go version go1.2.1, single thread  
 <pre>
@@ -194,10 +193,10 @@ fork jmervine/GoT
     func New(t *testing.T) *TT
 
     // Equivalence check   
-    func (t *TT) Eq(id string, a, b interface{})
+    func (t *TT) Eq(a, b interface{})
     
     // No Equivalent check
-    func (t *TT) NoEq(id string, a, b interface{})  
+    func (t *TT) NoEq(a, b interface{})  
 
 ## tplEngin\i18n
 i18n pkg.

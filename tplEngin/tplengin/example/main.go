@@ -15,7 +15,7 @@ func main() {
 
 	context := make(map[string]interface{})
 	context["a"] = 10
-	context["f1"] = []interface{}{"MyText", float64(12)}
+	context["f1"] = []interface{}{float64(12)}
 
 	buf := &fastbuf.Buf{}
 	r.Replace("/maintpls/1.tpl", context, buf)

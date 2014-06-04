@@ -58,6 +58,14 @@ type (
 		contextVar string      // id передаваемого контекста
 	}
 	tTagIncludeVar [2]string
+	tTagFor        struct {
+		forContext            string
+		forTpl                parser.Ttpl
+		forContextAdditional  string
+		elseTpl               parser.Ttpl
+		elseContextAdditional string
+	}
+
 	//
 	TReplaser struct {
 		i18n *i18n.TReplacer

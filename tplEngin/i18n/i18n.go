@@ -163,7 +163,7 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 // Get phrase
 func (t *TReplacer) p(tpl *titem, context []interface{}) []byte {
 	if int(tpl.contextCount) > len(context) {
-		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.contextCount))+" , "+strconv.Itoa(len(context))+")", 0))
+		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.contextCount))+" , "+strconv.Itoa(len(context))+") "+fmt.Sprintf("%#v", tpl.items), 0))
 	}
 
 	var result []byte

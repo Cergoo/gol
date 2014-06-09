@@ -31,6 +31,21 @@ Cergoo.cache:    5000	    612472 ns/op   24000 B/op	    3000 allocs/op
 go-cache:        5000	    590598 ns/op   16000 B/op	    2000 allocs/op
 </pre>
 
+## chansubscriber
+Subscribe channel pack. Thread-safe.
+
+    // Constructor
+    func New(ch <-chan interface{}, closesubscribers bool) *TChanSubscriber
+    
+    // Set strict send or not strict
+    func (t *TChanSubscriber) StrictSet(v bool)
+    
+    // Add subscribe
+    func (t *TChanSubscriber) Subscribe(name string, ch chan<- interface{})
+    
+    // Unsubscribe
+    func (t *TChanSubscriber) Unsubscribe(name string) {
+
 ## cookie
 
     // Create new *http.Cookie  
@@ -130,6 +145,27 @@ Support comments in json config files.
 
     // Remove comments from source .json  
     func RemoveComment(source []byte) (result []byte)     
+
+## keyid
+String key to uint id and uint id to string key association pack. No save thread.
+
+    // Constructor
+    func New() *Tkeyid
+    
+    // Set cortege (key, id)
+    func (t *Tkeyid) Set(key string, id uint)
+    
+    // Delete from key and return id
+   func (t *Tkeyid) DelFromKey(key string) (id uint, ok bool)
+   
+   // Delete from id and return key
+   func (t *Tkeyid) DelFromId(id uint) (key string, ok bool)
+   
+   // Get id from key
+   func (t *Tkeyid) GetId(key string) (id uint, ok bool)
+   
+   // Get key from id
+   func (t *Tkeyid) GetKey(id uint) (key string, ok bool) {
 
 ## refl
 Additional reflection functions pack
@@ -233,5 +269,3 @@ Parser util from i18n & tpl pkg
 ## tplEngin\tplengin
 Templare engin.
 Attention! Work not complete.
-
-  

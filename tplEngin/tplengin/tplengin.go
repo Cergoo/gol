@@ -1,4 +1,4 @@
-/*
+20/*
 	tpl & language pkg
 	supports multi language output
 	(c) 2014 Cergoo

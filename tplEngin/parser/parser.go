@@ -124,10 +124,10 @@ func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 }
 
 //  pars string to context id
-func ParseInt(source string) uint16 {
+func ParseInt(source string) uint {
 	i, e := strconv.Atoi(source)
 	if e != nil || i < 0 {
-		err.Panic(err.New("error parse to uint16: '"+source+"'", 0))
+		err.Panic(err.New("error parse to uint: '"+source+"'", 0))
 	}
-	return uint16(i)
+	return uint(i)
 }

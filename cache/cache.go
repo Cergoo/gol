@@ -268,7 +268,8 @@ func (t *t_cache) Range(ch chan<- *TCortege) {
 }
 
 /*
-    non interface range function
+    non interface range function,
+	for breack range close a channel
 	Use buffer for unlock bucket
 */
 func (t *t_cache) rangeCache(ch chan<- *TCortege) {
@@ -289,6 +290,11 @@ func (t *t_cache) rangeCache(ch chan<- *TCortege) {
 		}
 		buf = buf[:0]
 	}
+	defer nopanic()
+}
+
+func nopanic() {
+	recover()
 }
 
 // Write the cache's items (using Gob) to an io.Writer.

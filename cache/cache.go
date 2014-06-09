@@ -20,11 +20,6 @@ import (
 )
 
 type (
-	TCortege struct {
-		Key string
-		Val interface{}
-	}
-
 	t_item struct {
 		r   uint8
 		Val interface{}

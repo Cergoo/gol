@@ -287,6 +287,7 @@ func (t *t_cache) rangeCache(ch chan<- *TCortege) {
 		for _, v = range buf {
 			ch <- v
 		}
+		buf = buf[:0]
 	}
 }
 

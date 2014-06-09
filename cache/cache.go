@@ -20,6 +20,11 @@ import (
 )
 
 type (
+	TCortege struct {
+		Key string
+		Val interface{}
+	}
+
 	t_item struct {
 		r   uint8
 		Val interface{}
@@ -246,6 +251,48 @@ func (t *t_cache) Inc(key string, n float64) interface{} {
 	}
 	bucket.Unlock()
 	return nil
+}
+
+// Delete all items
+func (t *t_cache) DelAll() {
+	var i int
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)))).ht
+	for _, bucket := range ht {
+		bucket.Lock()
+		t.count.Add(uint64(len(bucket.items)-1), true)
+		for i = range bucket.items {
+			bucket.items[i] = nil
+		}
+		bucket.Unlock()
+	}
+}
+
+// Interface range function
+func (t *t_cache) Range(ch chan<- *TCortege) {
+	go t.rangeCache(ch)
+}
+
+/*
+    non interface range function
+	Use buffer for unlock bucket
+*/
+func (t *t_cache) rangeCache(ch chan<- *TCortege) {
+	var (
+		i   int
+		buf []*TCortege
+		v   *TCortege
+	)
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)))).ht
+	for _, bucket := range ht {
+		bucket.RLock()
+		for i = range bucket.items {
+			buf = append(buf, &TCortege{Key: bucket.items[i].Key, Val: bucket.items[i].Val})
+		}
+		bucket.RUnlock()
+		for _, v = range buf {
+			ch <- v
+		}
+	}
 }
 
 // Write the cache's items (using Gob) to an io.Writer.

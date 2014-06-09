@@ -156,16 +156,16 @@ String key to uint id and uint id to string key association pack. No save thread
     func (t *Tkeyid) Set(key string, id uint)
     
     // Delete from key and return id
-   func (t *Tkeyid) DelFromKey(key string) (id uint, ok bool)
+    func (t *Tkeyid) DelFromKey(key string) (id uint, ok bool)
    
-   // Delete from id and return key
-   func (t *Tkeyid) DelFromId(id uint) (key string, ok bool)
+    // Delete from id and return key
+    func (t *Tkeyid) DelFromId(id uint) (key string, ok bool)
    
-   // Get id from key
-   func (t *Tkeyid) GetId(key string) (id uint, ok bool)
+    // Get id from key
+    func (t *Tkeyid) GetId(key string) (id uint, ok bool)
    
-   // Get key from id
-   func (t *Tkeyid) GetKey(id uint) (key string, ok bool) {
+    // Get key from id
+    func (t *Tkeyid) GetKey(id uint) (key string, ok bool)
 
 ## refl
 Additional reflection functions pack

@@ -43,7 +43,7 @@ type (
 		count          counter.T_counter // limit items count in cache, 0 - unlimit
 		growcountgo    int               // count items in bucket to go grow hase table
 		growlock       uint32
-		callback       func(key *string, val *interface{})
+		ch_janitor     chan<- *TCortege
 	}
 )
 
@@ -62,7 +62,7 @@ func New(
 	init_bucketscount int,
 	ifreadthenlive bool,
 	duration time.Duration,
-	callback func(key *string, val *interface{})) Cache {
+	ch_janitor chan<- *TCortege) Cache {
 
 	const growcountgo = 14
 	if init_bucketscount < 1 {
@@ -83,7 +83,7 @@ func New(
 		ifreadthenlive: ifreadthenlive,
 		t:              ht,
 		growcountgo:    growcountgo,
-		callback:       callback,
+		ch_janitor:     ch_janitor,
 	}
 
 	if duration > 0 {
@@ -259,7 +259,7 @@ func (t *t_cache) DelAll() {
 	}
 }
 
-// Interface range function
+// Interface range function, for breack range close a channel
 func (t *t_cache) Range(ch chan<- *TCortege) {
 	go t.rangeCache(ch)
 }
@@ -433,6 +433,8 @@ func (t *t_cache) janitor(stop <-chan bool) {
 		ht           *t_hash
 		bucket       *t_bucket
 		count_del    uint32
+		buf          []*TCortege
+		v            *TCortege
 	)
 
 	for {
@@ -448,8 +450,8 @@ func (t *t_cache) janitor(stop <-chan bool) {
 				lenbucket = len(bucket.items)
 				for i = 0; i < lenbucket; {
 					if bucket.items[i].r == 0 {
-						if t.callback != nil {
-							t.callback(&bucket.items[i].Key, &bucket.items[i].Val)
+						if t.ch_janitor != nil {
+							buf = append(buf, &TCortege{Key: bucket.items[i].Key, Val: bucket.items[i].Val})
 						}
 						lenbucket--
 						bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], nil
@@ -458,10 +460,13 @@ func (t *t_cache) janitor(stop <-chan bool) {
 						bucket.items[i].r--
 						i++
 					}
-
 				}
 				bucket.items = bucket.items[:lenbucket]
 				bucket.Unlock()
+				for _, v = range buf {
+					t.ch_janitor <- v
+				}
+				buf = buf[:0]
 			}
 			t.count.Add(uint64(count_del), true)
 		}

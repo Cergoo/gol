@@ -174,10 +174,10 @@ func (t *t_cache) Set(key string, val interface{}) (r bool) {
 		}
 		r = true
 		t.count.Inc()
-	} else {
-		bucket.Unlock()
+		return
 	}
 
+	bucket.Unlock()
 	return
 }
 
@@ -190,11 +190,8 @@ func (t *t_cache) Del(key string) (val interface{}) {
 	for i, v := range bucket.items {
 		if v.Key == key {
 			val = v.Val
-			bucket.items[i] = nil
 			endi = len(bucket.items) - 1
-			if i != endi {
-				bucket.items[i], bucket.items[endi] = bucket.items[endi], bucket.items[i]
-			}
+			bucket.items[i], bucket.items[endi] = bucket.items[endi], nil
 			bucket.items = bucket.items[:endi]
 			t.count.Dec()
 			break
@@ -454,9 +451,8 @@ func (t *t_cache) janitor(stop <-chan bool) {
 						if t.callback != nil {
 							t.callback(&bucket.items[i].Key, &bucket.items[i].Val)
 						}
-						bucket.items[i].Val = nil
 						lenbucket--
-						bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], bucket.items[i]
+						bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], nil
 						count_del++
 					} else {
 						bucket.items[i].r--

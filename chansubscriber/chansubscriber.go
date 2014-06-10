@@ -47,7 +47,6 @@ func (t *TChanSubscriber) StrictSet(v bool) {
 // Add subscribe
 func (t *TChanSubscriber) Subscribe(name string, ch chan<- interface{}) {
 	t.Lock()
-	defer t.Unlock()
 
 	id, ok := t.keyid[name]
 	if ok {
@@ -55,22 +54,21 @@ func (t *TChanSubscriber) Subscribe(name string, ch chan<- interface{}) {
 		return
 	}
 
-	for i := range t.out {
-		if t.out[i] == nil {
-			t.out[i] = ch
-			t.keyid[name] = uint(i)
-			return
-		}
-	}
-
 	t.keyid[name] = uint(len(t.out))
 	t.out = append(t.out, ch)
+	t.Unlock()
 }
 
 // Unsubscribe
 func (t *TChanSubscriber) Unsubscribe(name string) {
 	t.Lock()
-	delete(t.keyid, name)
+	id, ok := t.keyid[name]
+	if ok {
+		vLen := len(t.out) - 1
+		t.out[id], t.out[vLen] = t.out[vLen], nil
+		t.out = t.out[:vLen-1]
+		delete(t.keyid, name)
+	}
 	t.Unlock()
 }
 
@@ -98,14 +96,12 @@ func (t *TChanSubscriber) run(stop <-chan bool) {
 		case v, ok = <-t.in:
 			t.Lock()
 			for _, outChan = range t.out {
-				if outChan != nil {
-					if t.sendStrict {
-						outChan <- v
-					} else {
-						select {
-						case outChan <- v:
-						default:
-						}
+				if t.sendStrict {
+					outChan <- v
+				} else {
+					select {
+					case outChan <- v:
+					default:
 					}
 				}
 			}

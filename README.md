@@ -41,10 +41,10 @@ Subscribe channel pack. Thread-safe.
     func (t *TChanSubscriber) StrictSet(v bool)
     
     // Add subscribe
-    func (t *TChanSubscriber) Subscribe(name string, ch chan<- interface{})
+    func (t *TChanSubscriber) Subscribe(ch chan<- interface{})
     
     // Unsubscribe
-    func (t *TChanSubscriber) Unsubscribe(name string) {
+    func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 
 ## cookie
 

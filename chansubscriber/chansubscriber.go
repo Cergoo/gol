@@ -17,7 +17,6 @@ type (
 		sendStrict       bool
 		in               <-chan interface{}
 		out              []chan<- interface{}
-		keyid            map[string]uint
 		sync.Mutex
 	}
 )
@@ -27,7 +26,6 @@ func New(ch <-chan interface{}, closesubscribers bool) *TChanSubscriber {
 	t := new(TChanSubscriber)
 	t.in = ch
 	t.closesubscribers = closesubscribers
-	t.keyid = make(map[string]uint)
 	chan_stop := make(chan bool)
 	stopRun := func(t *TChanSubscriber) {
 		close(chan_stop)
@@ -45,29 +43,29 @@ func (t *TChanSubscriber) StrictSet(v bool) {
 }
 
 // Add subscribe
-func (t *TChanSubscriber) Subscribe(name string, ch chan<- interface{}) {
-	t.Lock()
-
-	id, ok := t.keyid[name]
-	if ok {
-		t.out[id] = ch
+func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
+	if ch == nil {
 		return
 	}
-
-	t.keyid[name] = uint(len(t.out))
+	t.Lock()
+	for _, v := range t.out {
+		if v == ch {
+			return
+		}
+	}
 	t.out = append(t.out, ch)
 	t.Unlock()
 }
 
 // Unsubscribe
-func (t *TChanSubscriber) Unsubscribe(name string) {
+func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 	t.Lock()
-	id, ok := t.keyid[name]
-	if ok {
-		vLen := len(t.out) - 1
-		t.out[id], t.out[vLen] = t.out[vLen], nil
-		t.out = t.out[:vLen-1]
-		delete(t.keyid, name)
+	for id, v := range t.out {
+		if v == ch {
+			vLen := len(t.out) - 1
+			t.out[id], t.out[vLen] = t.out[vLen], nil
+			t.out = t.out[:vLen-1]
+		}
 	}
 	t.Unlock()
 }
@@ -93,6 +91,7 @@ func (t *TChanSubscriber) run(stop <-chan bool) {
 	for ok {
 		select {
 		case <-stop:
+			return
 		case v, ok = <-t.in:
 			t.Lock()
 			for _, outChan = range t.out {

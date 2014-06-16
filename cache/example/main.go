@@ -15,12 +15,12 @@ func main() {
 		//i int
 	)
 	n := cache.New(hash.HashFAQ6, 0, true, 0*time.Minute, nil)
-	for t = 0; t < 1000; t++ {
+	for t = 0; t < 100000; t++ {
 		n.Set("ind uhgyug e x try"+strconv.Itoa(t), t)
 	}
-	fmt.Println(n.Get("ind uhgyug e x try100"))
+	fmt.Println(n.Get("ind uhgyug e x try1"))
 	time.Sleep(10 * time.Second)
-	for t = 0; t < 1000; t++ {
+	for t = 0; t < 100000; t++ {
 		l = n.Get("ind uhgyug e x try" + strconv.Itoa(t))
 		if l == nil {
 			fmt.Println(l, t, "nn")

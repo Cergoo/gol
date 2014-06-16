@@ -35,16 +35,13 @@ go-cache:        5000	    590598 ns/op   16000 B/op	    2000 allocs/op
 Subscribe channel pack. Thread-safe.
 
     // Constructor
-    func New(ch <-chan interface{}, closesubscribers bool) *TChanSubscriber
-    
-    // Set strict send or not strict
-    func (t *TChanSubscriber) StrictSet(v bool)
-    
+    func New(ch <-chan interface{}, sendStrict, closesubscribers bool) *TChanSubscriber
+        
     // Add subscribe
     func (t *TChanSubscriber) Subscribe(ch chan<- interface{})
     
     // Unsubscribe
-    func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
+    func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{})
 
 ## cookie
 

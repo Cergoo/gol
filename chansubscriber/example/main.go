@@ -14,7 +14,7 @@ func init() {
 }
 
 func main() {
-	hub := chansubscriber.New(chwriter, true)
+	hub := chansubscriber.New(chwriter, false, true)
 	chreader1 := make(chan interface{}, 2)
 	chreader2 := make(chan interface{}, 2)
 	chreader3 := make(chan interface{}, 2)

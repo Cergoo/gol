@@ -14,7 +14,6 @@ import (
 type (
 	TChanSubscriber struct {
 		closesubscribers bool
-		sendStrict       bool
 		in               <-chan interface{}
 		out              []chan<- interface{}
 		sync.Mutex
@@ -22,24 +21,21 @@ type (
 )
 
 // Constructor
-func New(ch <-chan interface{}, closesubscribers bool) *TChanSubscriber {
+func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscriber {
 	t := new(TChanSubscriber)
 	t.in = ch
-	t.closesubscribers = closesubscribers
+	t.closesubscribers = closeSubscribers
 	chan_stop := make(chan bool)
 	stopRun := func(t *TChanSubscriber) {
 		close(chan_stop)
 	}
-	go t.run(chan_stop)
+	if sendStrict {
+		go t.sendStrict(chan_stop)
+	} else {
+		go t.sendNoStrict(chan_stop)
+	}
 	runtime.SetFinalizer(t, stopRun)
 	return t
-}
-
-// Set strict send or not strict
-func (t *TChanSubscriber) StrictSet(v bool) {
-	t.Lock()
-	t.sendStrict = v
-	t.Unlock()
 }
 
 // Add subscribe
@@ -82,7 +78,7 @@ func (t *TChanSubscriber) close() {
 	}
 }
 
-func (t *TChanSubscriber) run(stop <-chan bool) {
+func (t *TChanSubscriber) sendStrict(stop <-chan bool) {
 	var (
 		outChan chan<- interface{}
 		v       interface{}
@@ -95,13 +91,30 @@ func (t *TChanSubscriber) run(stop <-chan bool) {
 		case v, ok = <-t.in:
 			t.Lock()
 			for _, outChan = range t.out {
-				if t.sendStrict {
-					outChan <- v
-				} else {
-					select {
-					case outChan <- v:
-					default:
-					}
+				outChan <- v
+			}
+			t.Unlock()
+		}
+	}
+	defer t.close()
+}
+
+func (t *TChanSubscriber) sendNoStrict(stop <-chan bool) {
+	var (
+		outChan chan<- interface{}
+		v       interface{}
+		ok      bool = true
+	)
+	for ok {
+		select {
+		case <-stop:
+			return
+		case v, ok = <-t.in:
+			t.Lock()
+			for _, outChan = range t.out {
+				select {
+				case outChan <- v:
+				default:
 				}
 			}
 			t.Unlock()

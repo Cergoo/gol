@@ -14,7 +14,7 @@ The package is the implementation of hashmap for organizing in-memory key-value 
 - save/load operation supported
 - mechanism of managing the lifetime data: time expirations (set for the entire cache) and options "if read then life", support callback function on a remove 
 - items count limiter
-- use your update item function (SetFunc)
+- use your user update item function (SetFunc)
 - use your hash function.
 
 ### Benchmark test  

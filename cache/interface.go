@@ -4,7 +4,15 @@ import (
 	"io"
 )
 
+// Returned result code
+const (
+	ResultExist = iota
+	ResultAdd
+	ResultNoExistNoAdd
+)
+
 type (
+	// (key, value) cortege
 	TCortege struct {
 		Key string
 		Val interface{}
@@ -13,7 +21,8 @@ type (
 	Cache interface {
 		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
 		Get(string) interface{}
-		Set(string, interface{}) bool
+		Set(string, interface{}) (actionResult uint8)
+		SetFunc(string, interface{}, func(interface{}) (interface{}, error)) (newVal interface{}, actionResult uint8, e error)
 		Del(string) (val interface{})
 		DelAll()
 		Range(chan<- *TCortege)
@@ -25,6 +34,7 @@ type (
 		Len() I_counter
 	}
 
+	// Counter interface
 	I_counter interface {
 		Get() uint64
 		GetLimit() uint64

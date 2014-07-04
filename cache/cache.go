@@ -148,7 +148,7 @@ func (t *t_cache) Get(key string) (val interface{}) {
 }
 
 // Add or Update item
-func (t *t_cache) Set(key string, val interface{}) (r bool) {
+func (t *t_cache) Set(key string, val interface{}) (actionResult uint8) {
 	var (
 		v *t_item
 	)
@@ -159,7 +159,48 @@ func (t *t_cache) Set(key string, val interface{}) (r bool) {
 	for _, v = range bucket.items {
 		if v.Key == key {
 			v.Val = val
-			r = true
+			bucket.Unlock()
+			actionResult = ResultExist
+			return
+		}
+	}
+	// Add
+	if t.count.Check() {
+		lenbucet := len(bucket.items)
+		bucket.items = append(bucket.items, &t_item{Key: key, Val: val, r: 1})
+		bucket.Unlock()
+		if lenbucet > t.growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
+			go t.grow()
+		}
+		actionResult = ResultAdd
+		t.count.Inc()
+		return
+	}
+
+	bucket.Unlock()
+	actionResult = ResultNoExistNoAdd
+	return
+}
+
+// Add new value or Update value item
+func (t *t_cache) SetFunc(key string, val interface{}, f func(interface{}) (interface{}, error)) (newVal interface{}, actionResult uint8, e error) {
+	var (
+		v *t_item
+	)
+	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	bucket := ht.ht[ht.keyToID([]byte(key))]
+	bucket.Lock()
+	// Update
+	for _, v = range bucket.items {
+		if v.Key == key {
+			newVal, e = f(v.Val)
+			if e == nil {
+				v.Val = newVal
+			} else {
+				newVal = v.Val
+			}
+
+			actionResult = ResultExist
 			bucket.Unlock()
 			return
 		}
@@ -172,12 +213,13 @@ func (t *t_cache) Set(key string, val interface{}) (r bool) {
 		if lenbucet > t.growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
 			go t.grow()
 		}
-		r = true
+		newVal = val
+		actionResult = ResultAdd
 		t.count.Inc()
 		return
 	}
-
 	bucket.Unlock()
+	actionResult = ResultNoExistNoAdd
 	return
 }
 

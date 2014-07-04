@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"errors"
 	"gol/cache"
 	"gol/hash"
 	"strconv"
@@ -48,6 +49,33 @@ func Test_Inc(t *testing.T) {
 		t.Error("err")
 		return
 	}
+}
+
+func Test_SetFunc(t *testing.T) {
+	var (
+		v interface{}
+	)
+
+	arg := 2
+	f := func(val interface{}) (interface{}, error) {
+		var (
+			v int
+			b bool
+		)
+		v, b = val.(int)
+		if !b {
+			return nil, errors.New("Mismatch type")
+		}
+		return v * arg, nil
+	}
+
+	cache1.SetFunc("item101", 1, f)
+	v = cache1.Get("item101")
+	if v != 200 {
+		t.Error("err", v)
+		return
+	}
+
 }
 
 func Test_Del(t *testing.T) {

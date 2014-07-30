@@ -215,7 +215,7 @@ func parseTagPlural(source []string) *tTagPlural {
 	if len(source) < 2 {
 		err.Panic(err.New("error parsing to Plural Tag: "+fmt.Sprint(source), 0))
 	}
-	return &tTagPlural{parser.ParseInt(source[1]), []string{source[0]}}
+	return &tTagPlural{uint16(parser.ParseInt(source[1])), []string{source[0]}}
 }
 
 func parseText(source []byte) interface{} {

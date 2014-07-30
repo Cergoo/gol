@@ -1,4 +1,4 @@
-20/*
+/*
 	tpl & language pkg
 	supports multi language output
 	(c) 2014 Cergoo
@@ -39,31 +39,29 @@ type (
 	Ttpl struct {
 		I18n i18n.Ti18n             // языковой ресурс
 		tpl  map[string]parser.Ttpl // распарсеные шаблоны
+		vars map[string]interface{} //
 		f    refl.FuncMap           // функции (is a extension tags)
 	}
 
-	// текс
-	tTagText []byte
-	// id передаваемого контекста
+	ITag interface {
+		Parse([]string)
+	}
+
 	tTagVar        string
 	tTagVarHtmlEsc string
-	// extendet tags
-	tTagFunc []interface{}
-	// id фразы языкового ресурса 0- resurce name, 1- context name type []string
-	tTagi18nCon [2]string
-	tTagi18nVar [2]string
-	// static include temlate
+	tTagFunc       []interface{}
+	tTagi18nCon    [2]string
+	tTagi18nVar    [2]string
 	tTagIncludeCon struct {
 		tpl        parser.Ttpl // распарсеный шаблон
 		contextVar string      // id передаваемого контекста
 	}
 	tTagIncludeVar [2]string
 	tTagFor        struct {
-		forContext            string
-		forTpl                parser.Ttpl
-		forContextAdditional  string
-		elseTpl               parser.Ttpl
-		elseContextAdditional string
+		fromContext string
+		toVariable  string
+		forTpl      parser.Ttpl
+		elseTpl     parser.Ttpl
 	}
 
 	//
@@ -72,6 +70,8 @@ type (
 		tpl  *Ttpl
 	}
 )
+
+var ()
 
 // Create language obj
 func New() *Ttpl {
@@ -216,6 +216,8 @@ func parseTag(source []byte) (tag interface{}) {
 		tag = parseTagInclude(list[1:])
 	case "i18n":
 		tag = parseTagi18n(list[1:])
+	case "for":
+		tag = parseTagFor(list[1:])
 	default:
 		// переменная контекста
 		// либо функция (расширенные теги)
@@ -266,6 +268,24 @@ func parseTagi18n(source []string) interface{} {
 	}
 	m[0] = source[0]
 	return tTagi18nCon(m)
+}
+
+// parseTagi18n
+func parseTagFor(source []string) interface{} {
+	var m [2]string
+	if len(source) < 3 {
+		err.Panic(err.New("error parse tag 'For'", 0))
+	}
+	if source[0][0] == 46 {
+		if len(source[0]) > 1 {
+			m[0] = source[0][1:]
+		} else {
+			m[0] = "."
+		}
+		return tTagi18nVar(m)
+	}
+	m[0] = source[0]
+	return &tTagFor{}
 }
 
 //************** replacer blok begin

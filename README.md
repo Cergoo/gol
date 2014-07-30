@@ -201,9 +201,19 @@ Additional reflection functions pack
     // Return true if keys map1 == keys map2. It panics if v's Kind is not map.
     func MapKeysEq(map1, map2 interface{}) bool
     
-    // If "v" is struct copy fields to map[string]interface{} "m" and return true else return false
-    func StructToMap(v interface{}, m map[string]interface{}, prefix string) bool
-
+    // If "v" is struct copy fields to "m" map[string]interface{} and return true else return false.
+    // If "unexported" true copy all fields. 
+    func StructToMap(v interface{}, m map[string]interface{}, unexported bool, prefix string) bool
+    
+    // IsStruct returns true if the given variable is a struct or a pointer to struct.
+    func IsStruct(v interface{}) bool
+    
+    // Return true if v is chan, func, interface, map, pointer, or slice and v is nil
+    func IsNil(v interface{}) bool
+    
+    // Return true if v is nil or empty
+    func IsEmpty(v interface{}) bool
+    
 ## session
 Cookie based session engin implementation  
 

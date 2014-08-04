@@ -6,7 +6,7 @@
 package refl
 
 import (
-	"gol/err"
+	"github.com/Cergoo/gol/err"
 	"reflect"
 )
 

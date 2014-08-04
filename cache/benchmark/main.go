@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	gocache "github.com/pmylund/go-cache"
-	"gol/cache"
-	"gol/hash"
+	"github.com/Cergoo/gol/cache"
+	"github.com/Cergoo/gol/hash"
 	"strconv"
 	"sync"
 	"testing"

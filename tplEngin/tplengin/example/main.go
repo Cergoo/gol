@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"gol/fastbuf"
-	"gol/tplEngin/tplengin"
+	"github.com/Cergoo/gol/fastbuf"
+	"github.com/Cergoo/gol/tplEngin/tplengin"
 )
 
 func main() {

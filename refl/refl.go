@@ -38,10 +38,7 @@ func MapKeysEq(map1, map2 interface{}) bool {
 	If "unexported" true copy all fields.
 */
 func StructToMap(v interface{}, m map[string]interface{}, unexported bool, prefix string) bool {
-	objVal := reflect.ValueOf(v)
-	if objVal.Kind() == reflect.Ptr && objVal.Elem().Kind() == reflect.Struct {
-		objVal = objVal.Elem()
-	}
+	objVal := reflect.Indirect(reflect.ValueOf(v))
 	if objVal.Kind() != reflect.Struct {
 		return false
 	}

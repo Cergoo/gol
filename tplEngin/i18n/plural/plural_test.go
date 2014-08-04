@@ -1,7 +1,7 @@
 package plural
 
 import (
-	"gol/test"
+	"github.com/Cergoo/gol/test"
 	"testing"
 )
 

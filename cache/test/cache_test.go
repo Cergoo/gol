@@ -2,8 +2,8 @@ package cache
 
 import (
 	"errors"
-	"gol/cache"
-	"gol/hash"
+	"github.com/Cergoo/gol/cache"
+	"github.com/Cergoo/gol/hash"
 	"strconv"
 	"testing"
 	"time"

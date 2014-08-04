@@ -6,9 +6,9 @@
 package session
 
 import (
-	"gol/cookie"
-	"gol/err"
-	"gol/genid"
+	"github.com/Cergoo/gol/cookie"
+	"github.com/Cergoo/gol/err"
+	"github.com/Cergoo/gol/genid"
 	"math"
 	"net/http"
 )

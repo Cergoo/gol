@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"gol/fastbuf"
+	"github.com/Cergoo/gol/fastbuf"
 	"testing"
 )
 

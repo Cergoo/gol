@@ -1,8 +1,8 @@
 package refl
 
 import (
-	"gol/refl"
-	"gol/test"
+	"github.com/Cergoo/gol/refl"
+	"github.com/Cergoo/gol/test"
 	"testing"
 )
 

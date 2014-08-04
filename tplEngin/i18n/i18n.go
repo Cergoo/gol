@@ -8,12 +8,12 @@ package i18n
 
 import (
 	"fmt"
-	"gol/err"
-	gfilepath "gol/filepath"
-	"gol/jsonConfig"
-	"gol/refl"
-	"gol/tplEngin/i18n/plural"
-	"gol/tplEngin/parser"
+	"github.com/Cergoo/gol/err"
+	gfilepath "github.com/Cergoo/gol/filepath"
+	"github.com/Cergoo/gol/jsonConfig"
+	"github.com/Cergoo/gol/refl"
+	"github.com/Cergoo/gol/tplEngin/i18n/plural"
+	"github.com/Cergoo/gol/tplEngin/parser"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"

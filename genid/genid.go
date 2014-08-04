@@ -9,7 +9,7 @@ package genid
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"gol/err"
+	"github.com/Cergoo/gol/err"
 	"math"
 	"strings"
 )

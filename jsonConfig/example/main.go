@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gol/jsonConfig"
+	"github.com/Cergoo/gol/jsonConfig"
 )
 
 func main() {

@@ -8,7 +8,7 @@ package parser
 
 import (
 	"bytes"
-	"gol/err"
+	"github.com/Cergoo/gol/err"
 	"strconv"
 )
 

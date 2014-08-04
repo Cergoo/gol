@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"gol/refl"
+	"github.com/Cergoo/gol/refl"
 	"strconv"
 )
 

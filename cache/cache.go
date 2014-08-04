@@ -8,7 +8,7 @@ package cache
 import (
 	"encoding/gob"
 	"fmt"
-	"gol/counter"
+	"github.com/Cergoo/gol/counter"
 	"io"
 	"os"
 	"runtime"

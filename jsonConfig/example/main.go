@@ -1,12 +1,29 @@
 package main
 
 import (
-	"fmt"
 	"github.com/Cergoo/gol/jsonConfig"
+	"github.com/davecgh/go-spew/spew"
+)
+
+type (
+	v1 struct {
+		Portudp string
+		In      struct {
+			F1 int
+			F2 string
+		}
+		Readtimeout      string
+		Maxheader        int
+		Initbucketscount int
+		Duration         string
+		Udp              string
+		Porttcp          string
+		Workerscount     int
+	}
 )
 
 func main() {
-	m := make(map[string]string)
+	m := new(v1)
 	jsonConfig.Load("conf.json", &m)
-	fmt.Println(m)
+	spew.Dump(m)
 }

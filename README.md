@@ -44,17 +44,6 @@ Subscribe channel pack. Thread-safe.
     // Unsubscribe
     func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{})
 
-## cookie
-
-    // Create new *http.Cookie  
-    func NewCookie(name, value string, options *Options) *http.Cookie
-
-    // Set cookie  
-    func SetCookie(w http.ResponseWriter, name, value string, options *Options)
-
-    // Del cookie   
-    func DelCookie(w http.ResponseWriter, name string)
-
 ## counter 
 Easy atomic counter type  
 
@@ -110,16 +99,6 @@ Filepath util
     // modified function Ext standart "path/filepath" pkg  
     func Ext(fullname string) (name, ext string)
 
-## genid
-Generate ID pkg  
-  
-    // NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
-    // the actual length can be less per unit.      
-    func NewHTTPGen(length uint16) HTTPGenID
- 
-    // Generate random strind http compatible.       
-    func (t HTTPGenID) NewID() string
-
 ## hash
 Hash functions library
 
@@ -134,6 +113,43 @@ Hash functions library
   
     // Rs hash  
     func HashRs(str []byte) (h uint32)  
+
+
+## http/genid
+Generate ID pkg  
+  
+    // NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
+    // the actual length can be less per unit.      
+    func NewHTTPGen(length uint8) HTTPGenID
+ 
+    // Generate random strind http compatible.       
+    func (t HTTPGenID) NewID() string
+
+## cookie
+
+    // Create new *http.Cookie  
+    func NewCookie(name, value string, options *Options) *http.Cookie
+
+    // Set cookie  
+    func SetCookie(w http.ResponseWriter, name, value string, options *Options)
+
+    // Del cookie   
+    func DelCookie(w http.ResponseWriter, name string)
+    
+## http/session
+Cookie based session engin implementation  
+
+    // Constructor session engin  
+    func NewSessionEngin(lenID uint8, ipProtect bool, stor TStor) *TSession 
+
+    // Create new session  
+    func (t *TSession) New(w http.ResponseWriter, r *http.Request, data interface{}) (id string)       
+
+    // Delete session  
+    func (t *TSession) Del(w http.ResponseWriter, r *http.Request)
+
+    // Get session  
+    func (t *TSession) Get(w http.ResponseWriter, r *http.Request) (id []byte, val interface{})
 
 ## jsonConfig
 Support comments in json config files.    
@@ -214,21 +230,6 @@ Additional reflection functions pack
     // Return true if v is nil or empty
     func IsEmpty(v interface{}) bool
     
-## session
-Cookie based session engin implementation  
-
-    // Constructor session engin  
-    func NewSessionEngin(lenID uint8, stor TStor) *TSession 
-
-    // Create new session  
-    func (t *TSession) New(w http.ResponseWriter, data interface{}) (id string)  
-
-    // Delete session  
-    func (t *TSession) Del(w http.ResponseWriter, r *http.Request)
-
-    // Get session  
-    func (t *TSession) Get(w http.ResponseWriter, r *http.Request) interface{}
-
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package   
 fork jmervine/GoT

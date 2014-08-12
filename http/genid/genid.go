@@ -15,15 +15,15 @@ import (
 )
 
 type (
-	HTTPGenID uint16
+	HTTPGenID uint8
 )
 
 /*
 	NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3
 	the actual length can be less per unit
 */
-func NewHTTPGen(length uint16) HTTPGenID {
-	return HTTPGenID(math.Ceil(float64(3 * length / 4)))
+func NewHTTPGen(length uint8) HTTPGenID {
+	return HTTPGenID(math.Ceil(float64(length / 4 * 3)))
 }
 
 // generate random strind http compatible

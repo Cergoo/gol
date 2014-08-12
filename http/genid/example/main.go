@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Cergoo/gol/genid"
+	"github.com/Cergoo/gol/http/genid"
 )
 
 func main() {

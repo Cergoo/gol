@@ -4,9 +4,9 @@
 	under terms of ISC license
 	==========================
 	route example:
-	getpage/lang/id
+	getpage/lang/en
 	------- ---- --
-	routeID param 1,2...
+	actionName/paramName/paramValue
 */
 package router
 
@@ -21,42 +21,21 @@ import (
 
 type (
 	Trouter struct {
-		routes          map[string]*troute
+		Routes          map[string]func(http.ResponseWriter, *http.Request)
 		filesRouteLabel string
 		filesPathPrefix string
 		errorLog        *log.Logger
-	}
-
-	troute struct {
-		action func(http.ResponseWriter, *http.Request)
-		param  []string // url parts to request parameters
 	}
 )
 
 // constructor
 func New(filesRouteLabel, filesPathPrefix string) *Trouter {
 	return &Trouter{
-		routes:          make(map[string]*troute),
+		Routes:          make(map[string]func(http.ResponseWriter, *http.Request)),
 		filesRouteLabel: filesRouteLabel,
 		filesPathPrefix: filesPathPrefix,
 		errorLog:        log.New(os.Stderr, "router: ", log.LstdFlags),
 	}
-}
-
-/*
-	Add route
-	getpage/lang/id
-	------- ---- --
-	routeID param 1,2
-*/
-func (t *Trouter) RouteAdd(route string, action func(http.ResponseWriter, *http.Request)) {
-	routeParts := strings.Split(route, "/")
-	var param []string
-	if len(routeParts) > 1 {
-		param := make([]string, len(routeParts)-1)
-		copy(param, routeParts[1:])
-	}
-	t.routes[routeParts[0]] = &troute{action: action, param: param}
 }
 
 // routing
@@ -77,21 +56,20 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	route := t.routes[urlParts[0]]
-	if route == nil {
+	// find action
+	action := t.Routes[urlParts[0]]
+	if action == nil {
 		fmt.Fprint(w, "url not found")
 		return
 	}
-	urlParts = urlParts[1:]
-	if len(route.param) > len(urlParts) {
-		fmt.Fprint(w, "url not valid")
-		return
-	}
+
+	// parse url paramrters
 	r.ParseForm()
-	for id, val := range route.param {
-		r.Form.Add(val, urlParts[id])
+	for id := 1; id < len(urlParts); id = +2 {
+		r.Form.Add(urlParts[id], urlParts[id+1])
 	}
 
-	route.action(w, r)
+	// run action
+	action(w, r)
 	return
 }

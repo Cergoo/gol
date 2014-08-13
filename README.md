@@ -125,7 +125,7 @@ Generate ID pkg
     // Generate random strind http compatible.       
     func (t HTTPGenID) NewID() string
 
-## cookie
+## http/cookie
 
     // Create new *http.Cookie  
     func NewCookie(name, value string, options *Options) *http.Cookie
@@ -150,6 +150,9 @@ Cookie based session engin implementation
 
     // Get session  
     func (t *TSession) Get(w http.ResponseWriter, r *http.Request) (id []byte, val interface{})
+
+## http/router
+Routing a path url to action. First elemet path is action name, others elemets is request parameters of a type: name/value
 
 ## jsonConfig
 Support comments in json config files.    

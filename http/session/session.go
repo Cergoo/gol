@@ -18,7 +18,7 @@ type (
 	TSession struct {
 		ipProtect bool            // session ip protect
 		gen       genid.HTTPGenID // id generator
-		stor      TStor           // store interface implementation
+		Stor      TStor           // store interface implementation
 	}
 
 	tdata struct {
@@ -43,7 +43,7 @@ func NewSessionEngin(lenID uint8, ipProtect bool, stor TStor) *TSession {
 	return &TSession{
 		ipProtect: ipProtect,
 		gen:       genid.NewHTTPGen(lenID),
-		stor:      stor,
+		Stor:      stor,
 	}
 }
 
@@ -57,7 +57,7 @@ func (t *TSession) New(w http.ResponseWriter, r *http.Request, data interface{})
 			sessionData.ip = strings.SplitN(r.RemoteAddr, ":", 2)[0]
 		}
 	}
-	t.stor.Set(id, sessionData)
+	t.Stor.Set(id, sessionData)
 	cookie.SetCookie(w, sid, id, &cookie.Options{Path: "/", MaxAge: math.MaxInt32, HttpOnly: true})
 	return
 }
@@ -66,7 +66,7 @@ func (t *TSession) New(w http.ResponseWriter, r *http.Request, data interface{})
 func (t *TSession) Del(w http.ResponseWriter, r *http.Request) {
 	vcoockie, e := r.Cookie(sid)
 	err.Panic(e)
-	t.stor.Del(vcoockie.Value)
+	t.Stor.Del(vcoockie.Value)
 	cookie.DelCookie(w, sid)
 }
 
@@ -76,8 +76,8 @@ func (t *TSession) Get(w http.ResponseWriter, r *http.Request) (id []byte, val i
 	if e != nil {
 		return
 	}
-	sessionData, b := t.stor.Get(vcoockie.Value).(*tdata)
-	// if session delet or not chek ipProtect then del cookie
+	sessionData, b := t.Stor.Get(vcoockie.Value).(*tdata)
+	// if session deleted or not chek ipProtect then del cookie
 	if !b || sessionData == nil || (t.ipProtect && sessionData.ip != strings.SplitN(r.RemoteAddr, ":", 2)[0]) {
 		cookie.DelCookie(w, sid)
 		return

@@ -1,12 +1,20 @@
 /*
-	url http routing to action
+	Routing a path url to action or file.
 	(c) 2014 Cergoo
 	under terms of ISC license
 	==========================
-	route example:
+	Description:
+	First elemet path is action name, others elemets is request parameters of a type: name/value
+	Features:
+	- routing to file;
+	- routing to action;
+	- logging a errors action to stderr.
+	Route example:
 	getpage/lang/en
 	------- ---- --
 	actionName/paramName/paramValue
+	and
+	getfile/path/to/file
 */
 package router
 
@@ -21,21 +29,28 @@ import (
 
 type (
 	Trouter struct {
-		Routes          map[string]func(http.ResponseWriter, *http.Request)
-		filesRouteLabel string
-		filesPathPrefix string
-		errorLog        *log.Logger
+		Routes            map[string]func(http.ResponseWriter, *http.Request)
+		filesRouteLabel   string
+		fileServerHandler http.Handler
+		errorLog          *log.Logger
 	}
 )
 
-// constructor
-func New(filesRouteLabel, filesPathPrefix string) *Trouter {
-	return &Trouter{
+/*
+	constructor
+	if filesRootDir == "" then no http files accesse
+*/
+func New(filesRouteLabel, filesRootDir string) *Trouter {
+	r := &Trouter{
 		Routes:          make(map[string]func(http.ResponseWriter, *http.Request)),
 		filesRouteLabel: filesRouteLabel,
-		filesPathPrefix: filesPathPrefix,
 		errorLog:        log.New(os.Stderr, "router: ", log.LstdFlags),
 	}
+	if filesRootDir > "" {
+		r.fileServerHandler = http.StripPrefix("/"+filesRouteLabel, http.FileServer(http.Dir(filesRootDir)))
+	}
+
+	return r
 }
 
 // routing
@@ -51,8 +66,8 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	urlParts := strings.SplitN(url, "/", 30)
 
 	// files stream
-	if urlParts[0] == t.filesRouteLabel {
-		http.ServeFile(w, r, t.filesPathPrefix+strings.TrimPrefix(url, t.filesRouteLabel))
+	if t.fileServerHandler != nil && urlParts[0] == t.filesRouteLabel {
+		t.fileServerHandler.ServeHTTP(w, r)
 		return
 	}
 
@@ -63,13 +78,13 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// parse url paramrters
+	// parse url to paramrters
 	r.ParseForm()
-	for id := 1; id < len(urlParts); id = +2 {
+	count := len(urlParts) - 1
+	for id := 1; id < count; id += 2 {
 		r.Form.Add(urlParts[id], urlParts[id+1])
 	}
 
 	// run action
 	action(w, r)
-	return
 }

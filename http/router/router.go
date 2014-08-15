@@ -7,7 +7,7 @@
 	First elemet path is action name, others elemets is request parameters of a type: name/value
 	Features:
 	- routing to file;
-	- routing to action;
+	- suppart http method for REST routing;
 	- logging a errors action to stderr.
 	Route example:
 	getpage/lang/en
@@ -61,7 +61,6 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			t.errorLog.Printf("error: %s\nat:\n%s", e, debug.Stack())
 		}
 	}()
-
 	url := r.URL.Path[1:]
 	urlParts := strings.SplitN(url, "/", 30)
 
@@ -72,7 +71,7 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// find action
-	action := t.Routes[urlParts[0]]
+	action := t.Routes[r.Method+urlParts[0]]
 	if action == nil {
 		fmt.Fprint(w, "url not found")
 		return

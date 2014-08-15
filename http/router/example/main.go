@@ -9,6 +9,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/Cergoo/gol/http/method"
 	"github.com/Cergoo/gol/http/router"
 	"log"
 	"net/http"
@@ -24,10 +25,11 @@ func action2(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
 	r := router.New("files", "./directoryfiles")
-	r.Routes[""] = action1
-	r.Routes["action1"] = action1
-	r.Routes["action2"] = action2
+	r.Routes[method.Get] = action1
+	r.Routes[method.Get+"action1"] = action1
+	r.Routes[method.Get+"action2"] = action2
 
 	srv_htpp := &http.Server{
 		Addr:           ":9999",

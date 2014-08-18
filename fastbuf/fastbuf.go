@@ -10,6 +10,10 @@ import (
 	"io"
 )
 
+/*
+	writeoff - index buffer is filled
+	readeoff - index subtracts buffer
+*/
 type (
 	Buf struct {
 		buf      []byte
@@ -83,6 +87,10 @@ func (t *Buf) Len() int {
 	return t.writeoff
 }
 
+func (t *Buf) Cap() int {
+	return cap(t.buf)
+}
+
 /* Reader functions */
 
 func (t *Buf) ReadNext(n int) []byte {
@@ -97,7 +105,8 @@ func (t *Buf) ReadNext(n int) []byte {
 
 func (t *Buf) ReadByte() (b byte, e error) {
 	if t.readeoff < t.writeoff {
-		b = t.ReadNext(1)[0]
+		b = t.buf[t.readeoff]
+		t.readeoff++
 		return
 	}
 	e = io.EOF

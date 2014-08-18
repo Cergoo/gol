@@ -2,6 +2,8 @@
 (c) 2013-2014 Cergoo   
 under terms of ISC license
 
+## binary
+binary Encode Decode implementation pkg
 
 ## cache
 Cache is an in-memory key:value store/cache similar to memcached that is suitable for applications running on a single machine.    

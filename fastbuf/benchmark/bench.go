@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	fastBuf  fastbuf.Buf
+	fastBuf  = fastbuf.New(nil)
 	bytesBuf bytes.Buffer
 	r1, r2   testing.BenchmarkResult
 	p        = []byte("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
@@ -27,7 +27,7 @@ func Benchmark_fastbuf(b *testing.B) {
 		for i := 0; i < 10; i++ {
 			fastBuf.Write(p)
 		}
-		fastBuf.Flush()
+		fastBuf.FlushP()
 	}
 }
 
@@ -36,7 +36,6 @@ func Benchmark_bytesbuf(b *testing.B) {
 		for i := 0; i < 10; i++ {
 			bytesBuf.Write(p)
 		}
-		bytesBuf.Bytes()
 		bytesBuf.Reset()
 	}
 }

@@ -13,7 +13,8 @@ import (
 
 type (
 	TChanSubscriber struct {
-		closesubscribers bool
+		closeSubscribers bool
+		sendStrict       bool
 		in               <-chan interface{}
 		out              []chan<- interface{}
 		sync.Mutex
@@ -22,18 +23,16 @@ type (
 
 // Constructor
 func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscriber {
-	t := new(TChanSubscriber)
-	t.in = ch
-	t.closesubscribers = closeSubscribers
+	t := &TChanSubscriber{
+		in:               ch,
+		sendStrict:       sendStrict,
+		closeSubscribers: closeSubscribers,
+	}
 	chan_stop := make(chan bool)
 	stopRun := func(t *TChanSubscriber) {
 		close(chan_stop)
 	}
-	if sendStrict {
-		go t.sendStrict(chan_stop)
-	} else {
-		go t.sendNoStrict(chan_stop)
-	}
+	go t.send(chan_stop)
 	runtime.SetFinalizer(t, stopRun)
 	return t
 }
@@ -68,7 +67,7 @@ func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 
 // Close all subscribers
 func (t *TChanSubscriber) close() {
-	if t.closesubscribers {
+	if t.closeSubscribers {
 		t.Unlock()
 		t.Lock()
 		for i := range t.out {
@@ -78,46 +77,42 @@ func (t *TChanSubscriber) close() {
 	}
 }
 
-func (t *TChanSubscriber) sendStrict(stop <-chan bool) {
+func (t *TChanSubscriber) send(stop <-chan bool) {
 	var (
 		outChan chan<- interface{}
 		v       interface{}
-		ok      bool = true
+		ok      bool
+		f       func()
 	)
-	for ok {
-		select {
-		case <-stop:
-			return
-		case v, ok = <-t.in:
-			t.Lock()
+
+	if t.sendStrict {
+		f = func() {
 			for _, outChan = range t.out {
 				outChan <- v
 			}
-			t.Unlock()
 		}
-	}
-	defer t.close()
-}
-
-func (t *TChanSubscriber) sendNoStrict(stop <-chan bool) {
-	var (
-		outChan chan<- interface{}
-		v       interface{}
-		ok      bool = true
-	)
-	for ok {
-		select {
-		case <-stop:
-			return
-		case v, ok = <-t.in:
-			t.Lock()
+	} else {
+		f = func() {
 			for _, outChan = range t.out {
 				select {
 				case outChan <- v:
 				default:
 				}
 			}
-			t.Unlock()
+		}
+	}
+
+	v, ok = <-t.in
+	for ok {
+
+		t.Lock()
+		f()
+		t.Unlock()
+
+		select {
+		case <-stop:
+			return
+		case v, ok = <-t.in:
 		}
 	}
 	defer t.close()

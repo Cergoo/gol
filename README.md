@@ -80,17 +80,11 @@ Editable error implementation
 ## fastbuf
 io.Writer implementation  
 
-    // write to buf
-    func (t *Buf) Write(p []byte) (n int, err error)
-    
-    // get all buf and clear buf
-    func (t *Buf) Flush() (r []byte)  
-
 ###Comparition benchmark test
 <pre>
 Write
-fastbuf:      5000000        550 ns/op       0 B/op	       0 allocs/op
-bytes.Buffer: 1000000       1099 ns/op       0 B/op	       0 allocs/op
+fastbuf:      10000000	       169 ns/op       0 B/op	       0 allocs/op
+bytes.Buffer: 10000000	       222 ns/op       0 B/op	       0 allocs/op
 </pre>
 
 ## filepath

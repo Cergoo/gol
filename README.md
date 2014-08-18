@@ -2,7 +2,7 @@
 (c) 2013-2014 Cergoo   
 under terms of ISC license
 
-## binary
+## binaryED
 binary Encode Decode implementation pkg
 
 ## cache
@@ -35,7 +35,7 @@ go-cache:    5000	    462482 ns/op   15184 B/op	     949 allocs/op
 </pre>
 
 ## chansubscriber
-Subscribe channel pack. Thread-safe.
+Subscribe channel pack. Thread-safe. Send messages of writer to a each subscribers.  
 
     // Constructor
     func New(ch <-chan interface{}, sendStrict, closesubscribers bool) *TChanSubscriber

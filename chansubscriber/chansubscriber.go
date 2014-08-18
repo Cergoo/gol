@@ -1,5 +1,6 @@
 /*
-	subscribe channel pack
+	subscribe channel pack,
+	send messages of writer to a each subscribers
 	(c) 2014 Cergoo
 	under terms of ISC license
 */

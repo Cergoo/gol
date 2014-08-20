@@ -1,5 +1,5 @@
 /*
-	http://localhost:9999/action1/prm1/val1/prm2/val2
+	http://localhost:9999/action1/prm1/prm2/prm3
 	http://localhost:9999/action1/prm1/val1/prm2
 	http://localhost:9999/files/f1.txt
 	http://localhost:9999/files
@@ -16,20 +16,20 @@ import (
 	"time"
 )
 
-func action1(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "action1", " ", r.Form.Encode())
+func action2(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "action2", " ", r.Form.Encode(), " ", r.URL.Path)
 }
 
-func action2(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "action2", " ", r.Form.Encode())
+func action1(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "action1", " ", r.Form.Encode())
 }
 
 func main() {
 
 	r := router.New("files", "./directoryfiles")
-	r.Routes[method.Get] = action1
-	r.Routes[method.Get+"action1"] = action1
-	r.Routes[method.Get+"action2"] = action2
+	r.AddRout(method.Get, "", action1)
+	r.AddRout(method.Get, "action1/id/lang", action1)
+	r.AddRout(method.Get, "action2/id/lang", action2)
 
 	srv_htpp := &http.Server{
 		Addr:           ":9999",

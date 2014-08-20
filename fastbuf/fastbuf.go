@@ -22,6 +22,7 @@ type (
 	}
 )
 
+// Constructor
 func New(buf []byte) (b *Buf) {
 	b = new(Buf)
 	if buf == nil {
@@ -43,7 +44,6 @@ func (t *Buf) Grow(n int) {
 	t.buf = newbuf
 }
 
-// Resize cap
 func (t *Buf) grow(n int) {
 	if cap(t.buf) < t.writeoff+n {
 		if cap(t.buf) < n {
@@ -53,7 +53,7 @@ func (t *Buf) grow(n int) {
 	}
 }
 
-// write to buf
+// Write to buf
 func (t *Buf) Write(p []byte) (n int, err error) {
 	t.grow(len(p))
 	copy(t.buf[t.writeoff:], p)
@@ -61,21 +61,21 @@ func (t *Buf) Write(p []byte) (n int, err error) {
 	return
 }
 
-// get all buf and clear buf
+// Get poiner to all buf and clear buf
 func (t *Buf) FlushP() (r []byte) {
 	r = t.buf[:t.writeoff]
 	t.writeoff = 0
 	return
 }
 
-// get all buf and clear buf
+// Get all buf and clear buf
 func (t *Buf) Flush() (r []byte) {
 	r = append(r, t.buf[:t.writeoff]...)
 	t.writeoff = 0
 	return
 }
 
-//
+// Reserve slice size n
 func (t *Buf) Reserve(n int) []byte {
 	t.grow(n)
 	oldoff := t.writeoff
@@ -93,7 +93,11 @@ func (t *Buf) Cap() int {
 
 /* Reader functions */
 
+// Read next slice
 func (t *Buf) ReadNext(n int) []byte {
+	if t.readeoff >= t.writeoff {
+		return nil
+	}
 	n += t.readeoff
 	if n > t.writeoff {
 		n = t.writeoff
@@ -103,6 +107,7 @@ func (t *Buf) ReadNext(n int) []byte {
 	return data
 }
 
+// Read next byte
 func (t *Buf) ReadByte() (b byte, e error) {
 	if t.readeoff < t.writeoff {
 		b = t.buf[t.readeoff]

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"binaryED"
 	"fmt"
+	"github.com/Cergoo/gol/binaryED"
 	"github.com/Cergoo/gol/fastbuf"
 )
 

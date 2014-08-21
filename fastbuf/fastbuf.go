@@ -53,11 +53,19 @@ func (t *Buf) grow(n int) {
 	}
 }
 
-// Write to buf
+// Write slice to buf
 func (t *Buf) Write(p []byte) (n int, err error) {
 	t.grow(len(p))
 	copy(t.buf[t.writeoff:], p)
 	t.writeoff += len(p)
+	return
+}
+
+// Write byte to buf
+func (t *Buf) WriteByte(p byte) (err error) {
+	t.grow(1)
+	t.writeoff++
+	t.buf[t.writeoff] = p
 	return
 }
 

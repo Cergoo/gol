@@ -20,6 +20,8 @@ package router
 
 import (
 	"fmt"
+	"github.com/Cergoo/gol/http/method"
+	"github.com/Cergoo/gol/util"
 	"log"
 	"net/http"
 	"os"
@@ -34,31 +36,23 @@ type (
 	}
 
 	Trouter struct {
-		routes            map[string]*troute
-		filesRouteLabel   string
-		fileServerHandler http.Handler
-		errorLog          *log.Logger
+		routes   map[string]*troute
+		errorLog *log.Logger
 	}
 )
 
-/*
-	constructor
-	if filesRootDir == "" then no http files accesse
-*/
-func New(filesRouteLabel, filesRootDir string) *Trouter {
-	r := &Trouter{
-		routes:          make(map[string]*troute),
-		filesRouteLabel: filesRouteLabel,
-		errorLog:        log.New(os.Stderr, "router: ", log.LstdFlags),
+func New() *Trouter {
+	return &Trouter{
+		routes:   make(map[string]*troute),
+		errorLog: log.New(os.Stderr, "router: ", log.LstdFlags),
 	}
-	if filesRootDir > "" {
-		r.fileServerHandler = http.StripPrefix("/"+filesRouteLabel, http.FileServer(http.Dir(filesRootDir)))
-	}
-
-	return r
 }
 
-func (t *Trouter) AddRout(method, patch string, action func(w http.ResponseWriter, r *http.Request)) {
+func (t *Trouter) ServeFiles(label, root string) {
+	t.routes[method.Get+label] = &troute{action: http.StripPrefix("/"+label, http.FileServer(http.Dir(root))).ServeHTTP}
+}
+
+func (t *Trouter) Handler(method, patch string, action func(w http.ResponseWriter, r *http.Request)) {
 	parts := strings.Split(patch, "/")
 	r := &troute{action: action}
 	r.prm = append(r.prm, parts[1:]...)
@@ -73,32 +67,20 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			t.errorLog.Printf("error: %s\nat:\n%s", e, debug.Stack())
 		}
 	}()
-	url := r.URL.Path[1:]
-	urlParts := strings.SplitN(url, "/", 30)
 
-	// Files stream
-	if t.fileServerHandler != nil && urlParts[0] == t.filesRouteLabel {
-		t.fileServerHandler.ServeHTTP(w, r)
-		return
-	}
+	urlParts := strings.SplitN(r.URL.Path[1:], "/", 20)
 
 	// Find action
 	action := t.routes[r.Method+urlParts[0]]
 	if action == nil {
-		fmt.Fprint(w, "url not found")
+		http.NotFound(w, r)
 		return
 	}
 
-	// Parse url to paramrters
+	// Parse url to parameters
 	r.ParseForm()
 	urlParts = urlParts[1:]
-
-	// find minimal len of a slice
-	count := len(urlParts)
-	if len(action.prm) < count {
-		count = len(action.prm)
-	}
-
+	count := util.Min(len(urlParts), len(action.prm))
 	for id := 0; id < count; id++ {
 		if len(urlParts[id]) > 0 {
 			r.Form.Set(action.prm[id], urlParts[id])

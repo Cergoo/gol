@@ -148,7 +148,7 @@ Cookie based session engin implementation
     func (t *TSession) Get(w http.ResponseWriter, r *http.Request) (id []byte, val interface{})
 
 ## http/router
-Routing a path url to action. First elemet path is action name, others elemets is request parameters of a type: name/value
+Routing a path url to action. First elemet path is action name, others elemets is a request parameters
 
 ## jsonConfig
 Support comments in json config files.    

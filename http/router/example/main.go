@@ -1,5 +1,5 @@
 /*
-	http://localhost:9999/action1/prm1/prm2/prm3
+	http://localhost:9999/action1/prm1/val1/prm2/val2
 	http://localhost:9999/action1/prm1/val1/prm2
 	http://localhost:9999/files/f1.txt
 	http://localhost:9999/files
@@ -26,10 +26,11 @@ func action1(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	r := router.New("files", "./directoryfiles")
-	r.AddRout(method.Get, "", action1)
-	r.AddRout(method.Get, "action1/id/lang", action1)
-	r.AddRout(method.Get, "action2/id/lang", action2)
+	r := router.New()
+	r.ServeFiles("files", "./directoryfiles")
+	r.Handler(method.Get, "", action1)
+	r.Handler(method.Get, "action1/id/lang", action1)
+	r.Handler(method.Get, "action2/id/lang", action2)
 
 	srv_htpp := &http.Server{
 		Addr:           ":9999",

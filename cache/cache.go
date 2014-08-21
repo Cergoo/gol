@@ -163,9 +163,10 @@ func (t *t_cache) Set(cortege *TCortege, mode uint8) (val interface{}, actionRes
 			actionResult = ResultExist
 			if mode == ModeSet_OnlyInsert {
 				val = v.Val
-			} else {
-				v.Val = cortege.Val
+				bucket.Unlock()
+				return
 			}
+			v.Val = cortege.Val
 			bucket.Unlock()
 			return
 		}

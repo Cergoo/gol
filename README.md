@@ -20,17 +20,17 @@ The package is the implementation of hashmap for organizing in-memory key-value 
 
 ### Benchmark test  
 go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cache)  
-go version go1.3, single thread  
+go version go1.3, single thread      
 <pre>
 Set
-gol/cache:   5000	    459357 ns/op   23200 B/op	    1450 allocs/op
-go-cache:    5000	    734346 ns/op   66291 B/op	    2956 allocs/op
+Cergoo.cache:    5000	    609351 ns/op   41545 B/op	    2454 allocs/op
+go-cache:        2000	    703098 ns/op   66097 B/op	    2955 allocs/op
 Get
-gol/cache:   5000	    393734 ns/op   23200 B/op	    1450 allocs/op
-go-cache:    5000	    387485 ns/op   15184 B/op	     949 allocs/op
+Cergoo.cache:    5000	    384360 ns/op   23200 B/op	    1450 allocs/op
+go-cache:        5000	    384360 ns/op   15184 B/op	     949 allocs/op
 Inc
-gol/cache:   5000	    403109 ns/op   23200 B/op	    1450 allocs/op
-go-cache:    5000	    462482 ns/op   15184 B/op	     949 allocs/op
+Cergoo.cache:    5000	    393734 ns/op   23200 B/op	    1450 allocs/op
+go-cache:        5000	    431233 ns/op   15184 B/op	     949 allocs/op
 </pre>
 
 ## chansubscriber

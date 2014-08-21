@@ -1,7 +1,6 @@
 package cache
 
 import (
-	"errors"
 	"github.com/Cergoo/gol/cache"
 	"github.com/Cergoo/gol/hash"
 	"strconv"
@@ -20,7 +19,7 @@ func init() {
 func Test_Get(t *testing.T) {
 	var v int
 	for i := 0; i < 100000; i++ {
-		cache1.Set("item"+strconv.Itoa(i), i)
+		cache1.Set(&cache.TCortege{"item" + strconv.Itoa(i), i}, cache.ModeSet_UpdateOrInsert)
 	}
 
 	for i := 0; i < 100000; i++ {
@@ -51,33 +50,6 @@ func Test_Inc(t *testing.T) {
 	}
 }
 
-func Test_SetFunc(t *testing.T) {
-	var (
-		v interface{}
-	)
-
-	arg := 2
-	f := func(val interface{}) (interface{}, error) {
-		var (
-			v int
-			b bool
-		)
-		v, b = val.(int)
-		if !b {
-			return nil, errors.New("Mismatch type")
-		}
-		return v * arg, nil
-	}
-
-	cache1.SetFunc("item101", 1, f)
-	v = cache1.Get("item101")
-	if v != 200 {
-		t.Error("err", v)
-		return
-	}
-
-}
-
 func Test_Del(t *testing.T) {
 	cache1.Del("item1")
 	v := cache1.Get("item1")
@@ -96,7 +68,7 @@ func Test_SaveLoad(t *testing.T) {
 		t.Error("err")
 		return
 	}
-	cache1.Set("item10", 11)
+	cache1.Set(&cache.TCortege{"item10", 11}, cache.ModeSet_UpdateOrInsert)
 	err = cache1.LoadFile("f")
 	if err != nil {
 		t.Error("err")

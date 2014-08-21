@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	gocache "github.com/pmylund/go-cache"
 	"github.com/Cergoo/gol/cache"
 	"github.com/Cergoo/gol/hash"
+	gocache "github.com/pmylund/go-cache"
 	"strconv"
 	"sync"
 	"testing"
@@ -47,7 +47,7 @@ func main() {
 func Benchmark_cacheSet(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < count; i++ {
-			_cache.Set("item"+strconv.Itoa(i), i)
+			_cache.Set(&cache.TCortege{"item" + strconv.Itoa(i), i}, cache.ModeSet_UpdateOrInsert)
 		}
 	}
 }

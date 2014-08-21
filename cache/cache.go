@@ -147,77 +147,43 @@ func (t *t_cache) Get(key string) (val interface{}) {
 	return
 }
 
-// Add or Update item
-func (t *t_cache) Set(key string, val interface{}) (actionResult uint8) {
+// Set mode: onlyUpdate, onlyInsert, updateOrInsert
+func (t *t_cache) Set(cortege *TCortege, mode uint8) (val interface{}, actionResult uint8) {
 	var (
 		v *t_item
 	)
+	val = cortege.Val
 	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht.ht[ht.keyToID([]byte(key))]
+	bucket := ht.ht[ht.keyToID([]byte(cortege.Key))]
 	bucket.Lock()
+
 	// Update
 	for _, v = range bucket.items {
-		if v.Key == key {
-			v.Val = val
-			bucket.Unlock()
+		if v.Key == cortege.Key {
 			actionResult = ResultExist
-			return
-		}
-	}
-	// Add
-	if t.count.Check() {
-		lenbucet := len(bucket.items)
-		bucket.items = append(bucket.items, &t_item{Key: key, Val: val, r: 1})
-		bucket.Unlock()
-		if lenbucet > t.growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
-			go t.grow()
-		}
-		actionResult = ResultAdd
-		t.count.Inc()
-		return
-	}
-
-	bucket.Unlock()
-	actionResult = ResultNoExistNoAdd
-	return
-}
-
-// Add new value or Update value item
-func (t *t_cache) SetFunc(key string, val interface{}, f func(interface{}) (interface{}, error)) (newVal interface{}, actionResult uint8, e error) {
-	var (
-		v *t_item
-	)
-	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht.ht[ht.keyToID([]byte(key))]
-	bucket.Lock()
-	// Update
-	for _, v = range bucket.items {
-		if v.Key == key {
-			newVal, e = f(v.Val)
-			if e == nil {
-				v.Val = newVal
+			if mode == ModeSet_OnlyInsert {
+				val = v.Val
 			} else {
-				newVal = v.Val
+				v.Val = cortege.Val
 			}
-
-			actionResult = ResultExist
 			bucket.Unlock()
 			return
 		}
 	}
+
 	// Add
-	if t.count.Check() {
+	if mode != ModeSet_OnlyUpdate && t.count.Check() {
 		lenbucet := len(bucket.items)
-		bucket.items = append(bucket.items, &t_item{Key: key, Val: val, r: 1})
+		bucket.items = append(bucket.items, &t_item{Key: cortege.Key, Val: cortege.Val, r: 1})
 		bucket.Unlock()
 		if lenbucet > t.growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
 			go t.grow()
 		}
-		newVal = val
 		actionResult = ResultAdd
 		t.count.Inc()
 		return
 	}
+
 	bucket.Unlock()
 	actionResult = ResultNoExistNoAdd
 	return
@@ -391,7 +357,7 @@ func (t *t_cache) Load(r io.Reader) error {
 	)
 	dec := gob.NewDecoder(r)
 	for err = dec.Decode(&item); err == nil; err = dec.Decode(&item) {
-		t.Set(item.Key, item.Val)
+		t.Set(&TCortege{item.Key, item.Val}, ModeSet_UpdateOrInsert)
 	}
 	return err
 }

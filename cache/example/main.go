@@ -16,7 +16,7 @@ func main() {
 	)
 	n := cache.New(hash.HashFAQ6, 0, true, 0*time.Minute, nil)
 	for t = 0; t < 100000; t++ {
-		n.Set("ind uhgyug e x try"+strconv.Itoa(t), t)
+		n.Set(&cache.TCortege{"ind uhgyug e x try" + strconv.Itoa(t), t}, cache.ModeSet_UpdateOrInsert)
 	}
 	fmt.Println(n.Get("ind uhgyug e x try1"))
 	time.Sleep(10 * time.Second)

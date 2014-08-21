@@ -11,6 +11,13 @@ const (
 	ResultNoExistNoAdd
 )
 
+// Mode operation set
+const (
+	ModeSet_OnlyUpdate = iota
+	ModeSet_OnlyInsert
+	ModeSet_UpdateOrInsert
+)
+
 type (
 	// (key, value) cortege
 	TCortege struct {
@@ -21,8 +28,7 @@ type (
 	Cache interface {
 		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
 		Get(string) interface{}
-		Set(string, interface{}) (actionResult uint8)
-		SetFunc(string, interface{}, func(interface{}) (interface{}, error)) (newVal interface{}, actionResult uint8, e error)
+		Set(cortege *TCortege, mode uint8) (val interface{}, actionResult uint8)
 		Del(string) (val interface{})
 		DelAll()
 		Range(chan<- *TCortege)

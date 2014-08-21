@@ -5,6 +5,12 @@
 */
 package cache
 
+
+/* 
+TODO :  
+ - memory limiter implement 
+*/
+
 import (
 	"encoding/gob"
 	"fmt"

@@ -11,16 +11,16 @@ import (
 	"time"
 )
 
+const count = 1000
+
 var (
 	_cache   cache.Cache
 	go_cache *gocache.Cache
-	count    int
 	m        sync.RWMutex
 )
 
 func init() {
-	count = 1000
-	_cache = cache.New(hash.HashFAQ6, count, true, 10*time.Minute, nil)
+	_cache = cache.New(hash.HashFAQ6, true, 10*time.Minute, nil)
 	go_cache = gocache.New(5*time.Minute, 10*time.Minute)
 }
 
@@ -47,7 +47,7 @@ func main() {
 func Benchmark_cacheSet(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < count; i++ {
-			_cache.Set(&cache.TCortege{"item" + strconv.Itoa(i), i}, cache.ModeSet_UpdateOrInsert)
+			_cache.Set("item"+strconv.Itoa(i), i, cache.UpdateOrInsert)
 		}
 	}
 }

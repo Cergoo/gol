@@ -8,7 +8,7 @@ package hash
 
 // FAQ6 hash
 func HashFAQ6(str []byte) (h uint32) {
-	for i := 0; i < len(str); i++ {
+	for i := range str {
 		h += uint32(str[i])
 		h += h << 10
 		h ^= h >> 6

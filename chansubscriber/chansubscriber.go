@@ -1,15 +1,20 @@
 /*
-	subscribe channel pack,
-	send messages of writer to a each subscribers
+	subcribe channel pack, send messages of writer to a each subscribers
 	(c) 2014 Cergoo
 	under terms of ISC license
+	----
+	features:
+	- thread safe
+	- protect of a double subscribe
+	- close a input channel for ending send messages
 */
 
 package chansubscriber
 
 import (
-	"runtime"
 	"sync"
+	"sync/atomic"
+	"unsafe"
 )
 
 type (
@@ -17,84 +22,93 @@ type (
 		closeSubscribers bool
 		sendStrict       bool
 		in               <-chan interface{}
-		out              []chan<- interface{}
+		out              *[]chan<- interface{}
 		sync.Mutex
 	}
 )
 
 // Constructor
 func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscriber {
+	out := make([]chan<- interface{}, 0)
 	t := &TChanSubscriber{
 		in:               ch,
 		sendStrict:       sendStrict,
 		closeSubscribers: closeSubscribers,
+		out:              &out,
 	}
-	chan_stop := make(chan bool)
-	stopRun := func(t *TChanSubscriber) {
-		close(chan_stop)
-	}
-	go t.send(chan_stop)
-	runtime.SetFinalizer(t, stopRun)
+	go t.send()
 	return t
 }
 
-// Add subscribe
+// Subscribe
 func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
+	t.Lock()
+	defer t.Unlock()
 	if ch == nil {
 		return
 	}
-	t.Lock()
-	for _, v := range t.out {
+	outslice := *(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out))))
+	for _, v := range outslice {
 		if v == ch {
 			return
 		}
 	}
-	t.out = append(t.out, ch)
-	t.Unlock()
+	newoutslice := make([]chan<- interface{}, len(outslice), len(outslice)+1)
+	copy(newoutslice, outslice)
+	newoutslice = append(newoutslice, ch)
+	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.out)), unsafe.Pointer(&newoutslice))
 }
 
 // Unsubscribe
 func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 	t.Lock()
-	for id, v := range t.out {
+	outslice := *(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out))))
+	for id, v := range outslice {
 		if v == ch {
-			vLen := len(t.out) - 1
-			t.out[id], t.out[vLen] = t.out[vLen], nil
-			t.out = t.out[:vLen-1]
+			newoutslice := make([]chan<- interface{}, len(outslice)-1)
+			copy(newoutslice, outslice[:id])
+			copy(newoutslice[id:], outslice[id+1:])
+			atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.out)), unsafe.Pointer(&newoutslice))
+			break
 		}
 	}
-	t.Unlock()
+	defer t.Unlock()
 }
 
-// Close all subscribers
+// Get count subscribers
+func (t *TChanSubscriber) Len() int {
+	return len(*(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out)))))
+}
+
+// helper function, Close all subscribers
 func (t *TChanSubscriber) close() {
 	if t.closeSubscribers {
-		t.Unlock()
 		t.Lock()
-		for i := range t.out {
-			close(t.out[i])
+		outslice := *t.out
+		for i := range outslice {
+			close(outslice[i])
 		}
 		t.Unlock()
 	}
 }
 
-func (t *TChanSubscriber) send(stop <-chan bool) {
+func (t *TChanSubscriber) send() {
 	var (
-		outChan chan<- interface{}
-		v       interface{}
-		ok      bool
-		f       func()
+		outChan  chan<- interface{}
+		v        interface{}
+		f        func()
+		outslice []chan<- interface{}
 	)
 
 	if t.sendStrict {
 		f = func() {
-			for _, outChan = range t.out {
+			for _, outChan = range outslice {
 				outChan <- v
 			}
 		}
 	} else {
 		f = func() {
-			for _, outChan = range t.out {
+			for _, outChan = range outslice {
 				select {
 				case outChan <- v:
 				default:
@@ -103,18 +117,10 @@ func (t *TChanSubscriber) send(stop <-chan bool) {
 		}
 	}
 
-	v, ok = <-t.in
-	for ok {
-
-		t.Lock()
+	for v = range t.in {
+		outslice = *(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out))))
 		f()
-		t.Unlock()
-
-		select {
-		case <-stop:
-			return
-		case v, ok = <-t.in:
-		}
 	}
+
 	defer t.close()
 }

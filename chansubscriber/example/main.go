@@ -28,4 +28,6 @@ func main() {
 	fmt.Println(<-chreader1, <-chreader1)
 	fmt.Println(<-chreader2, <-chreader2)
 	fmt.Println(<-chreader3, <-chreader3)
+	close(chwriter)
+	fmt.Println(<-chreader3)
 }

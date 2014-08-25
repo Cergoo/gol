@@ -13,9 +13,9 @@ const (
 
 // Mode operation set
 const (
-	ModeSet_OnlyUpdate = iota
-	ModeSet_OnlyInsert
-	ModeSet_UpdateOrInsert
+	OnlyUpdate = iota
+	OnlyInsert
+	UpdateOrInsert
 )
 
 type (
@@ -28,7 +28,7 @@ type (
 	Cache interface {
 		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
 		Get(string) interface{}
-		Set(cortege *TCortege, mode uint8) (val interface{}, actionResult uint8)
+		Set(key string, val interface{}, mode uint8) (rval interface{}, actionResult uint8)
 		Del(string) (val interface{})
 		DelAll()
 		Range(chan<- *TCortege)

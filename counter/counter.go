@@ -1,8 +1,8 @@
 /*
   easy atomic counter type
-  (c) 2013-2014 Cergoo   
+  (c) 2013-2014 Cergoo
   under terms of ISC license
-*/  
+*/
 
 package counter
 
@@ -38,11 +38,8 @@ func (t *T_counter) Dec() uint64 {
 }
 
 // Add value
-func (t *T_counter) Add(v uint64, dec bool) uint64 {
-	if dec {
-		return atomic.AddUint64(&t.value, ^uint64(v-1))
-	}
-	return atomic.AddUint64(&t.value, v)
+func (t *T_counter) Add(v int64) uint64 {
+	return atomic.AddUint64(&t.value, uint64(v))
 }
 
 // Get current limit value

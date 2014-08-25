@@ -13,13 +13,13 @@ var (
 )
 
 func init() {
-	cache1 = cache.New(hash.HashFAQ6, 0, true, 5*time.Second, nil)
+	cache1 = cache.New(hash.HashFAQ6, true, 5*time.Second, nil)
 }
 
 func Test_Get(t *testing.T) {
 	var v int
 	for i := 0; i < 100000; i++ {
-		cache1.Set(&cache.TCortege{"item" + strconv.Itoa(i), i}, cache.ModeSet_UpdateOrInsert)
+		cache1.Set("item"+strconv.Itoa(i), i, cache.UpdateOrInsert)
 	}
 
 	for i := 0; i < 100000; i++ {
@@ -68,7 +68,7 @@ func Test_SaveLoad(t *testing.T) {
 		t.Error("err")
 		return
 	}
-	cache1.Set(&cache.TCortege{"item10", 11}, cache.ModeSet_UpdateOrInsert)
+	cache1.Set("item10", 11, cache.UpdateOrInsert)
 	err = cache1.LoadFile("f")
 	if err != nil {
 		t.Error("err")

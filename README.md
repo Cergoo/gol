@@ -23,14 +23,14 @@ go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cac
 go version go1.3, single thread      
 <pre>
 Set
-Cergoo.cache:    5000	    609351 ns/op   41545 B/op	    2454 allocs/op
-go-cache:        2000	    703098 ns/op   66097 B/op	    2955 allocs/op
+Cergoo.cache:    5000	    456282 ns/op   23200 B/op	    1450 allocs/op
+go-cache:        5000	    734426 ns/op   66266 B/op	    2956 allocs/op
 Get
-Cergoo.cache:    5000	    384360 ns/op   23200 B/op	    1450 allocs/op
-go-cache:        5000	    384360 ns/op   15184 B/op	     949 allocs/op
+Cergoo.cache:    5000	    359400 ns/op   23200 B/op	    1450 allocs/op
+go-cache:        5000	    362525 ns/op   15184 B/op	     949 allocs/op
 Inc
-Cergoo.cache:    5000	    393734 ns/op   23200 B/op	    1450 allocs/op
-go-cache:        5000	    431233 ns/op   15184 B/op	     949 allocs/op
+Cergoo.cache:    5000	    406278 ns/op   23200 B/op	    1450 allocs/op
+go-cache:        5000	    428155 ns/op   15184 B/op	     949 allocs/op
 </pre>
 
 ## chansubscriber
@@ -61,7 +61,7 @@ Easy atomic counter type
     func (t *T_counter) Dec() uint64  
 
     // Add value    
-    func (t *T_counter) Add(v uint64, dec bool) uint64  
+    func (t *T_counter) Add(v int64) uint64  
 
     // Get current limit value  
     func (t *T_counter) GetLimit() uint64  

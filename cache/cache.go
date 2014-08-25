@@ -5,10 +5,9 @@
 */
 package cache
 
-
-/* 
-TODO :  
- - memory limiter implement 
+/*
+TODO :
+ - memory limiter implement
 */
 
 import (
@@ -16,6 +15,7 @@ import (
 	"fmt"
 	"github.com/Cergoo/gol/counter"
 	"io"
+	"math"
 	"os"
 	"runtime"
 	"sort"
@@ -25,11 +25,16 @@ import (
 	"unsafe"
 )
 
+const (
+	growcountgo    = 16
+	initbucketscap = 10
+)
+
 type (
 	t_item struct {
 		r   uint8
-		Val interface{}
 		Key string
+		Val interface{}
 	}
 
 	t_bucket struct {
@@ -43,13 +48,18 @@ type (
 	}
 
 	t_cache struct {
-		t              *t_hash           // hash table
-		duration       time.Duration     // duration janitor
-		ifreadthenlive bool              // ifreadthenlive enable
-		count          counter.T_counter // limit items count in cache, 0 - unlimit
-		growcountgo    int               // count items in bucket to go grow hase table
-		growlock       uint32
-		ch_janitor     chan<- *TCortege
+		t                      *t_hash           // hash table
+		janitor_duration       time.Duration     // janitor_duration janitor
+		janitor_ifreadthenlive bool              // janitor_ifreadthenlive enable
+		count                  counter.T_counter // limit items count in cache, 0 - unlimit
+		growlock               uint32
+		janitor_ch             chan<- *TCortege
+		chan_stop              chan bool
+	}
+
+	// for finalizer
+	tfinalize struct {
+		*t_cache
 	}
 )
 
@@ -59,49 +69,47 @@ func (t *t_hash) keyToID(key []byte) uint32 {
 }
 
 /*
-	Constructor new cache
-	ifreadthenlive - if item read then item live
-	duration - time to clear items, if 0 then never
+	Constructor new cache:
+	hash                   - hash function
+	janitor_ifreadthenlive - if item read then item live
+	janitor_duration       - time to clear items, if 0 then never
+	janitor_ch             - chanel to send removed items
 */
 func New(
 	hash func([]byte) uint32,
-	init_bucketscount int,
-	ifreadthenlive bool,
-	duration time.Duration,
-	ch_janitor chan<- *TCortege) Cache {
-
-	const growcountgo = 14
-	if init_bucketscount < 1 {
-		init_bucketscount = 1000
-	}
+	janitor_ifreadthenlive bool,
+	janitor_duration time.Duration,
+	janitor_ch chan<- *TCortege) Cache {
 
 	ht := new(t_hash)
-	ht.ht = make([]*t_bucket, init_bucketscount)
+	ht.ht = make([]*t_bucket, 1024)
 	ht.hash = hash
 	for i := range ht.ht {
 		ht.ht[i] = &t_bucket{
-			items: make([]*t_item, 0, growcountgo+4),
+			items: make([]*t_item, 0, initbucketscap),
 		}
 	}
 
 	t := &t_cache{
-		duration:       duration,
-		ifreadthenlive: ifreadthenlive,
-		t:              ht,
-		growcountgo:    growcountgo,
-		ch_janitor:     ch_janitor,
+		janitor_duration:       janitor_duration,
+		janitor_ifreadthenlive: janitor_ifreadthenlive,
+		t:          ht,
+		janitor_ch: janitor_ch,
 	}
 
-	if duration > 0 {
-		chan_stop := make(chan bool)
-		stopJanitor := func(t *t_cache) {
-			close(chan_stop)
-		}
-		go t.janitor(chan_stop)
-		runtime.SetFinalizer(t, stopJanitor)
+	if janitor_duration > 0 {
+		finalized := &tfinalize{t}
+		t.chan_stop = make(chan bool)
+		go t.janitor(t.chan_stop)
+		runtime.SetFinalizer(finalized, stop)
+		return finalized
 	}
 
 	return t
+}
+
+func stop(t *tfinalize) {
+	close(t.chan_stop)
 }
 
 // Point to countern
@@ -142,7 +150,7 @@ func (t *t_cache) Get(key string) (val interface{}) {
 	bucket.RLock()
 	for _, v := range bucket.items {
 		if v.Key == key {
-			if t.ifreadthenlive {
+			if t.janitor_ifreadthenlive {
 				v.r = 1
 			}
 			val = v.Val
@@ -154,36 +162,36 @@ func (t *t_cache) Get(key string) (val interface{}) {
 }
 
 // Set mode: onlyUpdate, onlyInsert, updateOrInsert
-func (t *t_cache) Set(cortege *TCortege, mode uint8) (val interface{}, actionResult uint8) {
+func (t *t_cache) Set(key string, val interface{}, mode uint8) (rval interface{}, actionResult uint8) {
 	var (
 		v *t_item
 	)
-	val = cortege.Val
+	rval = val
 	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
-	bucket := ht.ht[ht.keyToID([]byte(cortege.Key))]
+	bucket := ht.ht[ht.keyToID([]byte(key))]
 	bucket.Lock()
 
 	// Update
 	for _, v = range bucket.items {
-		if v.Key == cortege.Key {
+		if v.Key == key {
 			actionResult = ResultExist
-			if mode == ModeSet_OnlyInsert {
-				val = v.Val
+			if mode == OnlyInsert {
+				rval = v.Val
 				bucket.Unlock()
 				return
 			}
-			v.Val = cortege.Val
+			v.Val = val
 			bucket.Unlock()
 			return
 		}
 	}
 
 	// Add
-	if mode != ModeSet_OnlyUpdate && t.count.Check() {
-		lenbucet := len(bucket.items)
-		bucket.items = append(bucket.items, &t_item{Key: cortege.Key, Val: cortege.Val, r: 1})
+	if mode != OnlyUpdate && t.count.Check() {
+		lenbucket := len(bucket.items)
+		bucket.items = append(bucket.items, &t_item{Key: key, Val: val, r: 1})
 		bucket.Unlock()
-		if lenbucet > t.growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
+		if lenbucket > growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
 			go t.grow()
 		}
 		actionResult = ResultAdd
@@ -266,7 +274,7 @@ func (t *t_cache) DelAll() {
 	ht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)))).ht
 	for _, bucket := range ht {
 		bucket.Lock()
-		t.count.Add(uint64(len(bucket.items)-1), true)
+		t.count.Add(int64(-(len(bucket.items) - 1)))
 		for i = range bucket.items {
 			bucket.items[i] = nil
 		}
@@ -364,7 +372,7 @@ func (t *t_cache) Load(r io.Reader) error {
 	)
 	dec := gob.NewDecoder(r)
 	for err = dec.Decode(&item); err == nil; err = dec.Decode(&item) {
-		t.Set(&TCortege{item.Key, item.Val}, ModeSet_UpdateOrInsert)
+		t.Set(item.Key, item.Val, UpdateOrInsert)
 	}
 	return err
 }
@@ -406,6 +414,13 @@ func (t *t_cache) grow() {
 	oldht := (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	oldlen := len(oldht.ht)
 	newlen := oldlen << 1
+
+	if uint64(newlen) >= math.MaxUint32 {
+		// grow only singleton runed
+		atomic.StoreUint32(&t.growlock, 0)
+		return
+	}
+
 	newht := new(t_hash)
 	newht.ht = make([]*t_bucket, newlen)
 	copy(newht.ht, oldht.ht) // possible since it links
@@ -421,8 +436,8 @@ func (t *t_cache) grow() {
 
 	j = oldlen
 	for i = 0; i < oldlen; i++ {
-		itemsold := make([]*t_item, 0, t.growcountgo+4)
-		itemsnew := make([]*t_item, 0, t.growcountgo+4)
+		itemsold := make([]*t_item, 0, initbucketscap)
+		itemsnew := make([]*t_item, 0, initbucketscap)
 		newht.ht[i].Lock()
 		for _, val = range newht.ht[i].items {
 			if newht.keyToID([]byte(val.Key)) == uint32(i) {
@@ -438,6 +453,7 @@ func (t *t_cache) grow() {
 		newht.ht[i].Unlock()
 		j++
 	}
+
 	// grow only singleton runed
 	atomic.StoreUint32(&t.growlock, 0)
 }
@@ -451,13 +467,12 @@ func (t *t_cache) janitor(stop <-chan bool) {
 		buf          []*TCortege
 		v            *TCortege
 	)
-
+	tick := time.Tick(t.janitor_duration)
 	for {
 		select {
 		case <-stop:
 			return
-		default:
-			time.Sleep(t.duration)
+		case <-tick:
 			count_del = 0
 			ht = (*t_hash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 			for _, bucket = range ht.ht {
@@ -465,7 +480,7 @@ func (t *t_cache) janitor(stop <-chan bool) {
 				lenbucket = len(bucket.items)
 				for i = 0; i < lenbucket; {
 					if bucket.items[i].r == 0 {
-						if t.ch_janitor != nil {
+						if t.janitor_ch != nil {
 							buf = append(buf, &TCortege{Key: bucket.items[i].Key, Val: bucket.items[i].Val})
 						}
 						lenbucket--
@@ -479,11 +494,11 @@ func (t *t_cache) janitor(stop <-chan bool) {
 				bucket.items = bucket.items[:lenbucket]
 				bucket.Unlock()
 				for _, v = range buf {
-					t.ch_janitor <- v
+					t.janitor_ch <- v
 				}
 				buf = buf[:0]
 			}
-			t.count.Add(uint64(count_del), true)
+			t.count.Add(int64(-count_del))
 		}
 	}
 }

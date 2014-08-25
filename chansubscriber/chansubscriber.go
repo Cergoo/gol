@@ -62,6 +62,7 @@ func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
 // Unsubscribe
 func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 	t.Lock()
+	defer t.Unlock()
 	outslice := *(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out))))
 	for id, v := range outslice {
 		if v == ch {
@@ -72,7 +73,6 @@ func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 			break
 		}
 	}
-	defer t.Unlock()
 }
 
 // Get count subscribers
@@ -84,11 +84,11 @@ func (t *TChanSubscriber) Len() int {
 func (t *TChanSubscriber) close() {
 	if t.closeSubscribers {
 		t.Lock()
+		defer t.Unlock()
 		outslice := *t.out
 		for i := range outslice {
 			close(outslice[i])
 		}
-		t.Unlock()
 	}
 }
 
@@ -117,10 +117,10 @@ func (t *TChanSubscriber) send() {
 		}
 	}
 
+	defer t.close()
+
 	for v = range t.in {
 		outslice = *(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out))))
 		f()
 	}
-
-	defer t.close()
 }

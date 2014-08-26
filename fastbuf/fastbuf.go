@@ -1,8 +1,5 @@
-/*
-	io.Writer implementation
-  (c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013 Cergoo
+// under terms of ISC license
 
 package fastbuf
 
@@ -10,11 +7,11 @@ import (
 	"io"
 )
 
-/*
-	writeoff - index buffer is filled
-	readeoff - index subtracts buffer
-*/
 type (
+	/*
+		writeoff - index buffer is filled
+		readeoff - index subtracts buffer
+	*/
 	Buf struct {
 		buf      []byte
 		writeoff int
@@ -91,10 +88,12 @@ func (t *Buf) Reserve(n int) []byte {
 	return t.buf[oldoff:t.writeoff]
 }
 
+// Get buffer length
 func (t *Buf) Len() int {
 	return t.writeoff
 }
 
+// Get buffer capacity
 func (t *Buf) Cap() int {
 	return cap(t.buf)
 }
@@ -126,6 +125,7 @@ func (t *Buf) ReadByte() (b byte, e error) {
 	return
 }
 
+// Reset reader index
 func (t *Buf) ReadReset() {
 	t.readeoff = 0
 }

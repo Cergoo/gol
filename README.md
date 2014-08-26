@@ -38,40 +38,16 @@ Subcribe channel pack, send messages of writer to a each subscribers.
 http://godoc.org/github.com/Cergoo/gol/chansubscriber
 
 ## counter 
-Easy atomic counter type  
-
-    // Get current count value  
-    func (t *T_counter) Get() uint64  
-
-    // Set current count value  
-    func (t *T_counter) Set(v uint64)  
-
-    // Increment  
-    func (t *T_counter) Inc() uint64  
-
-    // Decrement  
-    func (t *T_counter) Dec() uint64  
-
-    // Add value    
-    func (t *T_counter) Add(v int64) uint64  
-
-    // Get current limit value  
-    func (t *T_counter) GetLimit() uint64  
-
-    // Set new limit value  
-    func (t *T_counter) SetLimit(v uint64) 
-
-    // Check limit value  
-    func (t *T_counter) Check() bool 
-
-    // Check limit value  
-    func (t *T_counter) Check1(v uint64) bool  
+Easy atomic counter type.    
+http://godoc.org/github.com/Cergoo/gol/chansubscriber      
 
 ## err
-Editable error implementation
+Editable error implementation .
+http://godoc.org/github.com/Cergoo/gol/err
 
 ## fastbuf
-io.Writer implementation  
+io.Writer implementation.
+http://godoc.org/github.com/Cergoo/gol/fastbuf
 
 ###Comparition benchmark test
 <pre>
@@ -87,21 +63,9 @@ Filepath util
     func Ext(fullname string) (name, ext string)
 
 ## hash
-Hash functions library
-
-    // FAQ6 hash  
-    func HashFAQ6(str []byte) (h uint32)  
-
-    // Rot13 hash  
-    func HashRot13(str []byte) (h uint32)  
-
-    // Ly hash  
-    func HashLy(str []byte) (h uint32)  
+Hash functions library.
+http://godoc.org/github.com/Cergoo/gol/hash
   
-    // Rs hash  
-    func HashRs(str []byte) (h uint32)  
-
-
 ## http/genid
 Generate ID pkg  
   

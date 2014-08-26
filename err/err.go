@@ -1,27 +1,25 @@
-/*
-	error pkg
-	(c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013-2014 Cergoo
+// under terms of ISC license
+
 package err
 
-// editable error struct
+// Editable error struct.
 type OpenErr struct {
 	Text string
 	Code int
 }
 
-// create new error
+// Create new error.
 func New(e string, code int) *OpenErr {
 	return &OpenErr{e, code}
 }
 
-// interface error metod
+// Interface error metod.
 func (t *OpenErr) Error() string {
 	return t.Text
 }
 
-// panic gen
+// Panic gen.
 func Panic(e error) {
 	if e != nil {
 		panic(e)

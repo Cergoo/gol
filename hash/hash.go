@@ -1,9 +1,7 @@
-/*
-	hash pkg
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
 
+// Hash functions library.
 package hash
 
 // FAQ6 hash

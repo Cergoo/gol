@@ -1,3 +1,4 @@
+// Benchmark
 package main
 
 import (
@@ -16,13 +17,13 @@ var (
 
 func main() {
 	operation_name := "Write"
-	r1 = testing.Benchmark(Benchmark_fastbuf)
-	r2 = testing.Benchmark(Benchmark_bytesbuf)
+	r1 = testing.Benchmark(benchmark_fastbuf)
+	r2 = testing.Benchmark(benchmark_bytesbuf)
 	fmt.Print(operation_name, "\n", "fastbuf:", r1, r1.MemString(), "\n", "bytes.Buffer:", r2, r2.MemString(), "\n")
 
 }
 
-func Benchmark_fastbuf(b *testing.B) {
+func benchmark_fastbuf(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < 10; i++ {
 			fastBuf.Write(p)
@@ -31,7 +32,7 @@ func Benchmark_fastbuf(b *testing.B) {
 	}
 }
 
-func Benchmark_bytesbuf(b *testing.B) {
+func benchmark_bytesbuf(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < 10; i++ {
 			bytesBuf.Write(p)

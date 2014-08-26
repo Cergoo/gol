@@ -2,7 +2,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// example use pkg
+// Example use pkg.
 package main
 
 import (

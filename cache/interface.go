@@ -1,3 +1,6 @@
+// (c) 2013 Cergoo
+// under terms of ISC license
+
 package cache
 
 import (
@@ -25,6 +28,7 @@ type (
 		Val interface{}
 	}
 
+	// Cache interface
 	Cache interface {
 		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
 		Get(string) interface{}

@@ -1,3 +1,4 @@
+// Benchmark
 package main
 
 import (

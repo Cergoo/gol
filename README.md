@@ -8,7 +8,8 @@ binary Encode Decode implementation pkg
 ## cache
 Cache is an in-memory key:value store/cache similar to memcached that is suitable for applications running on a single machine.    
 The package is the implementation of hashmap for organizing in-memory key-value data store. Automatic lifetime management of records can be enabled or disabled. LRU caches are affected by the problem leaching records in intensive add, i.e. the records  permanently pushed do not linger in the cach. This package does not implement the LRU. In this implementation the time life records indicated for all the generated cache, specified time value is the size of time interval during which a new record is guaranteed to live in the cache. Then have a record of lives at least one time interval maximum of two time interval + can be implemented for the "if it's read then it lives" if a record is requested that her life is prolonged for the next time interval.  
-    
+http://godoc.org/github.com/Cergoo/gol/cache
+
 ### Feature:
 - thread-safe
 - faste and high availability
@@ -65,22 +66,15 @@ Hash functions library.
 http://godoc.org/github.com/Cergoo/gol/hash
   
 ## http/genid
-Generate ID pkg
+Generate http compatible ID.
 http://godoc.org/github.com/Cergoo/gol/http/genid  
   
-    // NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
-    // the actual length can be less per unit.      
-    func NewHTTPGen(length uint8) HTTPGenID
- 
-    // Generate random strind http compatible.       
-    func (t HTTPGenID) NewID() string
-
 ## http/method
-http methods name  
+Http methods name.  
 http://godoc.org/github.com/Cergoo/gol/http/method
 
 ## http/cookie
-Cookie pkg  
+Cookie pkg.  
 http://godoc.org/github.com/Cergoo/gol/http/cookie
         
 ## http/session

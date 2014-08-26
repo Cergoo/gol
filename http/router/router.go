@@ -3,14 +3,12 @@
 
 /*
 Routing a path url to action or file.
-
-Description:
-	First elemet path is action name, others elemets is a request parameters
-	Features:
+Description: First elemet path is action name, others elemets is a request parameters
+Features:
 	- routing to file;
 	- suppart http method for REST routing;
 	- logging a errors action to stderr.
-	Route example:
+Route example:
 	pubic/1/en
 	------- ---- --
 	actionName/:id/:lang

@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+// Example use pkg
 func main() {
 	var (
 		t int

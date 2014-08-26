@@ -1,8 +1,7 @@
-/*
-	in-memory key-value store
-	(c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013 Cergoo
+// under terms of ISC license
+
+// In-memory key-value store, thread-safe hasmap implementation.
 package cache
 
 /*
@@ -63,7 +62,7 @@ type (
 	}
 )
 
-// Key to ID function
+// Key to ID function.
 func (t *t_hash) keyToID(key []byte) uint32 {
 	return t.hash(key) % uint32(len(t.ht))
 }
@@ -290,6 +289,7 @@ func (t *t_cache) Range(ch chan<- *TCortege) {
 /*
     non interface range function,
 	for breack range close a channel
+
 	Use buffer for unlock bucket
 */
 func (t *t_cache) rangeCache(ch chan<- *TCortege) {

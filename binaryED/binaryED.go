@@ -9,6 +9,7 @@ package binaryED
 import (
 	"encoding/binary"
 	"math"
+	"reflect"
 	"time"
 )
 
@@ -28,7 +29,11 @@ const (
 	WORD64 = 8
 )
 
-var Pack = binary.LittleEndian
+var (
+	Pack      = binary.LittleEndian
+	TimeType  = reflect.TypeOf(time.Time{})
+	BytesType = reflect.TypeOf([]byte(nil))
+)
 
 /* Encoders */
 

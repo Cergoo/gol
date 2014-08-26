@@ -6,7 +6,9 @@
 package refl
 
 import (
+	"github.com/Cergoo/gol/err"
 	"reflect"
+	"strconv"
 )
 
 // A resize to slice all types. It panics if v's Kind is not slice.
@@ -52,6 +54,149 @@ func StructToMap(v interface{}, m map[string]interface{}, unexported bool, prefi
 	}
 	return true
 }
+
+const (
+	NoInt8 = iota
+	NoInt16
+	NoInt32
+	NoInt64
+	NoInt
+	NoUint8
+	NoUint16
+	NoUint32
+	NoUint64
+	NoUint
+	NoFloat32
+	NoFloat64
+)
+
+func StrTo(from string, to *reflect.Value) error {
+	var (
+		e error
+	)
+
+	switch to.Kind() {
+
+	case reflect.String:
+		to.SetString(from)
+
+	case reflect.Int8:
+		v, e := strconv.ParseInt(from, 10, 8)
+		if e != nil {
+			e = err.New(e.Error(), NoInt8)
+			return e
+		}
+		to.SetInt(v)
+
+	case reflect.Int16:
+		v, e := strconv.ParseInt(from, 10, 16)
+		if e != nil {
+			e = err.New(e.Error(), NoInt16)
+			return e
+		}
+		to.SetInt(v)
+
+	case reflect.Int32:
+		v, e := strconv.ParseInt(from, 10, 32)
+		if e != nil {
+			e = err.New(e.Error(), NoInt32)
+			return e
+		}
+		to.SetInt(v)
+
+	case reflect.Int64:
+		v, e := strconv.ParseInt(from, 10, 64)
+		if e != nil {
+			e = err.New(e.Error(), NoInt64)
+			return e
+		}
+		to.SetInt(v)
+
+	case reflect.Int:
+		v, e := strconv.ParseInt(from, 10, 0)
+		if e != nil {
+			e = err.New(e.Error(), NoInt)
+			return e
+		}
+		to.SetInt(v)
+
+	case reflect.Uint8:
+		v, e := strconv.ParseUint(from, 10, 8)
+		if e != nil {
+			e = err.New(e.Error(), NoUint8)
+			return e
+		}
+		to.SetUint(v)
+
+	case reflect.Uint16:
+		v, e := strconv.ParseUint(from, 10, 16)
+		if e != nil {
+			e = err.New(e.Error(), NoUint16)
+			return e
+		}
+		to.SetUint(v)
+
+	case reflect.Uint32:
+		v, e := strconv.ParseUint(from, 10, 32)
+		if e != nil {
+			e = err.New(e.Error(), NoUint32)
+			return e
+		}
+		to.SetUint(v)
+
+	case reflect.Uint64:
+		v, e := strconv.ParseUint(from, 10, 64)
+		if e != nil {
+			e = err.New(e.Error(), NoUint64)
+			return e
+		}
+		to.SetUint(v)
+
+	case reflect.Uint:
+		v, e := strconv.ParseUint(from, 10, 0)
+		if e != nil {
+			e = err.New(e.Error(), NoUint)
+			return e
+		}
+		to.SetUint(v)
+
+	case reflect.Float32:
+		v, e := strconv.ParseFloat(from, 32)
+		if e != nil {
+			e = err.New(e.Error(), NoFloat32)
+			return e
+		}
+		to.SetFloat(v)
+
+	case reflect.Float64:
+		v, e := strconv.ParseFloat(from, 64)
+		if e != nil {
+			e = err.New(e.Error(), NoFloat64)
+			return e
+		}
+		to.SetFloat(v)
+
+	case reflect.Bool:
+		if from == "1" || from == "true" {
+			to.SetBool(true)
+		} else {
+			to.SetBool(false)
+		}
+
+	}
+}
+
+/*
+   Convert a map[fieldName]value type map[string]string to structure
+
+func MapStrToStruct(m map[string]string, pointToObj interface{}) {
+	objVal := reflect.ValueOf(pointToObj).Elem()
+	nfield := objVal.NumField()
+	for i:=0; i!=nfield; i++ {
+		objVal.Field(i).Set()
+	}
+}
+*/
 
 /*
 	IsStruct returns true if the given variable is a struct or a pointer to struct.

@@ -1,3 +1,4 @@
+// example use pkg
 package main
 
 import (

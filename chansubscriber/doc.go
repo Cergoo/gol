@@ -3,10 +3,9 @@
 // under terms of ISC license
 	
 /*
-Features:
-
-  - thread safe
-  - protect of a double subscribe
-  - close a input channel for ending send messages
+Features:  
+  - thread safe;
+  - protect of a double subscribe;
+  - close a input channel for ending send messages.
 */
 package chansubscriber

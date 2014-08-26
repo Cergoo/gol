@@ -74,9 +74,9 @@ Generate ID pkg
     // Generate random strind http compatible.       
     func (t HTTPGenID) NewID() string
 
-## http/methods
+## http/method
 http methods name  
-http://godoc.org/github.com/Cergoo/gol/http/methods
+http://godoc.org/github.com/Cergoo/gol/http/method
 
 ## http/cookie
 
@@ -182,11 +182,9 @@ Additional reflection functions pack
     func IsEmpty(v interface{}) bool
     
 ## test  
-Test helper functions is a simple assertion wrapper for Go's built in "testing" package   
-fork jmervine/GoT  
+Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  
 http://godoc.org/github.com/Cergoo/gol/jsonConfig
   
-
 ## tplEngin\i18n
 i18n pkg.
 

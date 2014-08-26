@@ -34,16 +34,7 @@ go-cache:        5000	    428155 ns/op   15184 B/op	     949 allocs/op
 </pre>
 
 ## chansubscriber
-Subscribe channel pack. Thread-safe. Send messages of writer to a each subscribers.  
-
-    // Constructor
-    func New(ch <-chan interface{}, sendStrict, closesubscribers bool) *TChanSubscriber
-        
-    // Add subscribe
-    func (t *TChanSubscriber) Subscribe(ch chan<- interface{})
-    
-    // Unsubscribe
-    func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{})
+[http://godoc.org/github.com/Cergoo/gol/chansubscriber]
 
 ## counter 
 Easy atomic counter type  

@@ -1,6 +1,7 @@
 // (c) 2013-2014 Cergoo
 // under terms of ISC license
 
+// Editable error implementation.
 package err
 
 // Editable error struct.

@@ -1,6 +1,7 @@
 // (c) 2013-2014 Cergoo
 // under terms of ISC license
 
+// Easy atomic counter type.
 package counter
 
 import (

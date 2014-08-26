@@ -42,11 +42,11 @@ Easy atomic counter type.
 http://godoc.org/github.com/Cergoo/gol/chansubscriber      
 
 ## err
-Editable error implementation .
+Editable error implementation.  
 http://godoc.org/github.com/Cergoo/gol/err
 
 ## fastbuf
-io.Writer implementation.
+io.Writer implementation.  
 http://godoc.org/github.com/Cergoo/gol/fastbuf
 
 ###Comparition benchmark test
@@ -57,13 +57,11 @@ bytes.Buffer: 10000000	       222 ns/op       0 B/op	       0 allocs/op
 </pre>
 
 ## filepath
-Filepath util
+Filepath util.  
+http://godoc.org/github.com/Cergoo/gol/filepath
     
-    // modified function Ext standart "path/filepath" pkg  
-    func Ext(fullname string) (name, ext string)
-
 ## hash
-Hash functions library.
+Hash functions library.  
 http://godoc.org/github.com/Cergoo/gol/hash
   
 ## http/genid

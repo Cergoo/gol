@@ -1,6 +1,7 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
+// io.Writer implementation
 package fastbuf
 
 import (

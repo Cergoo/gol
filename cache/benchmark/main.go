@@ -48,7 +48,7 @@ func main() {
 func Benchmark_cacheSet(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < count; i++ {
-			_cache.Set("item"+strconv.Itoa(i), i, cache.UpdateOrInsert)
+			_cache.Set("item"+strconv.Itoa(i), i, 1, cache.UpdateOrInsert)
 		}
 	}
 }

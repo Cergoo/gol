@@ -19,7 +19,7 @@ func init() {
 func Test_Get(t *testing.T) {
 	var v int
 	for i := 0; i < 100000; i++ {
-		cache1.Set("item"+strconv.Itoa(i), i, cache.UpdateOrInsert)
+		cache1.Set("item"+strconv.Itoa(i), i, 1, cache.UpdateOrInsert)
 	}
 
 	for i := 0; i < 100000; i++ {
@@ -68,7 +68,7 @@ func Test_SaveLoad(t *testing.T) {
 		t.Error("err")
 		return
 	}
-	cache1.Set("item10", 11, cache.UpdateOrInsert)
+	cache1.Set("item10", 11, 1, cache.UpdateOrInsert)
 	err = cache1.LoadFile("f")
 	if err != nil {
 		t.Error("err")

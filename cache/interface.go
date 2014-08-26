@@ -32,7 +32,7 @@ type (
 	Cache interface {
 		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
 		Get(string) interface{}
-		Set(key string, val interface{}, mode uint8) (rval interface{}, actionResult uint8)
+		Set(key string, val interface{}, live, mode uint8) (rval interface{}, actionResult uint8)
 		Del(string) (val interface{})
 		DelAll()
 		Range(chan<- *TCortege)

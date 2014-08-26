@@ -7,7 +7,6 @@ package cache
 /*
 TODO :
  - memory limiter implement
- - set time live for each items
 */
 
 import (
@@ -161,8 +160,15 @@ func (t *t_cache) Get(key string) (val interface{}) {
 	return
 }
 
-// Set mode: onlyUpdate, onlyInsert, updateOrInsert
-func (t *t_cache) Set(key string, val interface{}, mode uint8) (rval interface{}, actionResult uint8) {
+/*
+Set:
+  key  - record key
+  val  - record val
+  live - record time live
+         if 255 then no janitor remov, removed only when the user
+  mode - set mode: onlyUpdate, onlyInsert, updateOrInsert
+*/
+func (t *t_cache) Set(key string, val interface{}, live uint8, mode uint8) (rval interface{}, actionResult uint8) {
 	var (
 		v *t_item
 	)
@@ -181,6 +187,7 @@ func (t *t_cache) Set(key string, val interface{}, mode uint8) (rval interface{}
 				return
 			}
 			v.Val = val
+			v.r = live
 			bucket.Unlock()
 			return
 		}
@@ -189,7 +196,7 @@ func (t *t_cache) Set(key string, val interface{}, mode uint8) (rval interface{}
 	// Add
 	if mode != OnlyUpdate && t.count.Check() {
 		lenbucket := len(bucket.items)
-		bucket.items = append(bucket.items, &t_item{Key: key, Val: val, r: 1})
+		bucket.items = append(bucket.items, &t_item{Key: key, Val: val, r: live})
 		bucket.Unlock()
 		if lenbucket > growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
 			go t.grow()
@@ -373,7 +380,7 @@ func (t *t_cache) Load(r io.Reader) error {
 	)
 	dec := gob.NewDecoder(r)
 	for err = dec.Decode(&item); err == nil; err = dec.Decode(&item) {
-		t.Set(item.Key, item.Val, UpdateOrInsert)
+		t.Set(item.Key, item.Val, item.r, UpdateOrInsert)
 	}
 	return err
 }
@@ -488,7 +495,9 @@ func (t *t_cache) janitor(stop <-chan bool) {
 						bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], nil
 						count_del++
 					} else {
-						bucket.items[i].r--
+						if bucket.items[i].r < 255 {
+							bucket.items[i].r--
+						}
 						i++
 					}
 				}

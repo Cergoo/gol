@@ -69,10 +69,10 @@ func (t *t_hash) keyToID(key []byte) uint32 {
 
 /*
 Constructor new cache:
-  hash                   - hash function
-  janitor_ifreadthenlive - if item read then item live
-  janitor_duration       - time to clear items, if 0 then never
-  janitor_ch             - chanel to send removed items
+    hash                   - hash function;
+    janitor_ifreadthenlive - if item read then item live;
+    janitor_duration       - time to clear items, if 0 then never;
+    janitor_ch             - chanel to send removed items.
 */
 func New(
 	hash func([]byte) uint32,

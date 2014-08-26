@@ -1,11 +1,6 @@
 // subcribe channel pack, send messages of writer to a each subscribers
 // (c) 2014 Cergoo
 // under terms of ISC license
-//
-// features:
-// - thread safe
-// - protect of a double subscribe
-// - close a input channel for ending send messages
 
 package chansubscriber
 
@@ -27,11 +22,11 @@ type (
 
 // Constructor:
 //
-// ch               - channel writer;
+//  ch               - channel writer;
 //
-// sendStrict       - if true not drop packets;
+//  sendStrict       - if true not drop packets;
 //
-// closeSubscribers - close all reader channel after close writer.
+//  closeSubscribers - close all reader channel after close writer.
 func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscriber {
 	out := make([]chan<- interface{}, 0)
 	t := &TChanSubscriber{

@@ -11,7 +11,7 @@ import (
 // pluralRule is a function that takes a single float64 and returns an int.  Its
 // intended use is to return an int index for what plural form to use for the
 // given float
-type PluralRule func(float64) int
+type PluralRule func(float64) uint8
 
 // pluralRules contains the list of all pluralRule functions. The string map
 // index is used when loading plural rules from yaml files
@@ -97,7 +97,7 @@ func isInt(n float64) bool {
 //     - wo:  Wolof
 //     - yo:  Yoruba
 //     - zh:  Chinese
-func pluralRule1(n float64) int {
+func pluralRule1(n float64) uint8 {
 	return 0
 }
 
@@ -229,7 +229,7 @@ func pluralRule1(n float64) int {
 //     - xh:  Xhosa
 //     - xog: Soga
 //     - zu:  Zulu
-func pluralRule2A(n float64) int {
+func pluralRule2A(n float64) uint8 {
 	if math.Abs(n) == 1 {
 		return 0
 	}
@@ -270,7 +270,7 @@ func pluralRule2A(n float64) int {
 //     - tl:  Tagalog
 //     - uz:  Uzbek
 //     - wa:  Walloon
-func pluralRule2B(n float64) int {
+func pluralRule2B(n float64) uint8 {
 	switch math.Abs(n) {
 	case 0, 1:
 		return 0
@@ -296,7 +296,7 @@ func pluralRule2B(n float64) int {
 //     - ff:  Fulah
 //     - fr:  French
 //     - kab: Kabyle
-func pluralRule2C(n float64) int {
+func pluralRule2C(n float64) uint8 {
 	abs := math.Abs(n)
 	if abs >= 0 && abs < 2 {
 		return 0
@@ -321,7 +321,7 @@ func pluralRule2C(n float64) int {
 //
 // Languages:
 //     - mk: Macedonian
-func pluralRule2D(n float64) int {
+func pluralRule2D(n float64) uint8 {
 	i := int64(math.Abs(n))
 	mod10 := i % 10
 	if isInt(n) && mod10 == 1 && i != 11 {
@@ -347,7 +347,7 @@ func pluralRule2D(n float64) int {
 //
 // Languages:
 //     - tzm: Central Atlas Tamazight
-func pluralRule2E(n float64) int {
+func pluralRule2E(n float64) uint8 {
 	i := int64(math.Abs(n))
 	if isInt(n) && (i == 0 || i == 1 || (i >= 11 && i <= 99)) {
 		return 0
@@ -371,7 +371,7 @@ func pluralRule2E(n float64) int {
 //
 // Languages:
 //     - gv: Manx
-func pluralRule2F(n float64) int {
+func pluralRule2F(n float64) uint8 {
 	i := int64(math.Abs(n))
 	mod10 := i % 10
 	mod20 := i % 20
@@ -402,7 +402,7 @@ func pluralRule2F(n float64) int {
 //
 // Languages:
 //     - lv: Latvian
-func pluralRule3A(n float64) int {
+func pluralRule3A(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		switch {
@@ -442,7 +442,7 @@ func pluralRule3A(n float64) int {
 //     - smj: Lule Sami
 //     - smn: Inari Sami
 //     - sms: Skolt Sami
-func pluralRule3B(n float64) int {
+func pluralRule3B(n float64) uint8 {
 	switch math.Abs(n) {
 	case 1:
 		return 0
@@ -473,7 +473,7 @@ func pluralRule3B(n float64) int {
 // Languages:
 //     - ro: Romanian
 //     - mo: Moldavian
-func pluralRule3C(n float64) int {
+func pluralRule3C(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		mod100 := i % 100
@@ -507,7 +507,7 @@ func pluralRule3C(n float64) int {
 //
 // Languages:
 //     - lt: Lithuanian
-func pluralRule3D(n float64) int {
+func pluralRule3D(n float64) uint8 {
 
 	if isInt(n) {
 		i := int64(math.Abs(n))
@@ -546,7 +546,7 @@ func pluralRule3D(n float64) int {
 // Languages:
 //     - cs: Czech
 //     - sk: Slovak
-func pluralRule3E(n float64) int {
+func pluralRule3E(n float64) uint8 {
 	switch math.Abs(n) {
 	case 1:
 		return 0
@@ -575,7 +575,7 @@ func pluralRule3E(n float64) int {
 //
 // Languages:
 //     - lag: Langi
-func pluralRule3F(n float64) int {
+func pluralRule3F(n float64) uint8 {
 	abs := math.Abs(n)
 	switch {
 	case n == 0:
@@ -606,7 +606,7 @@ func pluralRule3F(n float64) int {
 //
 // Languages:
 //     - shi: Tachelhit
-func pluralRule3G(n float64) int {
+func pluralRule3G(n float64) uint8 {
 
 	abs := math.Abs(n)
 	i := int64(abs)
@@ -642,7 +642,7 @@ func pluralRule3G(n float64) int {
 // Languages:
 //     - ksh: Colognian
 //     - mnk: Mandinka
-func pluralRule3H(n float64) int {
+func pluralRule3H(n float64) uint8 {
 	if isInt(n) {
 		switch int64(math.Abs(n)) {
 		case 0:
@@ -674,7 +674,7 @@ func pluralRule3H(n float64) int {
 //
 // Languages:
 //     - csb: Kashubian
-func pluralRule3I(n float64) int {
+func pluralRule3I(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		mod10 := i % 10
@@ -711,7 +711,7 @@ func pluralRule3I(n float64) int {
 //
 // Languages:
 //     - he: Hebrew
-func pluralRule4A(n float64) int {
+func pluralRule4A(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		switch {
@@ -754,7 +754,7 @@ func pluralRule4A(n float64) int {
 //     - sh: Serbo-Croatian
 //     - sr: Serbian
 //     - uk: Ukrainian
-func pluralRule4B(n float64) int {
+func pluralRule4B(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		mod10 := i % 10
@@ -785,7 +785,7 @@ func pluralRule4B(n float64) int {
 //  1 яблоко
 //  10 яблок
 //  10.1 яблока, 2 яблока
-func pluralRuleRu(n float64) int {
+func pluralRuleRu(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		mod10 := i % 10
@@ -822,7 +822,7 @@ func pluralRuleRu(n float64) int {
 //
 // Languages:
 //     - pl: Polish
-func pluralRule4C(n float64) int {
+func pluralRule4C(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		mod10 := i % 10
@@ -865,7 +865,7 @@ func pluralRule4C(n float64) int {
 //     - hsb: Upper Sorbian
 //     - sl:  Slovenian
 //     - wen: Sorbian Language
-func pluralRule4D(n float64) int {
+func pluralRule4D(n float64) uint8 {
 	if isInt(n) {
 		switch int64(math.Abs(n)) % 100 {
 		case 1:
@@ -901,7 +901,7 @@ func pluralRule4D(n float64) int {
 //
 // Languages:
 //     - mt: Maltese
-func pluralRule4E(n float64) int {
+func pluralRule4E(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		mod100 := i % 100
@@ -940,7 +940,7 @@ func pluralRule4E(n float64) int {
 //
 // Languages:
 //     - gd: Scottish Gaelic
-func pluralRule4F(n float64) int {
+func pluralRule4F(n float64) uint8 {
 	if isInt(n) {
 		i := int64(math.Abs(n))
 		switch {
@@ -980,7 +980,7 @@ func pluralRule4F(n float64) int {
 //
 // Languages:
 //     - ga: Irish
-func pluralRule5A(n float64) int {
+func pluralRule5A(n float64) uint8 {
 
 	if isInt(n) {
 		i := int64(math.Abs(n))
@@ -1023,7 +1023,7 @@ func pluralRule5A(n float64) int {
 //
 // Languages:
 //     - br: Breton
-func pluralRule5B(n float64) int {
+func pluralRule5B(n float64) uint8 {
 
 	if isInt(n) {
 		i := int64(math.Abs(n))
@@ -1073,7 +1073,7 @@ func pluralRule5B(n float64) int {
 //
 // Languages:
 //     - ar: Arabic
-func pluralRule6A(n float64) int {
+func pluralRule6A(n float64) uint8 {
 
 	if isInt(n) {
 		i := int64(math.Abs(n))
@@ -1122,7 +1122,7 @@ func pluralRule6A(n float64) int {
 //
 // Languages:
 //     - cy: Welsh
-func pluralRule6B(n float64) int {
+func pluralRule6B(n float64) uint8 {
 
 	switch math.Abs(n) {
 	case 0:

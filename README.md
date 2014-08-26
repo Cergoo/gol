@@ -106,53 +106,8 @@ String key to uint id and uint id to string key association pack. No save thread
 http://godoc.org/github.com/Cergoo/gol/keyid
 
 ## refl
-Additional reflection functions pack
-
-    /* Universal caller of functions */  
-    
-    type (  
-      FuncMap   map[string]reflect.Value  
-      FuncSlice []reflect.Value
-    )
-    
-    // Add to function map
-    func (t FuncMap) Add(name string, f interface{})
-    
-    // Add to function slice, return element id
-    func (t *FuncSlice) Add(f interface{}) int 
-    
-    // Call from map and return interface{}
-    func (t FuncMap) Calli(name string, params ...interface{}) []interface{}
-    
-    // Call from slice and return interface{}
-    func (t FuncSlice) Calli(id int, params ...interface{}) []interface{} 
-
-    // Call function from a function map
-    func (t FuncMap) Call(name string, params ...interface{}) []reflect.Value
-    
-    // Call function from a function slice
-    func (t FuncSlice) Call(id int, params ...interface{}) []reflect.Value
-
-    /* Other reflection functions */
-          
-    // A resize to slice all types. It panics if v's Kind is not slice.    
-    func SliceResize(pointToSlice interface{}, newCap int)
-
-    // Return true if keys map1 == keys map2. It panics if v's Kind is not map.
-    func MapKeysEq(map1, map2 interface{}) bool
-    
-    // If "v" is struct copy fields to "m" map[string]interface{} and return true else return false.
-    // If "unexported" true copy all fields. 
-    func StructToMap(v interface{}, m map[string]interface{}, unexported bool, prefix string) bool
-    
-    // IsStruct returns true if the given variable is a struct or a pointer to struct.
-    func IsStruct(v interface{}) bool
-    
-    // Return true if v is chan, func, interface, map, pointer, or slice and v is nil
-    func IsNil(v interface{}) bool
-    
-    // Return true if v is nil or empty
-    func IsEmpty(v interface{}) bool
+Additional reflection functions pack and Universal caller of functions.  
+http://godoc.org/github.com/Cergoo/gol/refl
     
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  

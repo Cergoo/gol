@@ -1,8 +1,7 @@
-/*
-	additional reflection functions pack
-	(c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013 Cergoo
+// under terms of ISC license
+
+// additional reflection functions pack
 package refl
 
 import (

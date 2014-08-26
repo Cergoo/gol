@@ -34,7 +34,8 @@ go-cache:        5000	    428155 ns/op   15184 B/op	     949 allocs/op
 </pre>
 
 ## chansubscriber
-[http://godoc.org/github.com/Cergoo/gol/chansubscriber]
+Subcribe channel pack, send messages of writer to a each subscribers.  
+http://godoc.org/github.com/Cergoo/gol/chansubscriber
 
 ## counter 
 Easy atomic counter type  

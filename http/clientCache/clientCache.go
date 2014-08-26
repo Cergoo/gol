@@ -1,9 +1,7 @@
-/*
-	http/1.1 client side cache control pkg
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
 
+// http/1.1 client side cache control pkg
 package clientCache
 
 import (

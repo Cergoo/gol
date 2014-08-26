@@ -1,9 +1,7 @@
-/*
-	binary Encode Decode implementation
-  	(c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013 Cergoo
+// under terms of ISC license
 
+// Binary Encode Decode implementation
 package binaryED
 
 import (

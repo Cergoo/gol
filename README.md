@@ -3,7 +3,8 @@
 under terms of ISC license
 
 ## binaryED
-binary Encode Decode implementation pkg
+Binary Encode Decode implementation pkg  
+http://godoc.org/github.com/Cergoo/gol/binaryED
 
 ## cache
 Cache is an in-memory key:value store/cache similar to memcached that is suitable for applications running on a single machine.    
@@ -73,6 +74,10 @@ http://godoc.org/github.com/Cergoo/gol/http/genid
 Http methods name.  
 http://godoc.org/github.com/Cergoo/gol/http/method
 
+## http/clientCache
+http/1.1 client side cache control pkg.  
+http://godoc.org/github.com/Cergoo/gol/http/clientCache
+
 ## http/cookie
 Cookie pkg.  
 http://godoc.org/github.com/Cergoo/gol/http/cookie
@@ -122,7 +127,7 @@ Feature:
    
 Example:
 <pre>Field {{0}} must be filled {{1}} {{plural appel 1}}</pre>
-See tplEngin\i18n\exaple for more details.
+See tplEngin/i18n/exaple for more details.
 
 ## tplEngin/i18n/plural
 Plural form rules, fork plural github.com/vube/i18n  

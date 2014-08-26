@@ -1,13 +1,11 @@
-/*
-	subcribe channel pack, send messages of writer to a each subscribers
-	(c) 2014 Cergoo
-	under terms of ISC license
-	----
-	features:
-	- thread safe
-	- protect of a double subscribe
-	- close a input channel for ending send messages
-*/
+// subcribe channel pack, send messages of writer to a each subscribers
+// (c) 2014 Cergoo
+// under terms of ISC license
+//
+// features:
+// - thread safe
+// - protect of a double subscribe
+// - close a input channel for ending send messages
 
 package chansubscriber
 
@@ -23,11 +21,14 @@ type (
 		sendStrict       bool
 		in               <-chan interface{}
 		out              *[]chan<- interface{}
-		sync.Mutex
+		mu               sync.Mutex
 	}
 )
 
 // Constructor
+// ch               - channel writer
+// sendStrict       - if true not drop packets
+// closeSubscribers - close all reader channel after close writer
 func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscriber {
 	out := make([]chan<- interface{}, 0)
 	t := &TChanSubscriber{
@@ -40,10 +41,10 @@ func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscri
 	return t
 }
 
-// Subscribe
+// Subscribe channel
 func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
-	t.Lock()
-	defer t.Unlock()
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	if ch == nil {
 		return
 	}
@@ -59,10 +60,10 @@ func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
 	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.out)), unsafe.Pointer(&newoutslice))
 }
 
-// Unsubscribe
+// Unsubscribe channel
 func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
-	t.Lock()
-	defer t.Unlock()
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	outslice := *(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out))))
 	for id, v := range outslice {
 		if v == ch {
@@ -83,8 +84,8 @@ func (t *TChanSubscriber) Len() int {
 // helper function, Close all subscribers
 func (t *TChanSubscriber) close() {
 	if t.closeSubscribers {
-		t.Lock()
-		defer t.Unlock()
+		t.mu.Lock()
+		defer t.mu.Unlock()
 		outslice := *t.out
 		for i := range outslice {
 			close(outslice[i])

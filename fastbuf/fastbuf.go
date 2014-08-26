@@ -9,10 +9,9 @@ import (
 )
 
 type (
-	/*
-		writeoff - index buffer is filled
-		readeoff - index subtracts buffer
-	*/
+	// writeoff - index buffer is filled
+	// readeoff - index subtracts buffer
+
 	Buf struct {
 		buf      []byte
 		writeoff int

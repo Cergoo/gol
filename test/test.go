@@ -1,10 +1,8 @@
-/*
-	test pkg is a simple assertion wrapper for Go's built in "testing" package
-	fork jmervine/GoT
-	(c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013 Cergoo
+// under terms of ISC license
 
+// Test pkg is a simple assertion wrapper for Go's built in "testing" package,
+// fork jmervine/GoT
 package test
 
 import (
@@ -19,12 +17,12 @@ type TT struct {
 	t *testing.T
 }
 
-// constructor
+// Constructor
 func New(t *testing.T) *TT {
 	return &TT{t: t}
 }
 
-// helper error generator
+// Helper error generator
 func (t *TT) error(args ...interface{}) {
 	m := args[0].(string)
 	depth := 2

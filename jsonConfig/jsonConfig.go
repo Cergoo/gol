@@ -1,16 +1,7 @@
-/*
-  support comments in json
-  (c)	2013-2014 Cergoo
-  under terms of ISC license
-*/
+// (c)	2013-2014 Cergoo
+// under terms of ISC license
 
-/*
-" == 34
-/ == 47
-\ == 92
-* == 42
-*/
-
+// Support comments in json
 package jsonConfig
 
 import (
@@ -18,6 +9,13 @@ import (
 	"github.com/Cergoo/gol/err"
 	"io/ioutil"
 )
+
+/*
+" == 34
+/ == 47
+\ == 92
+* == 42
+*/
 
 // Load & remove comments from source .json file
 func Load(fromPath string, toVar interface{}) {

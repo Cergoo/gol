@@ -1,9 +1,7 @@
-/*
-	http methods name 
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
 
+// http methods name
 package method
 
 const (

@@ -74,6 +74,10 @@ Generate ID pkg
     // Generate random strind http compatible.       
     func (t HTTPGenID) NewID() string
 
+## http/methods
+http methods name  
+http://godoc.org/github.com/Cergoo/gol/http/methods
+
 ## http/cookie
 
     // Create new *http.Cookie  
@@ -104,14 +108,9 @@ Cookie based session engin implementation
 Routing a path url to action. First elemet path is action name, others elemets is a request parameters
 
 ## jsonConfig
-Support comments in json config files.    
-
-    // Load & remove comments from source .json file  
-    func Load(fromPath string, toVar interface{})
-
-    // Remove comments from source .json  
-    func RemoveComment(source []byte) (result []byte)     
-
+Support comments in json config files.      
+http://godoc.org/github.com/Cergoo/gol/jsonConfig
+         
 ## keyid
 String key to uint id and uint id to string key association pack. No save thread.
 
@@ -184,16 +183,9 @@ Additional reflection functions pack
     
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package   
-fork jmervine/GoT
-
-    // constructor
-    func New(t *testing.T) *TT
-
-    // Equivalence check   
-    func (t *TT) Eq(a, b interface{})
-    
-    // No Equivalent check
-    func (t *TT) NoEq(a, b interface{})  
+fork jmervine/GoT  
+http://godoc.org/github.com/Cergoo/gol/jsonConfig
+  
 
 ## tplEngin\i18n
 i18n pkg.

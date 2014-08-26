@@ -121,8 +121,9 @@ http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n
 Plural form rules, fork plural github.com/vube/i18n  
 http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/plural
 
-## tplEngin\parser
+## tplEngin/parser
 Parser util from i18n & tpl pkg
+http://godoc.org/github.com/Cergoo/gol/tplEngin/parser
 
 ## tplEngin\tplengin
 Templare engin.

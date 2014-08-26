@@ -1,9 +1,7 @@
-/*
-	parser util from i18n & tpl pkg
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
 
+// Parser util from i18n & tpl pkg
 package parser
 
 import (
@@ -15,22 +13,23 @@ import (
 type (
 
 	/*
-		структура описывающая инструмент для парсинга
-		Delimiter - left and right tag gelimiter
-		ParseText - function of parse text
-		ParseTag  - function of parse tag
+		Structure describes a tool for parsing:
+		    Delimiter - left and right tag gelimiter;
+		    ParseText - function of parse text;
+		    ParseTag  - function of parse tag.
 	*/
 	ToParse struct {
 		Delimiter           [2][]byte
 		ParseText, ParseTag func([]byte) interface{}
 	}
 
-	Ttpl []interface{} // items of template
+	// Items of template
+	Ttpl []interface{}
 )
 
 /*
-	search of tag in a slice
-	return of leftpart, tag value, end tag number, success
+	Search of a tag in slice.
+	Return: leftpart, tag value, end tag number, success.
 */
 func FindTag(source []byte, delimiter [2][]byte) (lpart, tag []byte, end int, success bool) {
 	var begin int
@@ -51,9 +50,7 @@ func FindTag(source []byte, delimiter [2][]byte) (lpart, tag []byte, end int, su
 	return
 }
 
-/*
-	split a []byte into words by delimiters
-*/
+// Split a []byte into words by delimiters
 func SplitWord(source []byte, delimiters byte) []string {
 	var (
 		begin int
@@ -80,10 +77,7 @@ func SplitWord(source []byte, delimiters byte) []string {
 	return result
 }
 
-/*
-	if header(a) == b trim head and return tail
-	else return nil
-*/
+// if (header(a) == b) { trim head and return tail } else { return nil }
 func StrPrefix(a []byte, b string) []byte {
 	if len(a) >= len(b) && string(a[:len(b)]) == b {
 		return a[len(b):]
@@ -91,9 +85,7 @@ func StrPrefix(a []byte, b string) []byte {
 	return nil
 }
 
-/*
-	Universal parse metode, return template
-*/
+// Universal parse metode, return template
 func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	var (
 		success     bool
@@ -123,10 +115,10 @@ func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	return
 }
 
-//  pars string to context id
+// Pars string to context id
 func ParseInt(source string) uint {
-	i, e := strconv.Atoi(source)
-	if e != nil || i < 0 {
+	i, e := strconv.ParseUint(source, 10, 64)
+	if e != nil {
 		err.Panic(err.New("error parse to uint: '"+source+"'", 0))
 	}
 	return uint(i)

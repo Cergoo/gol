@@ -65,7 +65,8 @@ Hash functions library.
 http://godoc.org/github.com/Cergoo/gol/hash
   
 ## http/genid
-Generate ID pkg  
+Generate ID pkg
+http://godoc.org/github.com/Cergoo/gol/http/genid  
   
     // NewHTTPGen ID creator, resize to base64 encoding, len(id) = 4*length/3.   
     // the actual length can be less per unit.      
@@ -79,34 +80,29 @@ http methods name
 http://godoc.org/github.com/Cergoo/gol/http/method
 
 ## http/cookie
-
-    // Create new *http.Cookie  
-    func NewCookie(name, value string, options *Options) *http.Cookie
-
-    // Set cookie  
-    func SetCookie(w http.ResponseWriter, name, value string, options *Options)
-
-    // Del cookie   
-    func DelCookie(w http.ResponseWriter, name string)
-    
+Cookie pkg  
+http://godoc.org/github.com/Cergoo/gol/http/cookie
+        
 ## http/session
-Cookie based session engin implementation  
-
-    // Constructor session engin  
-    func NewSessionEngin(lenID uint8, ipProtect bool, stor TStor) *TSession 
-
-    // Create new session  
-    func (t *TSession) New(w http.ResponseWriter, r *http.Request, data interface{}) (id string)       
-
-    // Delete session  
-    func (t *TSession) Del(w http.ResponseWriter, r *http.Request)
-
-    // Get session  
-    func (t *TSession) Get(w http.ResponseWriter, r *http.Request) (id []byte, val interface{})
+Cookie based session engin implementation.  
+http://godoc.org/github.com/Cergoo/gol/http/session
 
 ## http/router
-Routing a path url to action. First elemet path is action name, others elemets is a request parameters
+Routing a path url to action or file. First elemet path is action name, others elemets is a request parameters.  
+http://godoc.org/github.com/Cergoo/gol/http/router
 
+###Features:
+- routing to file;
+- suppart http method for REST routing;
+- logging a errors action to stderr.
+
+###Route example:
+    pubic/1/en
+    ------- ---- --
+    actionName/:id/:lang
+    and
+    getfile/path/to/file
+          
 ## jsonConfig
 Support comments in json config files.      
 http://godoc.org/github.com/Cergoo/gol/jsonConfig

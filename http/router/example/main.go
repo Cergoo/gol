@@ -5,6 +5,7 @@
 	http://localhost:9999/files
 */
 
+// Example use pkg.
 package main
 
 import (

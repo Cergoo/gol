@@ -1,8 +1,7 @@
-/*
-	Cookie based session engin implementation
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
+
+// Cookie based session engin implementation.
 package session
 
 import (
@@ -35,10 +34,10 @@ type (
 )
 
 const (
-	sid = "sid"
+	SID = "sid"
 )
 
-// constructor
+// Constructor.
 func NewSessionEngin(lenID uint8, ipProtect bool, stor TStor) *TSession {
 	return &TSession{
 		ipProtect: ipProtect,
@@ -47,7 +46,7 @@ func NewSessionEngin(lenID uint8, ipProtect bool, stor TStor) *TSession {
 	}
 }
 
-// Create new session
+// Create new session.
 func (t *TSession) New(w http.ResponseWriter, r *http.Request, data interface{}) (id string) {
 	id = t.gen.NewID()
 	var sessionData *tdata
@@ -58,28 +57,28 @@ func (t *TSession) New(w http.ResponseWriter, r *http.Request, data interface{})
 		}
 	}
 	t.Stor.Set(id, sessionData)
-	cookie.SetCookie(w, sid, id, &cookie.Options{Path: "/", MaxAge: math.MaxInt32, HttpOnly: true})
+	cookie.SetCookie(w, SID, id, &cookie.Options{Path: "/", MaxAge: math.MaxInt32, HttpOnly: true})
 	return
 }
 
-// Delete session
+// Delete session.
 func (t *TSession) Del(w http.ResponseWriter, r *http.Request) {
-	vcoockie, e := r.Cookie(sid)
+	vcoockie, e := r.Cookie(SID)
 	err.Panic(e)
 	t.Stor.Del(vcoockie.Value)
-	cookie.DelCookie(w, sid)
+	cookie.DelCookie(w, SID)
 }
 
-// Get session return sid and value
+// Get session, return sid and value.
 func (t *TSession) Get(w http.ResponseWriter, r *http.Request) (id []byte, val interface{}) {
-	vcoockie, e := r.Cookie(sid)
+	vcoockie, e := r.Cookie(SID)
 	if e != nil {
 		return
 	}
 	sessionData, b := t.Stor.Get(vcoockie.Value).(*tdata)
 	// if session deleted or not chek ipProtect then del cookie
 	if !b || sessionData == nil || (t.ipProtect && sessionData.ip != strings.SplitN(r.RemoteAddr, ":", 2)[0]) {
-		cookie.DelCookie(w, sid)
+		cookie.DelCookie(w, SID)
 		return
 	}
 	return []byte(vcoockie.Value), sessionData.data

@@ -1,9 +1,10 @@
+// (c) 2014 Cergoo
+// under terms of ISC license
+
 /*
-	Routing a path url to action or file.
-	(c) 2014 Cergoo
-	under terms of ISC license
-	==========================
-	Description:
+Routing a path url to action or file.
+
+Description:
 	First elemet path is action name, others elemets is a request parameters
 	Features:
 	- routing to file;
@@ -41,6 +42,7 @@ type (
 	}
 )
 
+// Construcor
 func New() *Trouter {
 	return &Trouter{
 		routes:   make(map[string]*troute),
@@ -48,10 +50,12 @@ func New() *Trouter {
 	}
 }
 
+// Set serve files
 func (t *Trouter) ServeFiles(label, root string) {
 	t.routes[method.Get+label] = &troute{action: http.StripPrefix("/"+label, http.FileServer(http.Dir(root))).ServeHTTP}
 }
 
+// Set hadler
 func (t *Trouter) Handler(method, patch string, action func(w http.ResponseWriter, r *http.Request)) {
 	parts := strings.Split(patch, "/")
 	r := &troute{action: action}

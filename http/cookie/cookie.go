@@ -1,9 +1,7 @@
-/*
-	cookie pkg
-	(c) 2013 Cergoo
-	under terms of ISC license
-*/
+// (c) 2013 Cergoo
+// under terms of ISC license
 
+// Cookie pkg
 package cookie
 
 import (
@@ -12,6 +10,7 @@ import (
 )
 
 type (
+	// Cookie options struct
 	Options struct {
 		Path     string
 		Domain   string
@@ -21,7 +20,7 @@ type (
 	}
 )
 
-// Create new *http.Cookie  
+// Create new *http.Cookie
 func NewCookie(name, value string, options *Options) *http.Cookie {
 	cookie := &http.Cookie{
 		Name:     name,
@@ -45,7 +44,7 @@ func SetCookie(w http.ResponseWriter, name, value string, options *Options) {
 	http.SetCookie(w, NewCookie(name, value, options))
 }
 
-// Del cookie 
+// Del cookie
 func DelCookie(w http.ResponseWriter, name string) {
 	http.SetCookie(w, NewCookie(name, "", &Options{Path: "/", MaxAge: -1, HttpOnly: true}))
 }

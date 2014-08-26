@@ -8,6 +8,5 @@ Features:
   - thread safe
   - protect of a double subscribe
   - close a input channel for ending send messages
-
-package chansubscriber
 */
+package chansubscriber

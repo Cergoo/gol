@@ -162,11 +162,11 @@ func (t *t_cache) Get(key string) (val interface{}) {
 
 /*
 Set:
-  key  - record key
-  val  - record val
-  live - record time live
-         if 255 then no janitor remov, removed only when the user
-  mode - set mode: onlyUpdate, onlyInsert, updateOrInsert
+    key  - record key
+    val  - record val
+    live - record time live
+           if 255 then no janitor remov, removed only when the user
+    mode - set mode: onlyUpdate, onlyInsert, updateOrInsert
 */
 func (t *t_cache) Set(key string, val interface{}, live uint8, mode uint8) (rval interface{}, actionResult uint8) {
 	var (

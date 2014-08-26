@@ -21,11 +21,8 @@ type (
 )
 
 // Constructor:
-//
 //  ch               - channel writer;
-//
 //  sendStrict       - if true not drop packets;
-//
 //  closeSubscribers - close all reader channel after close writer.
 func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscriber {
 	out := make([]chan<- interface{}, 0)

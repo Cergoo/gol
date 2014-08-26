@@ -1,9 +1,7 @@
-/*
-	i18n pkg
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
 
+// i18n pkg
 package i18n
 
 import (
@@ -46,12 +44,12 @@ type (
 )
 
 // Create new replacer from language resources
-func (t Ti18n) NewReplacer(langName string) *TReplacer {
+func (t Ti18n) NewReplacer(langName string) (*TReplacer, error) {
 	lang, e := t[langName]
 	if !e {
-		err.Panic(err.New("Not found lang resurse from langname: '"+langName+"'", 0))
+		return nil, err.New("Not found lang resurse from langname: '"+langName+"'", 0)
 	}
-	return &TReplacer{langName: langName, lang: lang}
+	return &TReplacer{langName: langName, lang: lang}, nil
 }
 
 // Get lang

@@ -1,11 +1,7 @@
-/*
-	fork plural github.com/vube/i18n
+// (c) 2014 Cergoo
+// under terms of ISC license
 
-	plural form rules
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
-
+// Plural form rules, fork plural github.com/vube/i18n
 package plural
 
 import (

@@ -7,6 +7,7 @@ package cache
 /*
 TODO :
  - memory limiter implement
+ - set time live for each items
 */
 
 import (

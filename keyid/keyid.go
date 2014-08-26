@@ -1,8 +1,7 @@
-/*
-	key to id and id to key association pack
-	(c) 2014 Cergoo
-	under terms of ISC license
-*/
+// (c) 2014 Cergoo
+// under terms of ISC license
+
+// key to id and id to key association pack
 package keyid
 
 type (

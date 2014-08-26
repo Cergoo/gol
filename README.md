@@ -103,24 +103,7 @@ http://godoc.org/github.com/Cergoo/gol/jsonConfig
          
 ## keyid
 String key to uint id and uint id to string key association pack. No save thread.
-
-    // Constructor
-    func New() *Tkeyid
-    
-    // Set cortege (key, id)
-    func (t *Tkeyid) Set(key string, id uint)
-    
-    // Delete from key and return id
-    func (t *Tkeyid) DelFromKey(key string) (id uint, ok bool)
-   
-    // Delete from id and return key
-    func (t *Tkeyid) DelFromId(id uint) (key string, ok bool)
-   
-    // Get id from key
-    func (t *Tkeyid) GetId(key string) (id uint, ok bool)
-   
-    // Get key from id
-    func (t *Tkeyid) GetKey(id uint) (key string, ok bool)
+http://godoc.org/github.com/Cergoo/gol/keyid
 
 ## refl
 Additional reflection functions pack
@@ -175,34 +158,13 @@ Additional reflection functions pack
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  
 http://godoc.org/github.com/Cergoo/gol/jsonConfig
   
-## tplEngin\i18n
-i18n pkg.
+## tplEngin/i18n
+i18n pkg.  
+http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n
 
-### Feature:
-Load from .json format store language resource.  
-Support tag: include context and plural. Example: `Field {{0}} must be filled {{1}} {{plural appel 1}}`.     
-See tplEngin\i18n\exaple for more details.
-
-    // Create language obj
-    func New() Ti18n
-    
-    // Loade language resources  
-    func Load(patch string, pluralAccess bool)
-
-    // Create new replacer from language resources  
-    func (t Ti18n) NewReplacer(langName string) *TReplacer
-
-    // Get lang  
-    func (t *TReplacer) Lang() string
-
-    // Print. Get phrase from a map store.  
-    func (t *TReplacer) P(key string, context ...interface{}) []byte
-    
-    // Get plural. Use if Load (pluralAccess==true)  
-    func (t *TReplacer) Plural(key string, count float64) string
-    
-## tplEngin\i18n\plural
-Plural form rules
+## tplEngin/i18n/plural
+Plural form rules, fork plural github.com/vube/i18n  
+http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/plural
 
 ## tplEngin\parser
 Parser util from i18n & tpl pkg

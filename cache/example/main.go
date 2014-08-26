@@ -1,3 +1,4 @@
+// Example use pkg
 package main
 
 import (
@@ -8,7 +9,6 @@ import (
 	"time"
 )
 
-// Example use pkg
 func main() {
 	var (
 		t int

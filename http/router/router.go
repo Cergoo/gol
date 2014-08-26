@@ -3,7 +3,7 @@
 
 /*
 Routing a path url to action or file.
-Description: First elemet path is action name, others elemets is a request parameters
+Description: first elemet path is action name, others elemets is a request parameters.
 Features:
 	- routing to file;
 	- suppart http method for REST routing;

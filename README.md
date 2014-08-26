@@ -114,8 +114,14 @@ Test helper functions is a simple assertion wrapper for Go's built in "testing" 
 http://godoc.org/github.com/Cergoo/gol/jsonConfig
   
 ## tplEngin/i18n
-i18n pkg.  
-http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n
+i18n pkg.    
+http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n  
+Feature:
+    - Load from .json format language resource store.
+    - Support tag: include context and plural.     
+Example: 
+    Field {{0}} must be filled {{1}} {{plural appel 1}}    
+See tplEngin\i18n\exaple for more details.
 
 ## tplEngin/i18n/plural
 Plural form rules, fork plural github.com/vube/i18n  

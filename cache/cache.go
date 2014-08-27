@@ -47,13 +47,13 @@ type (
 	}
 
 	tCache struct {
-		t                      *tHash           // hash table
-		janitor_duration       time.Duration    // janitor_duration janitor
-		janitor_ifreadthenlive bool             // janitor_ifreadthenlive enable
-		count                  counter.TCounter // limit items count in cache, 0 - unlimit
-		growlock               uint32
-		janitor_ch             chan<- *TCortege
-		chan_stop              chan bool
+		t                     *tHash           // hash table
+		janitorDuration       time.Duration    // janitorDuration janitor
+		janitorIfReadThenLive bool             // janitorIfReadThenLive enable
+		count                 counter.TCounter // limit items count in cache, 0 - unlimit
+		growlock              uint32
+		janitorCh             chan<- *TCortege
+		stopCh                chan bool
 	}
 
 	// for finalizer
@@ -70,15 +70,15 @@ func (t *tHash) keyToID(key []byte) uint32 {
 /*
 New constructor of a new cache:
     hash                   - hash function;
-    janitor_ifreadthenlive - if item read then item live;
-    janitor_duration       - time to clear items, if 0 then never;
-    janitor_ch             - chanel to send removed items.
+    janitorIfReadThenLive - if item read then item live;
+    janitorDuration       - time to clear items, if 0 then never;
+    janitorCh             - chanel to send removed items.
 */
 func New(
 	hash func([]byte) uint32,
-	janitor_ifreadthenlive bool,
-	janitor_duration time.Duration,
-	janitor_ch chan<- *TCortege) Cache {
+	janitorIfReadThenLive bool,
+	janitorDuration time.Duration,
+	janitorCh chan<- *TCortege) Cache {
 
 	ht := new(tHash)
 	ht.ht = make([]*tBucket, 1024)
@@ -90,16 +90,16 @@ func New(
 	}
 
 	t := &tCache{
-		janitor_duration:       janitor_duration,
-		janitor_ifreadthenlive: janitor_ifreadthenlive,
-		janitor_ch:             janitor_ch,
-		t:                      ht,
+		janitorDuration:       janitorDuration,
+		janitorIfReadThenLive: janitorIfReadThenLive,
+		janitorCh:             janitorCh,
+		t:                     ht,
 	}
 
-	if janitor_duration > 0 {
+	if janitorDuration > 0 {
 		finalized := &tfinalize{t}
-		t.chan_stop = make(chan bool)
-		go t.janitor(t.chan_stop)
+		t.stopCh = make(chan bool)
+		go t.janitor(t.stopCh)
 		runtime.SetFinalizer(finalized, stop)
 		return finalized
 	}
@@ -108,7 +108,7 @@ func New(
 }
 
 func stop(t *tfinalize) {
-	close(t.chan_stop)
+	close(t.stopCh)
 }
 
 // Len get counter cache
@@ -149,7 +149,7 @@ func (t *tCache) Get(key string) (val interface{}) {
 	bucket.RLock()
 	for _, v := range bucket.items {
 		if v.Key == key {
-			if t.janitor_ifreadthenlive {
+			if t.janitorIfReadThenLive {
 				v.r = 1
 			}
 			val = v.Val
@@ -474,7 +474,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 		buf          []*TCortege
 		v            *TCortege
 	)
-	tick := time.Tick(t.janitor_duration)
+	tick := time.Tick(t.janitorDuration)
 	for {
 		select {
 		case <-stop:
@@ -487,7 +487,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 				lenbucket = len(bucket.items)
 				for i = 0; i < lenbucket; {
 					if bucket.items[i].r == 0 {
-						if t.janitor_ch != nil {
+						if t.janitorCh != nil {
 							buf = append(buf, &TCortege{Key: bucket.items[i].Key, Val: bucket.items[i].Val})
 						}
 						lenbucket--
@@ -503,7 +503,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 				bucket.items = bucket.items[:lenbucket]
 				bucket.Unlock()
 				for _, v = range buf {
-					t.janitor_ch <- v
+					t.janitorCh <- v
 				}
 				buf = buf[:0]
 			}

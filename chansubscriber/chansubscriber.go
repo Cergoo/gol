@@ -17,7 +17,7 @@ import (
 )
 
 type (
-	// TChanSubscriber
+	// TChanSubscriber main struct
 	TChanSubscriber struct {
 		closeSubscribers bool
 		sendStrict       bool

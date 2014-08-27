@@ -114,7 +114,7 @@ http://godoc.org/github.com/Cergoo/gol/keyid
 Additional reflection functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/refl
 
-## reflect/refl
+## reflect/caller
 Universal caller of functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/caller
     

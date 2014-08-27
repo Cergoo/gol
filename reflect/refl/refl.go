@@ -1,14 +1,14 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
-// Additional reflection functions pack
+// Package refl it's additional reflection functions
 package refl
 
 import (
 	"reflect"
 )
 
-// A resize to slice all types. It panics if v's Kind is not slice.
+// SliceResize a resize to slice all types. It panics if v's Kind is not slice.
 func SliceResize(pointToSlice interface{}, newCap int) {
 	slice := reflect.ValueOf(pointToSlice).Elem()
 	newslice := reflect.MakeSlice(slice.Type(), newCap, newCap)
@@ -16,7 +16,7 @@ func SliceResize(pointToSlice interface{}, newCap int) {
 	slice.Set(newslice)
 }
 
-// Return true if keys map1 == keys map2. It panics if v's Kind is not map.
+// MapKeysEq return true if keys map1 == keys map2. It panics if v's Kind is not map.
 func MapKeysEq(map1, map2 interface{}) bool {
 	rv1 := reflect.ValueOf(map1)
 	rv2 := reflect.ValueOf(map2)
@@ -32,19 +32,17 @@ func MapKeysEq(map1, map2 interface{}) bool {
 	return true
 }
 
-/*
-	If "v" is struct copy fields to "m" map[string]interface{} and return true else return false.
-	If "unexported" true copy all fields.
-*/
-func StructToMap(v interface{}, m map[string]interface{}, unexported bool, prefix string) bool {
+
+//StructToMap if "v" is struct copy fields to "m" map[string]interface{} and return true else return false.
+func StructToMap(v interface{}, m map[string]interface{}, prefix string) bool {
 	objVal := reflect.Indirect(reflect.ValueOf(v))
 	if objVal.Kind() != reflect.Struct {
 		return false
 	}
 	objType := objVal.Type()
 	for i := 0; i < objType.NumField(); i++ {
-		// access the value of unexported fields
-		if !unexported && objType.Field(i).PkgPath != "" {
+		// access the value of unexported fields objVal.Field(i).Interface() panic generate
+		if objType.Field(i).PkgPath != "" {
 			continue
 		}
 		m[prefix+objType.Field(i).Name] = objVal.Field(i).Interface()
@@ -61,7 +59,7 @@ func IsStruct(v interface{}) bool {
 	return t.Kind() == reflect.Struct
 }
 
-// Return true if v is chan, func, interface, map, pointer, or slice and v is nil
+// IsNil return true if v is chan, func, interface, map, pointer, or slice and v is nil
 func IsNil(v interface{}) bool {
 	if v == nil {
 		return true
@@ -75,7 +73,7 @@ func IsNil(v interface{}) bool {
 	return false
 }
 
-// Return true if v is nil or empty
+// IsEmpty return true if v is nil or empty
 func IsEmpty(v interface{}) bool {
 	if v == nil {
 		return true

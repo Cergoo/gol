@@ -3,29 +3,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/Cergoo/gol/refl"
-	"strconv"
+	"github.com/Cergoo/gol/reflect/refl"
 )
-
-type (
-	type1 int
-)
-
-func (t type1) f1(b int) int {
-	return int(t) + b
-}
 
 func main() {
-
 	// Example mapKeysEq
 	mapKeysEq()
-
-	// Example caller
-	caller()
-
 	// Example structToMap
 	structToMap()
-
 }
 
 // MapKeysEq
@@ -40,24 +25,6 @@ func mapKeysEq() {
 	map2["n2"] = 22
 
 	fmt.Println(refl.MapKeysEq(map1, map2))
-}
-
-// Caller
-func caller() {
-	fmt.Println("Caller example:")
-
-	// example1
-	caller := make(refl.FuncMap)
-	caller.Add("itoa", strconv.Itoa)
-	i := caller.Calli("itoa", 10)[0].(string)
-	fmt.Println(i)
-
-	// example2
-	var v type1
-	v = 10
-	caller.Add("f1", v.f1)
-	i1 := caller.Calli("f1", 10)[0].(int)
-	fmt.Println(i1)
 }
 
 // StructToMap

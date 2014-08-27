@@ -1,15 +1,13 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
-// additional reflection functions pack
-package refl
+// Package caller it's universal caller of functions
+package caller
 
 import (
 	"github.com/Cergoo/gol/err"
 	"reflect"
 )
-
-// Universal caller of functions
 
 const (
 	errNotFunction            = "It's not function."
@@ -18,11 +16,13 @@ const (
 )
 
 type (
+  // Universal caller of functions map contain
 	FuncMap   map[string]reflect.Value
+  // Universal caller of functions slice contain
 	FuncSlice []reflect.Value
 )
 
-// Add to function map
+// Add add to function map
 func (t FuncMap) Add(name string, f interface{}) {
 	v := reflect.ValueOf(f)
 	if v.Kind() != reflect.Func {
@@ -31,7 +31,7 @@ func (t FuncMap) Add(name string, f interface{}) {
 	t[name] = v
 }
 
-// Add to function slice, return element id
+// Add add to function slice, return element id
 func (t *FuncSlice) Add(f interface{}) int {
 	v := reflect.ValueOf(f)
 	if v.Kind() != reflect.Func {
@@ -41,7 +41,7 @@ func (t *FuncSlice) Add(f interface{}) int {
 	return len(*t) - 1
 }
 
-// Call and return interface{}
+// Calli call and return interface{}
 func (t FuncMap) Calli(name string, params ...interface{}) []interface{} {
 	var result []interface{}
 	r := t.Call(name, params...)
@@ -54,7 +54,7 @@ func (t FuncMap) Calli(name string, params ...interface{}) []interface{} {
 	return result
 }
 
-// Call and return interface{}
+// Calli call and return interface{}
 func (t FuncSlice) Calli(id int, params ...interface{}) []interface{} {
 	var result []interface{}
 	r := t.Call(id, params...)
@@ -67,7 +67,7 @@ func (t FuncSlice) Calli(id int, params ...interface{}) []interface{} {
 	return result
 }
 
-// Call function from a function map
+// Call call function from a function map
 func (t FuncMap) Call(name string, params ...interface{}) []reflect.Value {
 	f, e := t[name]
 	if !e {
@@ -76,7 +76,7 @@ func (t FuncMap) Call(name string, params ...interface{}) []reflect.Value {
 	return call(f, params...)
 }
 
-// Call function from a function slice
+// Call call function from a function slice
 func (t FuncSlice) Call(id int, params ...interface{}) []reflect.Value {
 	if len(t) <= id {
 		err.Panic(err.New(errFunctionNotFound, 0))

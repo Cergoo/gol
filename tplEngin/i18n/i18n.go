@@ -8,7 +8,7 @@ import (
 	"github.com/Cergoo/gol/err"
 	gfilepath "github.com/Cergoo/gol/filepath"
 	"github.com/Cergoo/gol/jsonConfig"
-	"github.com/Cergoo/gol/refl"
+	"github.com/Cergoo/gol/reflect/refl"
 	"github.com/Cergoo/gol/tplEngin/i18n/plural"
 	"github.com/Cergoo/gol/tplEngin/parser"
 	"io/ioutil"
@@ -35,10 +35,10 @@ type (
 		text  []string
 	}
 
-  // Ti18n main struct   
-  Ti18n map[string]*tlang
-  
-  // TReplacer replacer template to current lang words from i18n 
+	// Ti18n main struct
+	Ti18n map[string]*tlang
+
+	// TReplacer replacer template to current lang words from i18n
 	TReplacer struct {
 		langName string
 		lang     *tlang

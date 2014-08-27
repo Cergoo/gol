@@ -110,9 +110,13 @@ http://godoc.org/github.com/Cergoo/gol/jsonConfig
 String key to uint id and uint id to string key association pack. No save thread.
 http://godoc.org/github.com/Cergoo/gol/keyid
 
-## refl
-Additional reflection functions pack and Universal caller of functions.  
-http://godoc.org/github.com/Cergoo/gol/refl
+## reflect/refl
+Additional reflection functions  
+http://godoc.org/github.com/Cergoo/gol/reflect/refl
+
+## reflect/refl
+Universal caller of functions  
+http://godoc.org/github.com/Cergoo/gol/reflect/caller
     
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  

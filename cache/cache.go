@@ -1,7 +1,6 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
-// Package cache it's a in-memory key-value store based of the thread-safe hasmap implementation.
 package cache
 
 /*

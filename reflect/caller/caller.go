@@ -16,9 +16,9 @@ const (
 )
 
 type (
-  // Universal caller of functions map contain
-	FuncMap   map[string]reflect.Value
-  // Universal caller of functions slice contain
+  // FuncMap it's universal caller of functions map contain
+  FuncMap   map[string]reflect.Value
+  // FuncSlice it's universal caller of functions slice contain
 	FuncSlice []reflect.Value
 )
 

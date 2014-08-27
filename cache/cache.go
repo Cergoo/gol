@@ -28,6 +28,20 @@ const (
 	initbucketscap = 10
 )
 
+// Returned result code
+const (
+	ResultExist = iota
+	ResultAdd
+	ResultNoExistNoAdd
+)
+
+// Mode operation set
+const (
+	OnlyUpdate = iota
+	OnlyInsert
+	UpdateOrInsert
+)
+
 type (
 	tItem struct {
 		r   uint8
@@ -58,6 +72,36 @@ type (
 	// for finalizer
 	tfinalize struct {
 		*tCache
+	}
+
+	// TCortege struct (key, value) cortege
+	TCortege struct {
+		Key string
+		Val interface{}
+	}
+
+	// Cache interface
+	Cache interface {
+		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
+		Get(string) interface{}
+		Set(key string, val interface{}, live, mode uint8) (rval interface{}, actionResult uint8)
+		Del(string) (val interface{})
+		DelAll()
+		Range(chan<- *TCortege)
+		Inc(string, float64) interface{}
+		Save(io.Writer) error
+		SaveFile(string) error
+		Load(io.Reader) error
+		LoadFile(string) error
+		Len() ICounter
+	}
+
+	// ICounter interface counter
+	ICounter interface {
+		Get() uint64
+		GetLimit() uint64
+		SetLimit(v uint64)
+		Check() bool
 	}
 )
 
@@ -337,7 +381,7 @@ func (t *tCache) Save(w io.Writer) (err error) {
 			for _, bucket = range ht.ht {
 				bucket.RUnlock()
 			}
-			err = fmt.Errorf("Error registering item types with Gob library")
+			err = fmt.Errorf("error registering item types with Gob library")
 		}
 	}()
 	for _, bucket = range ht.ht {
@@ -469,7 +513,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 		i, lenbucket int
 		ht           *tHash
 		bucket       *tBucket
-		count_del    uint32
+		countDel     uint32
 		buf          []*TCortege
 		v            *TCortege
 	)
@@ -479,7 +523,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 		case <-stop:
 			return
 		case <-tick:
-			count_del = 0
+			countDel = 0
 			ht = (*tHash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 			for _, bucket = range ht.ht {
 				bucket.Lock()
@@ -491,7 +535,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 						}
 						lenbucket--
 						bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], nil
-						count_del++
+						countDel++
 					} else {
 						if bucket.items[i].r < 255 {
 							bucket.items[i].r--
@@ -506,7 +550,7 @@ func (t *tCache) janitor(stop <-chan bool) {
 				}
 				buf = buf[:0]
 			}
-			t.count.Add(int64(-count_del))
+			t.count.Add(int64(-countDel))
 		}
 	}
 }

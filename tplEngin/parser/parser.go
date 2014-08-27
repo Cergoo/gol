@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Parser util from i18n & tpl pkg
+// Package parser it's a util from i18n & tpl pkg
 package parser
 
 import (
@@ -13,7 +13,7 @@ import (
 type (
 
 	/*
-		Structure describes a tool for parsing:
+		ToParse struct describes a tool for parsing:
 		    Delimiter - left and right tag gelimiter;
 		    ParseText - function of parse text;
 		    ParseTag  - function of parse tag.
@@ -28,7 +28,7 @@ type (
 )
 
 /*
-	Search of a tag in slice.
+	FindTag search of a tag in slice.
 	Return: leftpart, tag value, end tag number, success.
 */
 func FindTag(source []byte, delimiter [2][]byte) (lpart, tag []byte, end int, success bool) {
@@ -50,7 +50,7 @@ func FindTag(source []byte, delimiter [2][]byte) (lpart, tag []byte, end int, su
 	return
 }
 
-// Split a []byte into words by delimiters
+// SplitWord split a []byte into words by delimiters, cut repeatable delimiters
 func SplitWord(source []byte, delimiters byte) []string {
 	var (
 		begin int
@@ -77,7 +77,7 @@ func SplitWord(source []byte, delimiters byte) []string {
 	return result
 }
 
-// if (header(a) == b) { trim head and return tail } else { return nil }
+// StrPrefix if (header(a) == b) { trim head and return tail } else { return nil }
 func StrPrefix(a []byte, b string) []byte {
 	if len(a) >= len(b) && string(a[:len(b)]) == b {
 		return a[len(b):]
@@ -85,7 +85,7 @@ func StrPrefix(a []byte, b string) []byte {
 	return nil
 }
 
-// Universal parse metode, return template
+// Parse universal parse metode, return template
 func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	var (
 		success     bool
@@ -115,7 +115,7 @@ func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	return
 }
 
-// Pars string to context id
+// ParseInt pars string to context id
 func ParseInt(source string) uint {
 	i, e := strconv.ParseUint(source, 10, 64)
 	if e != nil {

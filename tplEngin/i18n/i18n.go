@@ -35,7 +35,7 @@ type (
 		text  []string
 	}
 
-  // Ti18n  
+  // Ti18n main struct   
   Ti18n map[string]*tlang
   
   // TReplacer replacer template to current lang words from i18n 
@@ -82,7 +82,7 @@ func New() Ti18n {
 	return make(Ti18n)
 }
 
-// Loade loade language resources
+// Load load language resources
 func (t Ti18n) Load(patch string, pluralAccess bool) {
 	type (
 		tmpLang struct {

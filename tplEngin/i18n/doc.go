@@ -2,6 +2,7 @@
 // under terms of ISC license
 
 /*
+Package i18n 
 Feature:
     - Load from .json format language resource store.
     - Support tag: include context and plural.     

@@ -1,7 +1,7 @@
 // (c) 2013-2014 Cergoo
 // under terms of ISC license
 
-// Easy atomic counter type.
+// Package counter it's a easy atomic counter type.
 package counter
 
 import (
@@ -9,55 +9,56 @@ import (
 )
 
 type (
-	T_counter struct {
+// TCounter struct of a counter 
+	TCounter struct {
 		limit uint64
 		value uint64
 	}
 )
 
-// Get current count value
-func (t *T_counter) Get() uint64 {
+// Get get current count value
+func (t *TCounter) Get() uint64 {
 	return atomic.LoadUint64(&t.value)
 }
 
-// Set current count value
-func (t *T_counter) Set(v uint64) {
+// Set set current count value
+func (t *TCounter) Set(v uint64) {
 	atomic.StoreUint64(&t.value, v)
 }
 
-// Increment
-func (t *T_counter) Inc() uint64 {
+// Inc increment
+func (t *TCounter) Inc() uint64 {
 	return atomic.AddUint64(&t.value, 1)
 }
 
-// Decrement
-func (t *T_counter) Dec() uint64 {
+// Dec decrement
+func (t *TCounter) Dec() uint64 {
 	return atomic.AddUint64(&t.value, ^uint64(0)) // ^uint64(c-1)
 }
 
-// Add value
-func (t *T_counter) Add(v int64) uint64 {
+// Add add value
+func (t *TCounter) Add(v int64) uint64 {
 	return atomic.AddUint64(&t.value, uint64(v))
 }
 
-// Get current limit value
-func (t *T_counter) GetLimit() uint64 {
+// GetLimit get current limit value
+func (t *TCounter) GetLimit() uint64 {
 	return atomic.LoadUint64(&t.limit)
 }
 
-// Set new limit value
-func (t *T_counter) SetLimit(v uint64) {
+// SetLimit set new limit value
+func (t *TCounter) SetLimit(v uint64) {
 	atomic.StoreUint64(&t.limit, v)
 }
 
-// Check limit value
-func (t *T_counter) Check() bool {
+// Check check limit value
+func (t *TCounter) Check() bool {
 	limit := t.GetLimit()
 	return limit == 0 || limit > t.Get()
 }
 
-// Check limit value
-func (t *T_counter) Check1(v uint64) bool {
+// Check1 check limit value
+func (t *TCounter) Check1(v uint64) bool {
 	limit := t.GetLimit()
 	return limit == 0 || limit > v
 }

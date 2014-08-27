@@ -41,7 +41,7 @@ http://godoc.org/github.com/Cergoo/gol/chansubscriber
 
 ## counter 
 Easy atomic counter type.    
-http://godoc.org/github.com/Cergoo/gol/chansubscriber      
+http://godoc.org/github.com/Cergoo/gol/counter      
 
 ## err
 Editable error implementation.  

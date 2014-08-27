@@ -1,10 +1,10 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Hash functions library.
+// Package hash it's a hash functions library.
 package hash
 
-// FAQ6 hash
+// HashFAQ6
 func HashFAQ6(str []byte) (h uint32) {
 	for i := range str {
 		h += uint32(str[i])
@@ -17,7 +17,7 @@ func HashFAQ6(str []byte) (h uint32) {
 	return
 }
 
-// Rot13 hash
+// HashRot13
 func HashRot13(str []byte) (h uint32) {
 	for i := range str {
 		h += uint32(str[i])
@@ -26,7 +26,7 @@ func HashRot13(str []byte) (h uint32) {
 	return
 }
 
-// Ly hash
+// HashLy
 func HashLy(str []byte) (h uint32) {
 	for i := range str {
 		h = (h * 1664525) + uint32(str[i]) + 1013904223
@@ -34,7 +34,7 @@ func HashLy(str []byte) (h uint32) {
 	return
 }
 
-// Rs hash
+// HashRs
 func HashRs(str []byte) (h uint32) {
 	const b = 378551
 	var a uint32 = 63689

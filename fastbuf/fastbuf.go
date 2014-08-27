@@ -1,7 +1,7 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
-// io.Writer implementation
+// Package fastbuf it's io.Writer implementation
 package fastbuf
 
 import (
@@ -9,17 +9,15 @@ import (
 )
 
 type (
-	// writeoff - index buffer is filled
-	// readeoff - index subtracts buffer
-
+	// Buf struct of a buf
 	Buf struct {
-		buf      []byte
-		writeoff int
-		readeoff int
+		buf      []byte //
+		writeoff int    // writeoff - index buffer is filled
+		readeoff int    // readeoff - index subtracts buffer
 	}
 )
 
-// Constructor
+// New it's constructor buf
 func New(buf []byte) (b *Buf) {
 	b = new(Buf)
 	if buf == nil {
@@ -34,7 +32,7 @@ func New(buf []byte) (b *Buf) {
 
 /* Writer functions */
 
-// Resize cap
+// Grow resize cap
 func (t *Buf) Grow(n int) {
 	newbuf := make([]byte, cap(t.buf)+n)
 	copy(newbuf, t.buf)
@@ -50,7 +48,7 @@ func (t *Buf) grow(n int) {
 	}
 }
 
-// Write slice to buf
+// Write write slice into buf
 func (t *Buf) Write(p []byte) (n int, err error) {
 	t.grow(len(p))
 	copy(t.buf[t.writeoff:], p)
@@ -58,7 +56,7 @@ func (t *Buf) Write(p []byte) (n int, err error) {
 	return
 }
 
-// Write byte to buf
+// WriteByte write byte into buf
 func (t *Buf) WriteByte(p byte) (err error) {
 	t.grow(1)
 	t.writeoff++
@@ -66,21 +64,21 @@ func (t *Buf) WriteByte(p byte) (err error) {
 	return
 }
 
-// Get poiner to all buf and clear buf
+// FlushP get slice of all buf and clear buf
 func (t *Buf) FlushP() (r []byte) {
 	r = t.buf[:t.writeoff]
 	t.writeoff = 0
 	return
 }
 
-// Get all buf and clear buf
+// Flush get value all buf and clear buf
 func (t *Buf) Flush() (r []byte) {
 	r = append(r, t.buf[:t.writeoff]...)
 	t.writeoff = 0
 	return
 }
 
-// Reserve slice size n
+// Reserve reserve slice size n
 func (t *Buf) Reserve(n int) []byte {
 	t.grow(n)
 	oldoff := t.writeoff
@@ -88,19 +86,19 @@ func (t *Buf) Reserve(n int) []byte {
 	return t.buf[oldoff:t.writeoff]
 }
 
-// Get buffer length
+// Len get buffer length
 func (t *Buf) Len() int {
 	return t.writeoff
 }
 
-// Get buffer capacity
+// Cap get buffer capacity
 func (t *Buf) Cap() int {
 	return cap(t.buf)
 }
 
 /* Reader functions */
 
-// Read next slice
+// ReadNext read next n byte
 func (t *Buf) ReadNext(n int) []byte {
 	if t.readeoff >= t.writeoff {
 		return nil
@@ -114,7 +112,7 @@ func (t *Buf) ReadNext(n int) []byte {
 	return data
 }
 
-// Read next byte
+// ReadByte read next byte
 func (t *Buf) ReadByte() (b byte, e error) {
 	if t.readeoff < t.writeoff {
 		b = t.buf[t.readeoff]
@@ -125,7 +123,7 @@ func (t *Buf) ReadByte() (b byte, e error) {
 	return
 }
 
-// Reset reader index
+// ReadReset reset reader index
 func (t *Buf) ReadReset() {
 	t.readeoff = 0
 }

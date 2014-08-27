@@ -1,7 +1,6 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// i18n pkg
 package i18n
 
 import (
@@ -19,7 +18,6 @@ import (
 
 // types dictionarys define
 type (
-	Ti18n map[string]*tlang
 	tlang struct {
 		pluralRule plural.PluralRule   // language plural rule
 		plural     map[string][]string // plural pronunciation
@@ -37,13 +35,17 @@ type (
 		text  []string
 	}
 
+  // Ti18n  
+  Ti18n map[string]*tlang
+  
+  // TReplacer replacer template to current lang words from i18n 
 	TReplacer struct {
 		langName string
 		lang     *tlang
 	}
 )
 
-// Create new replacer from language resources
+// NewReplacer Create new replacer from language resources
 func (t Ti18n) NewReplacer(langName string) (*TReplacer, error) {
 	lang, e := t[langName]
 	if !e {
@@ -52,12 +54,12 @@ func (t Ti18n) NewReplacer(langName string) (*TReplacer, error) {
 	return &TReplacer{langName: langName, lang: lang}, nil
 }
 
-// Get lang
+// Lang get lang
 func (t *TReplacer) Lang() string {
 	return t.langName
 }
 
-// Print phrase from map store.
+// P print phrase
 func (t *TReplacer) P(key string, context ...interface{}) []byte {
 	tpl := t.lang.items[key]
 	if tpl == nil {
@@ -66,7 +68,7 @@ func (t *TReplacer) P(key string, context ...interface{}) []byte {
 	return t.p(tpl, context)
 }
 
-// Get plural. Use if Load (pluralAccess)
+// Plural get plural word form. Use if Load (pluralAccess)
 func (t *TReplacer) Plural(key string, count float64) string {
 	v, e := t.lang.plural[key]
 	if e {
@@ -75,12 +77,12 @@ func (t *TReplacer) Plural(key string, count float64) string {
 	return ""
 }
 
-// Create language obj
+// New create new language object
 func New() Ti18n {
 	return make(Ti18n)
 }
 
-// Loade language resources
+// Loade loade language resources
 func (t Ti18n) Load(patch string, pluralAccess bool) {
 	type (
 		tmpLang struct {

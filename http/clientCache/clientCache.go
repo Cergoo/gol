@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// http/1.1 client side cache control pkg
+// Package clientCache it's http/1.1 client side cache control pkg implementation
 package clientCache
 
 import (
@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// return true if cache validate (304)
+// Cache return true if cache validate (304)
 func Cache(w http.ResponseWriter, rh http.Header, timelive int, noStore bool, cacheControl, etag string) bool {
 	header := w.Header()
 	header.Set("Cache-Control", "max-age="+strconv.Itoa(timelive)+", "+cacheControl)

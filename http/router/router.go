@@ -2,7 +2,7 @@
 // under terms of ISC license
 
 /*
-Routing a path url to action or file.
+Package router it's http routing a path url to action or file implementation.
 Description: first elemet path is action name, others elemets is a request parameters.
 Features:
 	- routing to file;
@@ -33,14 +33,15 @@ type (
 		prm    []string
 		action func(http.ResponseWriter, *http.Request)
 	}
-
+  
+  // Trouter router
 	Trouter struct {
 		routes   map[string]*troute
 		errorLog *log.Logger
 	}
 )
 
-// Construcor
+// New constructor new router 
 func New() *Trouter {
 	return &Trouter{
 		routes:   make(map[string]*troute),
@@ -48,12 +49,12 @@ func New() *Trouter {
 	}
 }
 
-// Set serve files
+// ServeFiles set serve files
 func (t *Trouter) ServeFiles(label, root string) {
 	t.routes[method.Get+label] = &troute{action: http.StripPrefix("/"+label, http.FileServer(http.Dir(root))).ServeHTTP}
 }
 
-// Set hadler
+// Handler set hadler
 func (t *Trouter) Handler(method, patch string, action func(w http.ResponseWriter, r *http.Request)) {
 	parts := strings.Split(patch, "/")
 	r := &troute{action: action}
@@ -61,7 +62,7 @@ func (t *Trouter) Handler(method, patch string, action func(w http.ResponseWrite
 	t.routes[method+parts[0]] = r
 }
 
-// Routing
+// ServeHTTP routing function
 func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer func() {
 		if e := recover(); e != nil {

@@ -22,7 +22,7 @@ const (
 )
 
 type (
-	// (key, value) cortege
+	// TCortege struct (key, value) cortege
 	TCortege struct {
 		Key string
 		Val interface{}
@@ -41,11 +41,11 @@ type (
 		SaveFile(string) error
 		Load(io.Reader) error
 		LoadFile(string) error
-		Len() I_counter
+		Len() ICounter
 	}
 
-	// Counter interface
-	I_counter interface {
+	// ICounter interface counter
+	ICounter interface {
 		Get() uint64
 		GetLimit() uint64
 		SetLimit(v uint64)

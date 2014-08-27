@@ -1,14 +1,14 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Filepath pkg
+// Package filepath
 package filepath
 
 import (
 	"os"
 )
 
-// Modified function Ext standart "path/filepath" pkg
+// Ext it's modified function standart "path/filepath" pkg
 func Ext(fullname string) (name, ext string) {
 	for i := len(fullname) - 1; i >= 0 && !os.IsPathSeparator(fullname[i]); i-- {
 		if fullname[i] == '.' {

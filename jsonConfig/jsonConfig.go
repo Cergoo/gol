@@ -1,7 +1,7 @@
 // (c)	2013-2014 Cergoo
 // under terms of ISC license
 
-// Support comments in json
+// Package jsonConfig support comments in json
 package jsonConfig
 
 import (
@@ -17,7 +17,7 @@ import (
 * == 42
 */
 
-// Load & remove comments from source .json file
+// Load load & remove comments from source .json file
 func Load(fromPath string, toVar interface{}) {
 	file, e := ioutil.ReadFile(fromPath)
 	err.Panic(e)
@@ -25,7 +25,7 @@ func Load(fromPath string, toVar interface{}) {
 	err.Panic(json.Unmarshal(file, toVar))
 }
 
-// Remove comments from source .json
+// RemoveComment remove comments from source .json
 func RemoveComment(source []byte) (result []byte) {
 	var (
 		stateBlok, stateComment1, stateComment2 bool

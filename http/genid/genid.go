@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Generate http compatible ID
+// Package genid it's generate http compatible ID implementation
 package genid
 
 import (
@@ -13,6 +13,7 @@ import (
 )
 
 type (
+  // HTTPGenID type 
 	HTTPGenID uint8
 )
 
@@ -24,7 +25,7 @@ func NewHTTPGen(length uint8) HTTPGenID {
 	return HTTPGenID(math.Ceil(float64(length / 4 * 3)))
 }
 
-// Generate random strind http compatible
+// NewID generate random strind http compatible
 func (t HTTPGenID) NewID() string {
 	val := make([]byte, t)
 	_, e := rand.Read(val)

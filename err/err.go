@@ -1,21 +1,21 @@
 // (c) 2013-2014 Cergoo
 // under terms of ISC license
 
-// Editable error implementation.
+// Package err it's a editable error implementation.
 package err
 
-// Editable error struct.
+// OpenErr editable error struct.
 type OpenErr struct {
 	Text string
 	Code int
 }
 
-// Create new error.
+// New create new error.
 func New(e string, code int) *OpenErr {
 	return &OpenErr{e, code}
 }
 
-// Interface error metod.
+// Error it's interface error metod.
 func (t *OpenErr) Error() string {
 	return t.Text
 }

@@ -1,9 +1,10 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// http methods name
+// Package method it's http methods name
 package method
 
+// Http methods name 
 const (
 	Get     = "GET"
 	Post    = "POST"

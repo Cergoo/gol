@@ -2,7 +2,7 @@
 // under terms of ISC license
 
 /*
-Subcribe channel pack, send messages of writer to a each subscribers.
+Package chansubscriber it's a implements send messages of writer to a each subscribers.
 Features:
   - thread safe;
   - protect of a double subscribe;
@@ -17,6 +17,7 @@ import (
 )
 
 type (
+	// TChanSubscriber
 	TChanSubscriber struct {
 		closeSubscribers bool
 		sendStrict       bool
@@ -26,7 +27,7 @@ type (
 	}
 )
 
-// Constructor:
+// New constructor of a new chansubscriber:
 //  ch               - channel writer;
 //  sendStrict       - if true not drop packets;
 //  closeSubscribers - close all reader channel after close writer.
@@ -42,7 +43,7 @@ func New(ch <-chan interface{}, sendStrict, closeSubscribers bool) *TChanSubscri
 	return t
 }
 
-// Subscribe channel
+// Subscribe subscribe channel
 func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -61,7 +62,7 @@ func (t *TChanSubscriber) Subscribe(ch chan<- interface{}) {
 	atomic.StorePointer((*unsafe.Pointer)(unsafe.Pointer(&t.out)), unsafe.Pointer(&newoutslice))
 }
 
-// Unsubscribe channel
+// Unsubscribe unsubscribe channel
 func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
@@ -77,7 +78,7 @@ func (t *TChanSubscriber) Unsubscribe(ch chan<- interface{}) {
 	}
 }
 
-// Get count subscribers
+// Len get count subscribers
 func (t *TChanSubscriber) Len() int {
 	return len(*(*[]chan<- interface{})(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.out)))))
 }

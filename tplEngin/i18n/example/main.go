@@ -11,18 +11,30 @@ func main() {
 	lang.Load("lang", true)
 	lang.Load("lang1", true)
 
-	fmt.Println("ru")
-	replacer, _ := lang.NewReplacer("ru")
-	fmt.Println(string(replacer.P("message")))
-	fmt.Println(string(replacer.P("message1", "поле1", float64(2))))
-	fmt.Println(2.5, replacer.Plural("apple", float64(2.5)))
-	fmt.Println(string(replacer.P("pkgLang1_message10")))
+	type (
+		item struct {
+			name  string
+			count float64
+		}
+	)
 
-	fmt.Println("en")
-	replacer, _ = lang.NewReplacer("en")
-	fmt.Println(string(replacer.P("message")))
-	fmt.Println(string(replacer.P("message1", "поле1", float64(2))))
-	fmt.Println(2.5, replacer.Plural("apple", float64(2.5)))
-	fmt.Println(string(replacer.P("pkgLang1_message10")))
+	names := []*item{
+		&item{name: "UserName1", count: 12},
+		&item{name: "UserName2", count: 12.7},
+		&item{name: "UserName3", count: 101},
+		&item{name: "UserName4", count: 12.1212},
+	}
+
+	replacerRuLang, _ := lang.NewReplacer("ru")
+	replacerEnLang, _ := lang.NewReplacer("en")
+
+	for _, v := range names {
+		fmt.Println("ru: ", string(replacerRuLang.P("message2", v.name, v.count)))
+		fmt.Println("en: ", string(replacerEnLang.P("message2", v.name, v.count)))
+
+	}
+
+	fmt.Println(2.5, replacerRuLang.Plural("apple", 2.5))
+	fmt.Println(2.5, replacerEnLang.Plural("apple", 2.5))
 
 }

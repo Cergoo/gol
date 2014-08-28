@@ -32,7 +32,6 @@ func MapKeysEq(map1, map2 interface{}) bool {
 	return true
 }
 
-
 //StructToMap if "v" is struct copy fields to "m" map[string]interface{} and return true else return false.
 func StructToMap(v interface{}, m map[string]interface{}, prefix string) bool {
 	objVal := reflect.Indirect(reflect.ValueOf(v))
@@ -99,4 +98,39 @@ func IsEmpty(v interface{}) bool {
 	}
 
 	return false
+}
+
+type (
+	// TField struct about field sruct
+	TField struct {
+		Fname     string
+		Fexported bool
+		Ftype     string
+		Fkind     reflect.Kind
+		Ftags     reflect.StructTag
+	}
+)
+
+// StructFields return v type and v fields description
+func StructFields(v interface{}) (vType reflect.Type, vFields []*TField) {
+	var (
+		field reflect.StructField
+	)
+	vType = reflect.Indirect(reflect.ValueOf(v)).Type()
+	numFields := vType.NumField()
+	vFields = make([]*TField, 0, numFields)
+	for i := 0; i < numFields; i++ {
+		field = vType.Field(i)
+		fieldInfo := &TField{
+			Fname: field.Name,
+			Ftype: field.Type.String(),
+			Fkind: field.Type.Kind(),
+			Ftags: field.Tag,
+		}
+		if field.PkgPath == "" {
+			fieldInfo.Fexported = true
+		}
+		vFields = append(vFields, fieldInfo)
+	}
+	return
 }

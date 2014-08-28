@@ -13,7 +13,7 @@
 "phrase": {
   "message": "Field &laquo;email&raquo; must be filled",
   "message1": "Field {{0}} must be filled {{1}} {{plural apple 1}}",
-  "message2": "Field must be filled",
+  "message2": "Good afternoon, Mr.(Mrs.) {{0}}, you have {{1}} {{plural apple 1}}.",
   "save": "Save"
 }
 }

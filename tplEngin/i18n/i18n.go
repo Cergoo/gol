@@ -28,8 +28,11 @@ type (
 		contextCount int         // context var count
 	}
 
-	tTagText   []byte
-	tTagVar    uint16
+	tTagText []byte
+	tTagVar  struct {
+		id     uint16
+		format string
+	}
 	tTagPlural struct {
 		count uint16
 		text  []string
@@ -162,6 +165,10 @@ func (t Ti18n) Load(patch string, pluralAccess bool) {
 
 // Get phrase
 func (t *TReplacer) p(tpl *titem, context []interface{}) []byte {
+	var (
+		varFloate float64
+		varBool   bool
+	)
 	if int(tpl.contextCount) > len(context) {
 		err.Panic(err.New("i18n Mismatch context len: ("+strconv.Itoa(int(tpl.contextCount))+" , "+strconv.Itoa(len(context))+") "+fmt.Sprintf("%#v", tpl.items), 0))
 	}
@@ -171,10 +178,17 @@ func (t *TReplacer) p(tpl *titem, context []interface{}) []byte {
 		switch v := item.(type) {
 		case tTagText:
 			result = append(result, v...)
-		case tTagVar:
-			result = append(result, []byte(fmt.Sprint(context[v]))...)
+		case *tTagVar:
+			if len(v.format) > 0 {
+				result = append(result, []byte(fmt.Sprintf(v.format, context[v.id]))...)
+			} else {
+				result = append(result, []byte(fmt.Sprint(context[v.id]))...)
+			}
 		case *tTagPlural:
-			result = append(result, []byte(v.text[t.lang.pluralRule(context[v.count].(float64))])...)
+			varFloate, varBool = refl.Floate(context[v.count])
+			if varBool {
+				result = append(result, []byte(v.text[t.lang.pluralRule(varFloate)])...)
+			}
 		}
 	}
 	return result
@@ -201,8 +215,8 @@ func initAfterParse(lang *tlang, name string) {
 					err.Panic(err.New("Err parse:"+name+" Not found plural key: "+key, 0))
 				}
 			case tTagVar:
-				if int(v) > item.contextCount {
-					item.contextCount = int(v)
+				if int(v.id) > item.contextCount {
+					item.contextCount = int(v.id)
 				}
 			}
 		}
@@ -216,6 +230,19 @@ func parseTagPlural(source []string) *tTagPlural {
 		err.Panic(err.New("error parsing to Plural Tag: "+fmt.Sprint(source), 0))
 	}
 	return &tTagPlural{uint16(parser.ParseInt(source[1])), []string{source[0]}}
+}
+
+// parse context var tag
+func parseTagVar(source []string) (v *tTagVar) {
+	i, e := strconv.ParseUint(source[0], 10, 16)
+	if e != nil {
+		err.Panic(err.New("error parse to uint16: '"+source[0]+"'", 0))
+	}
+	v = &tTagVar{id: uint16(i)}
+	if len(source) > 1 {
+		v.format = source[1]
+	}
+	return
 }
 
 func parseText(source []byte) interface{} {
@@ -236,6 +263,6 @@ func parseTag(source []byte) interface{} {
 	case "plural":
 		return parseTagPlural(list[1:])
 	default:
-		return tTagVar(parser.ParseInt(list[0]))
+		return parseTagVar(list)
 	}
 }

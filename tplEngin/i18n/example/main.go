@@ -6,17 +6,24 @@ import (
 	"github.com/Cergoo/gol/tplEngin/i18n"
 )
 
+type (
+	item struct {
+		name  string
+		count float32
+	}
+
+	formatted float64
+)
+
+// fmt.Stringer implimentation
+func (t formatted) String() string {
+	return fmt.Sprintf("%20.5f", t)
+}
+
 func main() {
 	lang := i18n.New()
 	lang.Load("lang", true)
 	lang.Load("lang1", true)
-
-	type (
-		item struct {
-			name  string
-			count float64
-		}
-	)
 
 	names := []*item{
 		&item{name: "UserName1", count: 12},
@@ -34,7 +41,7 @@ func main() {
 
 	}
 
-	fmt.Println(2.5, replacerRuLang.Plural("apple", 2.5))
+	fmt.Println(formatted(2.5), replacerRuLang.Plural("apple", 2.5))
 	fmt.Println(2.5, replacerEnLang.Plural("apple", 2.5))
 
 }

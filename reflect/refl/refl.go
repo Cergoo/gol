@@ -100,6 +100,21 @@ func IsEmpty(v interface{}) bool {
 	return false
 }
 
+// Floate convert interface{} to floate64
+func Floate(v interface{}) (float64, bool) {
+	val := reflect.ValueOf(v)
+	switch val.Kind() {
+	case reflect.Float32, reflect.Float64:
+		return val.Float(), true
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+		return float64(val.Int()), true
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
+		return float64(val.Uint()), true
+	default:
+		return 0, false
+	}
+}
+
 type (
 	// TField struct about field sruct
 	TField struct {

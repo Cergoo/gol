@@ -229,15 +229,15 @@ func parseTagPlural(source []string) *tTagPlural {
 	if len(source) < 2 {
 		err.Panic(err.New("error parsing to Plural Tag: "+fmt.Sprint(source), 0))
 	}
-	return &tTagPlural{uint16(parser.ParseInt(source[1])), []string{source[0]}}
+	i, e := strconv.ParseUint(source[1], 10, 16)
+	err.Panic(e)
+	return &tTagPlural{uint16(i), []string{source[0]}}
 }
 
 // parse context var tag
 func parseTagVar(source []string) (v *tTagVar) {
 	i, e := strconv.ParseUint(source[0], 10, 16)
-	if e != nil {
-		err.Panic(err.New("error parse to uint16: '"+source[0]+"'", 0))
-	}
+	err.Panic(e)
 	v = &tTagVar{id: uint16(i)}
 	if len(source) > 1 {
 		v.format = source[1]
@@ -252,9 +252,7 @@ func parseText(source []byte) interface{} {
 func parseTag(source []byte) interface{} {
 	defer func() {
 		if e := recover(); e != nil {
-			v := e.(*err.OpenErr)
-			v.Text += "err parse i18n: " + string(source)
-			err.Panic(v)
+			panic(err.New("err parse i18n: "+string(source), 0))
 		}
 	}()
 

@@ -6,8 +6,6 @@ package parser
 
 import (
 	"bytes"
-	"github.com/Cergoo/gol/err"
-	"strconv"
 )
 
 type (
@@ -113,13 +111,4 @@ func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	}
 
 	return
-}
-
-// ParseInt pars string to context id
-func ParseInt(source string) uint {
-	i, e := strconv.ParseUint(source, 10, 64)
-	if e != nil {
-		err.Panic(err.New("error parse to uint: '"+source+"'", 0))
-	}
-	return uint(i)
 }

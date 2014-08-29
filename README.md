@@ -130,7 +130,7 @@ Feature:
 - Support tag: include context and plural.       
    
 Example:
-<pre>Field {{0}} must be filled {{1}} {{plural appel 1}}</pre>
+<pre>Good afternoon, Mr.(Mrs.) {{0}}, you have {{1 %.2f}} {{plural apple 1}}.</pre>
 See tplEngin/i18n/exaple for more details.
 
 ## tplEngin/i18n/plural

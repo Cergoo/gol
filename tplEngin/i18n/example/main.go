@@ -26,10 +26,10 @@ func main() {
 	lang.Load("lang1", true)
 
 	names := []*item{
-		&item{name: "UserName1", count: 12},
-		&item{name: "UserName2", count: 12.7},
+		&item{name: "UserName1", count: 12.2},
+		&item{name: "UserName2", count: 12.25},
 		&item{name: "UserName3", count: 101},
-		&item{name: "UserName4", count: 12.1212},
+		&item{name: "UserName4", count: 12},
 	}
 
 	replacerRuLang, _ := lang.NewReplacer("ru")

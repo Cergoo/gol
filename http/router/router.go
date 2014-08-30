@@ -24,42 +24,68 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
 	"runtime/debug"
 	"strings"
 )
 
+//
+const (
+	actionTypeAction = iota
+	actionTypeFile
+)
+
 type (
 	troute struct {
-		prm    []string
-		action func(http.ResponseWriter, *http.Request)
+		prm        []string
+		action     http.HandlerFunc
+		actionType uint8
 	}
-  
-  // Trouter router
+
+	// Trouter router
 	Trouter struct {
 		routes   map[string]*troute
 		errorLog *log.Logger
+		notFound http.HandlerFunc
 	}
 )
 
-// New constructor new router 
-func New() *Trouter {
+// New constructor new router
+func New(notFound http.HandlerFunc) *Trouter {
+	if notFound == nil {
+		notFound = http.NotFound
+	}
 	return &Trouter{
 		routes:   make(map[string]*troute),
 		errorLog: log.New(os.Stderr, "router: ", log.LstdFlags),
+		notFound: notFound,
 	}
 }
 
-// ServeFiles set serve files
-func (t *Trouter) ServeFiles(label, root string) {
-	t.routes[method.Get+label] = &troute{action: http.StripPrefix("/"+label, http.FileServer(http.Dir(root))).ServeHTTP}
+// FileServer set serve files
+func (t *Trouter) FileServer(label, root string) {
+	label = strings.ToLower(label)
+	t.routes[method.Get+label] = &troute{
+		action:     fileServer(label, root),
+		actionType: actionTypeFile,
+	}
+}
+
+func fileServer(prefix, root string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, root+path.Clean(r.URL.Path[len(prefix)+1:]))
+	}
 }
 
 // Handler set hadler
 func (t *Trouter) Handler(method, patch string, action func(w http.ResponseWriter, r *http.Request)) {
+	r := &troute{
+		action:     action,
+		actionType: actionTypeAction,
+	}
 	parts := strings.Split(patch, "/")
-	r := &troute{action: action}
 	r.prm = append(r.prm, parts[1:]...)
-	t.routes[method+parts[0]] = r
+	t.routes[method+strings.ToLower(parts[0])] = r
 }
 
 // ServeHTTP routing function
@@ -71,12 +97,18 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
-	urlParts := strings.SplitN(r.URL.Path[1:], "/", 20)
+	urlParts := strings.SplitN(r.URL.Path[1:], "/", 50)
 
 	// Find action
-	action := t.routes[r.Method+urlParts[0]]
+	action := t.routes[r.Method+strings.ToLower(urlParts[0])]
+	// Action nil
 	if action == nil {
-		http.NotFound(w, r)
+		t.notFound(w, r)
+		return
+	}
+	// Action get file
+	if action.actionType == actionTypeFile {
+		action.action(w, r)
 		return
 	}
 
@@ -89,7 +121,5 @@ func (t *Trouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			r.Form.Set(action.prm[id], urlParts[id])
 		}
 	}
-
-	// Run action
 	action.action(w, r)
 }

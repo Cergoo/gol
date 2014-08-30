@@ -27,8 +27,8 @@ func action1(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	r := router.New()
-	r.ServeFiles("files", "./directoryfiles")
+	r := router.New(nil)
+	r.FileServer("files", "./directoryfiles")
 	r.Handler(method.Get, "", action1)
 	r.Handler(method.Get, "action1/id/lang", action1)
 	r.Handler(method.Get, "action2/id/lang", action2)

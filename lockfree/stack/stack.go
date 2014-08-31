@@ -21,8 +21,7 @@ type tnode struct {
 
 // Push set item into stack
 func (t *Tstack) Push(v interface{}) {
-	node := &tnode{val: v}
-	node.next = t.top
+	node := &tnode{val: v, next: t.top}
 	for !atomic.CompareAndSwapPointer(&t.top, node.next, unsafe.Pointer(node)) {
 		node.next = t.top
 	}

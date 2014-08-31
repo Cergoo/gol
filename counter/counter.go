@@ -9,7 +9,7 @@ import (
 )
 
 type (
-// TCounter struct of a counter 
+	// TCounter struct of a counter
 	TCounter struct {
 		limit uint64
 		value uint64

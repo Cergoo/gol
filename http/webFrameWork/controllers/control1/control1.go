@@ -1,8 +1,8 @@
 package control1
 
 import (
-	. "../../registry"
 	"fmt"
+	. "github.com/Cergoo/gol/http/webFrameWork/registry"
 	"net/http"
 )
 

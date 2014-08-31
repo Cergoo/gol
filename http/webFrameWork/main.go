@@ -9,10 +9,10 @@
 package main
 
 import (
-	"./controllers/control1"
-	"./controllers/control2"	
+	"./controllers/control2"
 	"github.com/Cergoo/gol/http/method"
 	"github.com/Cergoo/gol/http/router"
+	"github.com/Cergoo/gol/http/webFrameWork/controllers/control1"
 	"log"
 	"net/http"
 	"time"

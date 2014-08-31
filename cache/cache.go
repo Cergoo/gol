@@ -93,15 +93,7 @@ type (
 		SaveFile(string) error
 		Load(io.Reader) error
 		LoadFile(string) error
-		Len() ICounter
-	}
-
-	// ICounter interface counter
-	ICounter interface {
-		Get() uint64
-		GetLimit() uint64
-		SetLimit(v uint64)
-		Check() bool
+		Len() counter.ICounter
 	}
 )
 
@@ -155,7 +147,7 @@ func stop(t *tfinalize) {
 }
 
 // Len get counter cache
-func (t *tCache) Len() ICounter {
+func (t *tCache) Len() counter.ICounter {
 	return &t.count
 }
 

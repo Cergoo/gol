@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package stack it's a implementation lockfree LIFO stack under counter & limiter items
+// Package stack it's a implementation lock free LIFO stack under counter & limiter items
 package stack
 
 import (

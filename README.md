@@ -145,6 +145,10 @@ See tplEngin/i18n/exaple for more details.
 Plural form rules, fork plural github.com/vube/i18n  
 http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/plural
 
+## tplEngin/human
+Package human it's a formatters for units to human friendly sizes  
+http://godoc.org/github.com/Cergoo/gol/tplEngin/human
+
 ## tplEngin/parser
 Parser util from i18n & tpl pkg  
 http://godoc.org/github.com/Cergoo/gol/tplEngin/parser

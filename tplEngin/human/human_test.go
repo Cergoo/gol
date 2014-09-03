@@ -32,7 +32,8 @@ var tests = []testData{
 
 func TestSize(t *testing.T) {
 	t1 := test.New(t)
+	hum := GetBytenHumanize([]string{"B", "KB", "MB", "GB", "TB", "PB", "EB"})
 	for _, pair := range tests {
-		t1.Eq(Byten(pair.Size), pair.Result)
+		t1.Eq(hum(pair.Size), pair.Result)
 	}
 }

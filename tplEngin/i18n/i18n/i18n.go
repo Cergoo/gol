@@ -228,9 +228,6 @@ func (t *TReplacer) p(tpl *titem, context []interface{}) []byte {
 			for _, varUint16 = range v.vars {
 				vars = append(vars, context[varUint16])
 			}
-			if v.f == nil {
-				fmt.Println("oooooooo")
-			}
 			result = append(result, v.f(vars)...)
 		}
 	}

@@ -14,6 +14,8 @@
   "message": "Поле &laquo;email&raquo; должно быть заполнено",
   "message1": "Поле {{0}} должно быть заполнено {{1}} {{plural apple 1}}",
   "message2": "День добрый, {{0}}, у Вас {{1 %.2f}} {{plural apple 1}}.",
+  "message3": "День добрый, {{0}}, занято {{f humanByte 1}}.",
+  "message4": "День добрый, {{0}}, занято {{f humanByteLong 1}}.",
   "save": "Сохранить"
 }
 }

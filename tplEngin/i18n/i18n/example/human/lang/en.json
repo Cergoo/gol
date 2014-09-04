@@ -1,0 +1,21 @@
+/*
+   English language resources of a package humanize1024 
+   from pkg github.com/Cergoo/gol/tplEngin/i18n/i18n
+   Units of Measurement 
+   comment out unnecessary
+*/
+
+{
+"pluralRule": "2A", 
+"plural": {
+  "bit":  ["bit", "bits"],  
+  "byte":  ["byte", "bytes"]
+//  "metr":  ["meter", "meters"]
+},
+"lists": {
+  "bitshort": ["b", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb"],
+  "byteshort": ["B", "KB", "MB", "GB", "TB", "PB", "EB"],
+  "+prefix1000": ["", "kilo", "mega", "giga", "tera", "peta", "eksa"],
+  "-prefix1000": ["", "mili", "mikro", "nano", "piko", "femto", "atto"]
+}
+}

@@ -115,6 +115,21 @@ func Floate(v interface{}) (float64, bool) {
 	}
 }
 
+// Uint convert interface{} to uint64
+func Uint(v interface{}) (uint64, bool) {
+	val := reflect.ValueOf(v)
+	switch val.Kind() {
+	case reflect.Float32, reflect.Float64:
+		return uint64(val.Float()), true
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+		return uint64(val.Int()), true
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
+		return val.Uint(), true
+	default:
+		return 0, false
+	}
+}
+
 type (
 	// TField struct about field sruct
 	TField struct {

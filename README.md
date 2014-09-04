@@ -130,24 +130,27 @@ http://godoc.org/github.com/Cergoo/gol/stack
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  
 http://godoc.org/github.com/Cergoo/gol/jsonConfig
   
-## tplEngin/i18n
-i18n pkg.    
-http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n  
+## tplEngin/i18n/i18n
+Package i18n implementation  
+http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/i18n   
 Feature:
-- Load from .json format language resource store. 
-- Support tag: include context and plural.       
-   
-Example:
-<pre>Good afternoon, Mr.(Mrs.) {{0}}, you have {{1 %.2f}} {{plural apple 1}}.</pre>
-See tplEngin/i18n/exaple for more details.
+    - Load from .json format language resource store.
+    - Support tag: include context vars and plural.
+    - Support pluggable module as a user functions libraris (a example 'humanize' mod implementation)     
+Example: 
+<pre>
+Good afternoon, Mr.(Mrs.) {{0}}, you have {{1 %.2f}} {{plural apple 1}}.
+Good afternoon, Mr.(Mrs.) {{0}}, you have {{f humanByteLong 1}}.
+</pre>    
+See tplEngin/i18n/i18n/exaple for more details. 
 
-## tplEngin/i18n/plural
+# tplEngin/i18n/plural
 Plural form rules, fork plural github.com/vube/i18n  
 http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/plural
 
-## tplEngin/human
+## tplEngin/i18n/human
 Package human it's a formatters for units to human friendly sizes  
-http://godoc.org/github.com/Cergoo/gol/tplEngin/human
+http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/human
 
 ## tplEngin/parser
 Parser util from i18n & tpl pkg  

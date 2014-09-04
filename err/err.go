@@ -26,3 +26,10 @@ func Panic(e error) {
 		panic(e)
 	}
 }
+
+// Panic gen.
+func PanicBool(ok bool, e string, code int) {
+	if !ok {
+		panic(New(e, code))
+	}
+}

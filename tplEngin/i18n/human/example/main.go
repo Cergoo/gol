@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/Cergoo/gol/tplEngin/human"
+	"github.com/Cergoo/gol/tplEngin/i18n/human"
 )
 
 func main() {

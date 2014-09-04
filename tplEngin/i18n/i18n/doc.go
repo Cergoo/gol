@@ -6,8 +6,8 @@ Package i18n implementation
 Feature:
     - Load from .json format language resource store.
     - Support tag: include context vars and plural.
-    - Support users functions
-    - Support pluggable module as a users functions libraris (a example 'humanize' mod implementation)     
+    - Support user functions
+    - Support pluggable modules as a user functions librarys (a example 'humanize' mod implementation)     
 Example: 
     Field {{0}} must be filled {{1}} {{plural appel 1}}
     Good afternoon, Mr.(Mrs.) {{0}}, you have {{f humanByteLong 1}}.

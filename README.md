@@ -133,10 +133,10 @@ http://godoc.org/github.com/Cergoo/gol/jsonConfig
 ## tplEngin/i18n/i18n
 Package i18n implementation  
 http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/i18n   
-Feature:
-    - Load from .json format language resource store.
-    - Support tag: include context vars and plural.
-    - Support pluggable module as a user functions libraris (a example 'humanize' mod implementation)     
+Feature:  
+    - Load from .json format language resource store.  
+    - Support tag: include context vars and plural.    
+    - Support pluggable module as a user functions libraris (a example 'humanize' mod implementation)       
 Example: 
 <pre>
 Good afternoon, Mr.(Mrs.) {{0}}, you have {{1 %.2f}} {{plural apple 1}}.

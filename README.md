@@ -144,7 +144,7 @@ Good afternoon, Mr.(Mrs.) {{0}}, you have {{f humanByteLong 1}}.
 </pre>    
 See tplEngin/i18n/i18n/exaple for more details. 
 
-# tplEngin/i18n/plural
+## tplEngin/i18n/plural
 Plural form rules, fork plural github.com/vube/i18n  
 http://godoc.org/github.com/Cergoo/gol/tplEngin/i18n/plural
 

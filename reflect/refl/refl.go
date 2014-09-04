@@ -69,7 +69,7 @@ func IsNil(v interface{}) bool {
 		return val.IsNil()
 	}
 
-	return false
+	return falseint64(
 }
 
 // IsEmpty return true if v is nil or empty
@@ -125,6 +125,21 @@ func Uint(v interface{}) (uint64, bool) {
 		return uint64(val.Int()), true
 	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
 		return val.Uint(), true
+	default:
+		return 0, false
+	}
+}
+
+// Int convert interface{} to int64
+func Int(v interface{}) (int64, bool) {
+	val := reflect.ValueOf(v)
+	switch val.Kind() {
+	case reflect.Float32, reflect.Float64:
+		return int64(val.Float()), true
+	case reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Int:
+		return val.Int(), true
+	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:
+		return int64(val.Uint()), true
 	default:
 		return 0, false
 	}

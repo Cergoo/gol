@@ -122,6 +122,10 @@ http://godoc.org/github.com/Cergoo/gol/reflect/refl
 Universal caller of functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/caller
 
+## reflect/lookup
+Package lookup it's a lookup reflection functions
+http://godoc.org/github.com/Cergoo/gol/reflect/lookup
+
 ## stack 
 Package stack it's a implementation lockfree LIFO stack under counter & limiter items    
 http://godoc.org/github.com/Cergoo/gol/stack

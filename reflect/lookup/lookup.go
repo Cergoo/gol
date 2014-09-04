@@ -11,9 +11,9 @@ import (
 )
 
 // LookupI interface{}
-func LookupI(v interface{}, path []byte) (vi interface{}, fullpath bool) {
+func LookupI(v interface{}, path []byte) (vi interface{}, ok bool) {
 	var r reflect.Value
-	r, fullpath = Lookup(reflect.ValueOf(v), path)
+	r, ok = Lookup(reflect.ValueOf(v), path)
 	if r.IsValid() {
 		vi = r.Interface()
 	}
@@ -21,7 +21,7 @@ func LookupI(v interface{}, path []byte) (vi interface{}, fullpath bool) {
 }
 
 // Lookup reflect.Value
-func Lookup(v reflect.Value, path []byte) (r reflect.Value, fullpath bool) {
+func Lookup(v reflect.Value, path []byte) (r reflect.Value, ok bool) {
 	var (
 		e error
 		i int64
@@ -43,6 +43,9 @@ func Lookup(v reflect.Value, path []byte) (r reflect.Value, fullpath bool) {
 			if e != nil {
 				return
 			}
+			if !(v.Len() > int(i)) {
+				return
+			}
 			v = v.Index(int(i))
 		default:
 			return
@@ -54,6 +57,6 @@ func Lookup(v reflect.Value, path []byte) (r reflect.Value, fullpath bool) {
 		r = v
 	}
 
-	fullpath = true
+	ok = true
 	return
 }

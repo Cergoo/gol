@@ -123,7 +123,7 @@ Universal caller of functions
 http://godoc.org/github.com/Cergoo/gol/reflect/caller
 
 ## reflect/lookup
-Package lookup it's a lookup reflection functions
+Package lookup it's a lookup reflection functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/lookup
 
 ## stack 

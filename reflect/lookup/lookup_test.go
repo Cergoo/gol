@@ -2,6 +2,7 @@ package lookup
 
 import (
 	"github.com/Cergoo/gol/test"
+	"strings"
 	"testing"
 )
 
@@ -39,15 +40,15 @@ func Test1(t *testing.T) {
 	var fullpath bool
 	t1 := test.New(t)
 
-	v, fullpath := LookupI(V, []byte("point/Val1"))
+	v, fullpath := LookupI(V, strings.Split("point.Val1", "."))
 	t1.Eq(v.(string), "стр")
 	t1.Eq(fullpath, true)
 
-	v, fullpath = LookupI(V, []byte("point/Val2/2/SliceVar/1"))
+	v, fullpath = LookupI(V, strings.Split("point.Val2.2.SliceVar.1", "."))
 	t1.Eq(v.(string), "ctr2")
 	t1.Eq(fullpath, true)
 
-	v, fullpath = LookupI(V, []byte("point/Val1/ogoPath"))
+	v, fullpath = LookupI(V, strings.Split("point.Val1.ogoPath", "."))
 	t1.Eq(v.(string), "стр")
 	t1.Eq(fullpath, false)
 }

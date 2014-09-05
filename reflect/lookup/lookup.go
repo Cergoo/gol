@@ -5,13 +5,12 @@
 package lookup
 
 import (
-	"bytes"
 	"reflect"
 	"strconv"
 )
 
 // LookupI interface{}
-func LookupI(v interface{}, path []byte) (vi interface{}, ok bool) {
+func LookupI(v interface{}, path []string) (vi interface{}, ok bool) {
 	var r reflect.Value
 	r, ok = Lookup(reflect.ValueOf(v), path)
 	if r.IsValid() {
@@ -21,15 +20,14 @@ func LookupI(v interface{}, path []byte) (vi interface{}, ok bool) {
 }
 
 // Lookup reflect.Value
-func Lookup(v reflect.Value, path []byte) (r reflect.Value, ok bool) {
+func Lookup(v reflect.Value, path []string) (r reflect.Value, ok bool) {
 	var (
 		e error
 		i int64
 		n string
 	)
-	part := bytes.Split(path, []byte("/"))
 
-	for _, p := range part {
+	for _, p := range path {
 		n = string(p)
 		v = reflect.Indirect(v)
 

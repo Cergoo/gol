@@ -34,8 +34,6 @@ var (
 	Pack = binary.LittleEndian
 	// TimeType reflection type time
 	TimeType = reflect.TypeOf(time.Time{})
-	// BytesType reflection type []byte
-	BytesType = reflect.TypeOf([]byte(nil))
 )
 
 /* Encoders */

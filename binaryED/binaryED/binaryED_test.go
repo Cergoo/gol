@@ -42,6 +42,7 @@ var (
 	inMap  = map[int]string{1: "f1", 2: "f2", 4: "f4"}
 	inMap1 = map[int]*t2{1: &t2{"f1", "f2"}, 2: &t2{"f2", "f2"}}
 	inMap2 = map[int]t2{1: t2{"f1", "f2"}, 2: t2{"f2", "f2"}}
+	inMapN = map[t2]int{t2{"f1", "f2"}: 1, t2{"f2", "f2"}: 2}
 
 	outInt    int
 	outStr    string
@@ -51,6 +52,7 @@ var (
 	outMap    map[int]string
 	outMap1   map[int]*t2
 	outMap2   map[int]t2
+	outMapN   map[t2]int
 )
 
 func TestED(t *testing.T) {
@@ -95,4 +97,8 @@ func TestED(t *testing.T) {
 	Encode(buf, inMap2)
 	Decode(buf, &outMap2)
 	t1.Eq(inMap2, outMap2)
+
+	Encode(buf, inMapN)
+	Decode(buf, &outMapN)
+	t1.Eq(inMapN, outMapN)
 }

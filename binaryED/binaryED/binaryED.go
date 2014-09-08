@@ -50,7 +50,7 @@ func encodeField(buf IBuf, val reflect.Value) {
 	case reflect.Slice, reflect.Array:
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
-		if val.Type() == BytesType {
+		if val.Type().Elem().Kind() == reflect.Uint8 {
 			buf.Write(val.Interface().([]byte))
 		} else {
 			for i := 0; i < vLen; i++ {
@@ -177,7 +177,7 @@ func decodeField(buf IBuf, val reflect.Value) (e error) {
 			return
 		}
 		ln := int(Pack.Uint32(part))
-		if val.Type() == BytesType {
+		if val.Type().Elem().Kind() == reflect.Uint8 {
 			part, e = buf.ReadNext(ln)
 			if e != nil {
 				return
@@ -220,19 +220,19 @@ func decodeField(buf IBuf, val reflect.Value) (e error) {
 		}
 		var (
 			mapKey, mapVal reflect.Value
-			ptr            bool
+			ptrVal         bool
 		)
 		mapValType := vtype.Elem()
 		if mapValType.Kind() == reflect.Ptr {
-			ptr = true
+			ptrVal = true
 			mapValType = mapValType.Elem()
 		}
 		for i := 0; i < ln; i++ {
-			mapKey = reflect.New(vtype.Key()).Elem()
 			mapVal = reflect.New(mapValType)
-			if !ptr {
+			if !ptrVal {
 				mapVal = mapVal.Elem()
 			}
+			mapKey = reflect.New(vtype.Key()).Elem()
 			decodeField(buf, mapKey)
 			decodeField(buf, mapVal)
 			val.SetMapIndex(mapKey, mapVal)

@@ -14,6 +14,14 @@ func main() {
 	structToMap()
 	//
 	m1()
+	//
+	m2()
+}
+
+func m2() {
+	slice := make([]byte, 10)
+	vt := reflect.TypeOf(slice)
+	fmt.Println(vt.Elem().Kind().String())
 }
 
 func m1() {

@@ -26,7 +26,7 @@ The package is designed for fast serialization / deserialization:
 	map (keys not pointer type)
 	struct
 
-Important !!!    
+Important !         
 ======================================================================
 - Nonexported field structures are ignored.    
 - In decoding the variable structure is used in which the decoding occurs,
@@ -35,7 +35,7 @@ up to the order of the fields in the description of the structures.
 - Possible encoding / decoding only a strictly structured data,
 ie map[string]interfase {} can not be coded as values ​​map do not have a strict structure.    
 
-Важно!!!
+Важно!    
     
 - При кодировании/декодировании неэкспортируемые поля структур игнорируются.     
 - При декодировании используется структура переменной в которую происходит декодирование, необходимо чтобы структура приёмнника соответсвовала структуре источника вплоть до порядка следования полей в описании структур.    

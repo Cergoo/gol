@@ -7,11 +7,10 @@ Package primitive it's a binary encode/decode primitive elementary implementatio
 http://godoc.org/github.com/Cergoo/gol/binaryED/primitive
 
 ## binaryED/binaryED
-Package binaryED it's a binary structure less format encode/decode implementation
-fork github.com/youtube/vitess/go/bson
+Package binaryED it's a binary structure less format encode/decode implementation  
+(fork github.com/youtube/vitess/go/bson)
 
-Attention!!!
-======================================================================
+#### Attention!!!
 Before you can use this package need to patch standard library reflect,
 for unto this add the file the following function:
 go/src/pkg/reflect/value.go
@@ -36,13 +35,12 @@ The package is designed for fast serialization / deserialization:
 	struct
 </pre>
 
-Important !!!
-======================================================================
-Nonexported field structures are ignored.
-In decoding the variable structure is used in which the decoding occurs,
+#### Important !!!
+- Nonexported field structures are ignored.
+- In decoding the variable structure is used in which the decoding occurs,
 necessary to match the structure of the receiver structure of the source
 up to the order of the fields in the description of the structures.
-Possible encoding / decoding only a strictly structured data,
+- Possible encoding / decoding only a strictly structured data,
 ie map[string]interfase {} can not be coded as values ​​map do not have a strict structure.
 
 ## cache

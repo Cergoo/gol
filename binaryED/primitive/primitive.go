@@ -1,8 +1,8 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
-// Package binaryED it's a binary encode/decode implementation
-package binaryED
+// Package primitive it's a binary encode/decode primitive elementary implementation
+package primitive
 
 import (
 	"encoding/binary"
@@ -12,11 +12,13 @@ import (
 )
 
 type (
-
-	// IBuffer interface of a buffer with support reserve
-	IBuffer interface {
+	// IBuf interface of a buffer with support reserve
+	IBuf interface {
 		Reserve(int) []byte
 		WriteByte(byte) error
+		Write([]byte) (int, error)
+		ReadNext(n int) ([]byte, error)
+		ReadByte() (byte, error)
 	}
 )
 
@@ -30,10 +32,8 @@ const (
 var (
 	// Pack it's a main coder
 	Pack = binary.LittleEndian
-
 	// TimeType reflection type time
 	TimeType = reflect.TypeOf(time.Time{})
-
 	// BytesType reflection type []byte
 	BytesType = reflect.TypeOf([]byte(nil))
 )
@@ -41,57 +41,57 @@ var (
 /* Encoders */
 
 // PutUint8 encode a uint8 into buf
-func PutUint8(buf IBuffer, val uint8) {
+func PutUint8(buf IBuf, val uint8) {
 	buf.WriteByte(val)
 }
 
 // PutUint16 encode a uint16 into buf
-func PutUint16(buf IBuffer, val uint16) {
+func PutUint16(buf IBuf, val uint16) {
 	Pack.PutUint16(buf.Reserve(WORD16), val)
 }
 
 // PutUint32 encode a uint32 into buf
-func PutUint32(buf IBuffer, val uint32) {
+func PutUint32(buf IBuf, val uint32) {
 	Pack.PutUint32(buf.Reserve(WORD32), val)
 }
 
 // PutUint64 encode a uint64 into buf
-func PutUint64(buf IBuffer, val uint64) {
+func PutUint64(buf IBuf, val uint64) {
 	Pack.PutUint64(buf.Reserve(WORD64), val)
 }
 
 // PutFloat64 encode a float64 into buf
-func PutFloat64(buf IBuffer, val float64) {
+func PutFloat64(buf IBuf, val float64) {
 	Pack.PutUint64(buf.Reserve(WORD64), math.Float64bits(val))
 }
 
 // PutFloat32 encode a float32 into buf
-func PutFloat32(buf IBuffer, val float32) {
+func PutFloat32(buf IBuf, val float32) {
 	Pack.PutUint32(buf.Reserve(WORD32), math.Float32bits(val))
 }
 
 // PutInt8 encode a int8 into buf
-func PutInt8(buf IBuffer, val int8) {
+func PutInt8(buf IBuf, val int8) {
 	buf.WriteByte(uint8(val))
 }
 
 // PutInt16 encode a int16 into buf
-func PutInt16(buf IBuffer, val int16) {
+func PutInt16(buf IBuf, val int16) {
 	Pack.PutUint16(buf.Reserve(WORD16), uint16(val))
 }
 
 // PutInt32 encode a int32 into buf
-func PutInt32(buf IBuffer, val int32) {
+func PutInt32(buf IBuf, val int32) {
 	Pack.PutUint32(buf.Reserve(WORD32), uint32(val))
 }
 
 // PutInt64 encode a int64 into buf
-func PutInt64(buf IBuffer, val int64) {
+func PutInt64(buf IBuf, val int64) {
 	Pack.PutUint64(buf.Reserve(WORD64), uint64(val))
 }
 
 // PutBool encode a bool into buf
-func PutBool(buf IBuffer, val bool) {
+func PutBool(buf IBuf, val bool) {
 	if val {
 		buf.Reserve(1)[0] = 1
 		return
@@ -101,7 +101,7 @@ func PutBool(buf IBuffer, val bool) {
 }
 
 // PutTime encode a time into buf
-func PutTime(buf IBuffer, val time.Time) {
+func PutTime(buf IBuf, val time.Time) {
 	Pack.PutUint64(buf.Reserve(WORD64), uint64(val.UnixNano()/1e6))
 }
 

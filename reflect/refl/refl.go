@@ -69,7 +69,7 @@ func IsNil(v interface{}) bool {
 		return val.IsNil()
 	}
 
-	return falseint64(
+	return false
 }
 
 // IsEmpty return true if v is nil or empty

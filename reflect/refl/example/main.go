@@ -4,6 +4,7 @@ package main
 import (
 	"fmt"
 	"github.com/Cergoo/gol/reflect/refl"
+	"reflect"
 )
 
 func main() {
@@ -11,6 +12,26 @@ func main() {
 	mapKeysEq()
 	// Example structToMap
 	structToMap()
+	//
+	m1()
+}
+
+func m1() {
+	map1 := make(map[string]int)
+	vt := reflect.TypeOf(map1)
+	n := vt.Elem().String()
+	fmt.Println(vt.Key().String(), vt.Kind().String(), n)
+
+	type (
+		t1 struct {
+			v1 int
+			v2 string
+		}
+	)
+
+	v := new(t1)
+	fmt.Println(reflect.ValueOf(v).Elem().Kind().String())
+
 }
 
 // MapKeysEq

@@ -71,6 +71,11 @@ func (t *Buf) FlushP() (r []byte) {
 	return
 }
 
+// Show get show current buffer
+func (t *Buf) Show() []byte {
+	return t.buf[:t.writeoff]
+}
+
 // Flush get value all buf and clear buf
 func (t *Buf) Flush() (r []byte) {
 	r = append(r, t.buf[:t.writeoff]...)
@@ -99,17 +104,19 @@ func (t *Buf) Cap() int {
 /* Reader functions */
 
 // ReadNext read next n byte
-func (t *Buf) ReadNext(n int) []byte {
+func (t *Buf) ReadNext(n int) (data []byte, e error) {
 	if t.readeoff >= t.writeoff {
-		return nil
+		e = io.EOF
+		return
 	}
 	n += t.readeoff
 	if n > t.writeoff {
 		n = t.writeoff
+		e = io.EOF
 	}
-	data := t.buf[t.readeoff:n]
+	data = t.buf[t.readeoff:n]
 	t.readeoff = n
-	return data
+	return
 }
 
 // ReadByte read next byte

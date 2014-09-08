@@ -48,7 +48,7 @@ func FindTag(source []byte, delimiter [2][]byte) (lpart, tag []byte, end int, su
 	return
 }
 
-// SplitWord split a []byte into words by delimiters, cut repeatable delimiters
+// SplitWord split a []byte into words by  byte delimiters, cut repeatable delimiters
 func SplitWord(source []byte, delimiters byte) []string {
 	var (
 		begin int
@@ -83,7 +83,7 @@ func StrPrefix(a []byte, b string) []byte {
 	return nil
 }
 
-// Parse universal parse metode, return template
+// Parse it's a universal parser, return template
 func Parse(source []byte, toparse *ToParse) (tpl Ttpl) {
 	var (
 		success     bool

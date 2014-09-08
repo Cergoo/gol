@@ -5,7 +5,8 @@
 Package binaryED it's a binary structure less format encode/decode implementation
 fork github.com/youtube/vitess/go/bson
 
-Attention!        
+Attention! 
+       
 ======================================================================        
 Before you can use this package need to patch standard library reflect,
 for unto this add the file the following function:
@@ -26,7 +27,8 @@ The package is designed for fast serialization / deserialization:
 	map (keys not pointer type)
 	struct
 
-Important !         
+Important !  
+       
 ======================================================================
 - Nonexported field structures are ignored.    
 - In decoding the variable structure is used in which the decoding occurs,

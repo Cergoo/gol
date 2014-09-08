@@ -44,7 +44,7 @@ up to the order of the fields in the description of the structures.
 - Possible encoding / decoding only a strictly structured data,
 ie map[string]interfase {} can not be coded as values ​​map do not have a strict structure.
 
-#### Важно!!!
+#### важно
 - При кодировании/декодировании неэкспортируемые поля структур игнорируются.
 - При декодировании используется структура переменной в которую происходит декодирование,
 необходимо чтобы структура приёмнника соответсвовала структуре источника

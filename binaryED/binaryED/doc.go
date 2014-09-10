@@ -18,13 +18,12 @@ go/src/pkg/reflect/value.go
     }
 
 The package is designed for fast serialization / deserialization:
-	uint8 uint16 uint32 uint64 uint
-	int8 int16 int32 int64 int
-	floate32 floate64
+	uint8, uint16, uint32, uint64, uint
+	int8, int16, int32, int64, int
+	floate32, floate64
 	bool
 	string
-	slise
-	array
+	slise, array
 	map (keys not pointer type)
 	struct
 

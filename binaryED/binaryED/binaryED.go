@@ -4,7 +4,6 @@
 package binaryED
 
 import (
-	//"fmt"
 	. "github.com/Cergoo/gol/binaryED/primitive"
 	"math"
 	"reflect"
@@ -19,7 +18,6 @@ func Encode(buf IBuf, val interface{}) {
 }
 
 func encodeField(buf IBuf, val reflect.Value) {
-	val = reflect.Indirect(val)
 	switch val.Kind() {
 	case reflect.Uint8:
 		buf.WriteByte(uint8(val.Uint()))
@@ -48,6 +46,13 @@ func encodeField(buf IBuf, val reflect.Value) {
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		buf.Write([]byte(val.String()))
 	case reflect.Slice, reflect.Array:
+		if val.Kind() == reflect.Slice {
+			if val.IsNil() {
+				buf.WriteByte(0)
+				return
+			}
+			buf.WriteByte(1)
+		}
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		if val.Type().Elem().Kind() == reflect.Uint8 {
@@ -57,6 +62,14 @@ func encodeField(buf IBuf, val reflect.Value) {
 				encodeField(buf, val.Index(i))
 			}
 		}
+	case reflect.Ptr:
+		val = val.Elem()
+		if val.Kind() == reflect.Invalid {
+			buf.WriteByte(0) // means nil
+			return
+		}
+		buf.WriteByte(1) // means not nil
+		encodeField(buf, val)
 	case reflect.Struct:
 		vType := val.Type()
 		if vType == TimeType {
@@ -72,6 +85,11 @@ func encodeField(buf IBuf, val reflect.Value) {
 			}
 		}
 	case reflect.Map:
+		if val.IsNil() {
+			buf.WriteByte(0)
+			return
+		}
+		buf.WriteByte(1)
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		keys := val.MapKeys()
@@ -86,7 +104,7 @@ func encodeField(buf IBuf, val reflect.Value) {
 
 // Decode decode value to binary
 func Decode(buf IBuf, val interface{}) {
-	decodeField(buf, reflect.ValueOf(val))
+	decodeField(buf, reflect.ValueOf(val).Elem())
 }
 
 func decodeField(buf IBuf, val reflect.Value) (e error) {
@@ -94,7 +112,6 @@ func decodeField(buf IBuf, val reflect.Value) (e error) {
 		part []byte
 		bt   byte
 	)
-	val = reflect.Indirect(val)
 	switch val.Kind() {
 	case reflect.Uint8:
 		bt, e = buf.ReadByte()
@@ -171,7 +188,14 @@ func decodeField(buf IBuf, val reflect.Value) (e error) {
 				*(*string)(val.Ptr()) = string(part)
 			}
 		}
-	case reflect.Slice:
+	case reflect.Slice, reflect.Array:
+		if val.Kind() == reflect.Slice {
+			bt, e = buf.ReadByte()
+			// if nil
+			if e != nil || bt == 0 {
+				return
+			}
+		}
 		part, e = buf.ReadNext(WORD32)
 		if e != nil {
 			return
@@ -191,6 +215,17 @@ func decodeField(buf IBuf, val reflect.Value) (e error) {
 				decodeField(buf, val.Index(i))
 			}
 		}
+	case reflect.Ptr:
+		bt, e = buf.ReadByte()
+		// if nil
+		if e != nil || bt == 0 {
+			return
+		}
+		if val.Elem().Kind() == reflect.Invalid {
+			val.Set(reflect.New(val.Type().Elem()))
+		}
+		val = val.Elem()
+		decodeField(buf, val)
 	case reflect.Struct:
 		vType := val.Type()
 		if vType == TimeType {
@@ -209,6 +244,11 @@ func decodeField(buf IBuf, val reflect.Value) (e error) {
 			}
 		}
 	case reflect.Map:
+		bt, e = buf.ReadByte()
+		// if nil
+		if e != nil || bt == 0 {
+			return
+		}
 		part, e = buf.ReadNext(WORD32)
 		if e != nil {
 			return

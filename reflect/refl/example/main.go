@@ -12,34 +12,49 @@ func main() {
 	mapKeysEq()
 	// Example structToMap
 	structToMap()
-	//
-	m1()
-	//
-	m2()
+
+	//mapResearch()
+	//structResearch()
+	//sliceResearch()
 }
 
-func m2() {
-	slice := make([]byte, 10)
+// Get slice elem type
+func sliceResearch() {
+	var slice []byte
+	//slice := make([]byte, 10)
+	//slice = nil
 	vt := reflect.TypeOf(slice)
-	fmt.Println(vt.Elem().Kind().String())
+	vv := reflect.ValueOf(slice)
+	fmt.Println(vt.Elem().Kind(), vv.Kind())
 }
 
-func m1() {
-	map1 := make(map[string]int)
-	vt := reflect.TypeOf(map1)
-	n := vt.Elem().String()
-	fmt.Println(vt.Key().String(), vt.Kind().String(), n)
-
+func structResearch() {
 	type (
 		t1 struct {
 			v1 int
 			v2 string
 		}
 	)
-
+	var v1 t1
 	v := new(t1)
-	fmt.Println(reflect.ValueOf(v).Elem().Kind().String())
+	//v = nil
+	fmt.Println(reflect.ValueOf(v).Elem().Kind())
 
+	//v1 := t1{}
+	fmt.Println(reflect.ValueOf(v1).Kind())
+
+	var v2 *t1
+	v2 = nil
+	rv := reflect.ValueOf(v2)
+	fmt.Println(rv.Kind(), rv.Elem().Kind())
+}
+
+// Get map type key and type val
+func mapResearch() {
+	map1 := make(map[string]int)
+	vt := reflect.TypeOf(map1)
+	n := vt.Elem().String()
+	fmt.Println(vt.Key().String(), vt.Kind().String(), n)
 }
 
 // MapKeysEq

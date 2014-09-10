@@ -59,8 +59,8 @@ func (t *Buf) Write(p []byte) (n int, err error) {
 // WriteByte write byte into buf
 func (t *Buf) WriteByte(p byte) (err error) {
 	t.grow(1)
-	t.writeoff++
 	t.buf[t.writeoff] = p
+	t.writeoff++
 	return
 }
 
@@ -133,4 +133,10 @@ func (t *Buf) ReadByte() (b byte, e error) {
 // ReadReset reset reader index
 func (t *Buf) ReadReset() {
 	t.readeoff = 0
+}
+
+// ReadWriteReset reset reader and writer indexs
+func (t *Buf) ReadWriteReset() {
+	t.readeoff = 0
+	t.writeoff = 0
 }

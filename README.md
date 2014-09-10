@@ -11,48 +11,6 @@ Package binaryED it's a binary structure less format encode/decode implementatio
 (fork github.com/youtube/vitess/go/bson)    
 http://godoc.org/github.com/Cergoo/gol/binaryED/binaryED
 
-#### Attention
-Before you can use this package need to patch standard library reflect,
-for unto this add the file the following function:
-go/src/pkg/reflect/value.go
-
-<pre>
-// the Go a user hack
-func (v Value) Ptr() unsafe.Pointer {
-       return v.ptr
-}
-</pre>
-
-The package is designed for fast serialization / deserialization:
-<pre>
-	uint8 uint16 uint32 uint64 uint
-	int8 int16 int32 int64 int
-	floate32 floate64
-	bool
-	string
-	slise
-	array
-	map (keys not pointer type)
-	struct
-</pre>
-
-#### Important
-- Nonexported field structures are ignored.
-- In decoding the variable structure is used in which the decoding occurs,
-necessary to match the structure of the receiver structure of the source
-up to the order of the fields in the description of the structures.
-- Possible encoding / decoding only a strictly structured data,
-ie map[string]interfase {} can not be coded as values ​​map do not have a strict structure.
-
-#### важно
-- При кодировании/декодировании неэкспортируемые поля структур игнорируются.
-- При декодировании используется структура переменной в которую происходит декодирование,
-необходимо чтобы структура приёмнника соответсвовала структуре источника
-вплоть до порядка следования полей в описании структур.
-- Возможно кодирование/декодирование только строго структурированных данных,
-то есть map[string]interfase{} нельзя кодировать так как значения хештаблицы
-не имеют описания структуры а формат кодирования некодирует описание структур а только их данные.
-
 ## cache
 Package cache it's a in-memory key-value store based of the thread-safe hasmap implementation similar to memcached that is suitable for applications running on a single machine.    
 Automatic lifetime management of records can be enabled or disabled. LRU caches are affected by the problem leaching records in intensive add, i.e. the records  permanently pushed do not linger in the cach. This package does not implement the LRU. In this implementation the time life records indicated for all the generated cache, specified time value is the size of time interval during which a new record is guaranteed to live in the cache. Then have a record of lives at least one time interval maximum of two time interval + can be implemented for the "if it's read then it lives" if a record is requested that her life is prolonged for the next time interval.  

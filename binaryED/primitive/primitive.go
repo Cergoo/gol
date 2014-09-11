@@ -19,6 +19,7 @@ type (
 		Write([]byte) (int, error)
 		ReadNext(n int) ([]byte, error)
 		ReadByte() (byte, error)
+		ReadWriteReset()
 	}
 )
 

@@ -9,19 +9,40 @@ import (
 
 func main() {
 	// Example mapKeysEq
-	mapKeysEq()
+	//mapKeysEq()
 	// Example structToMap
-	structToMap()
+	//structToMap()
 
+	n2()
 	//mapResearch()
 	//structResearch()
 	//sliceResearch()
 }
 
+func n1(n interface{}) {
+	vt := reflect.ValueOf(n)
+
+	fmt.Println(vt.Field(0).Kind(), vt.Field(0).Elem().Type().String())
+}
+
+func n2() {
+	type (
+		nn struct {
+			b interface{}
+		}
+	)
+	var n nn
+	n = nn{b: 7}
+	n1(n)
+}
+
 // Get slice elem type
 func sliceResearch() {
-	var slice []byte
-	//slice := make([]byte, 10)
+	var (
+		slice []byte
+	)
+
+	//slice = make([]byte, 10)
 	//slice = nil
 	vt := reflect.TypeOf(slice)
 	vv := reflect.ValueOf(slice)

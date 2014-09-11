@@ -1,7 +1,7 @@
 package binaryED
 
 import (
-	// "fmt"
+	//"fmt"
 	"github.com/Cergoo/gol/fastbuf"
 	"github.com/Cergoo/gol/test"
 	//"github.com/davecgh/go-spew/spew"
@@ -22,7 +22,7 @@ type (
 		F  []int
 		F2 string
 	}
-	t struct {
+	tt struct {
 		F1 string
 		F2 string
 	}
@@ -48,77 +48,75 @@ var (
 		},
 		F5: 12,
 	}
-	inMap  = map[int]string{1: "f1", 2: "f2", 4: "f4"}
-	inMap1 = map[int]*t2{1: &t2{"f1", nil, "f2"}, 2: &t2{"f2", nil, "f2"}}
-	inMap2 = map[int]t2{1: t2{"f1", []int{}, "f2"}, 2: t2{"f2", []int{}, "f2"}}
-	inMapN = map[t]int{t{"f1", "f2"}: 1, t{"f2", "f2"}: 2}
+	inMap          = map[int]string{1: "f1", 2: "f2", 4: "f4"}
+	inMap1         = map[int]*t2{1: &t2{"f1", nil, "f2"}, 2: &t2{"f2", nil, "f2"}}
+	inMap2         = map[int]t2{1: t2{"f1", []int{}, "f2"}, 2: t2{"f2", []int{}, "f2"}}
+	inMapN         = map[tt]int{tt{"f1", "f2"}: 1, tt{"f2", "f2"}: 2}
+	inMapInterface = map[int]interface{}{1: 1, 2: tt{"f2", "f2"}, 3: &t2{"f2", nil, "f2"}}
 
-	outInt    int
-	outStr    string
-	outBool   bool
-	outSlice  []string
-	outStruct = &t1{f3: 100}
-	outMap    map[int]string
-	outMap1   map[int]*t2
-	outMap2   map[int]t2
-	outMapN   map[t]int
+	outInt          int
+	outStr          string
+	outBool         bool
+	outSlice        []string
+	outStruct       = &t1{f3: 100}
+	outMap          map[int]string
+	outMap1         map[int]*t2
+	outMap2         map[int]t2
+	outMapN         map[tt]int
+	outMapInterface map[int]interface{}
 )
 
 func TestED(t *testing.T) {
 	t1 := test.New(t)
 
+	Decoder := NewDecoder(buf)
+	Decoder.Register(&t2{}, tt{})
+
 	Encode(buf, inInt)
-	Decode(buf, &outInt)
+	Decoder.Decode(&outInt)
 	t1.Eq(inInt, outInt)
-	buf.ReadWriteReset()
 
 	Encode(buf, inStr)
-	Decode(buf, &outStr)
+	Decoder.Decode(&outStr)
 	t1.Eq(inStr, outStr)
-	buf.ReadWriteReset()
 
 	Encode(buf, inStr1)
-	Decode(buf, &outStr)
+	Decoder.Decode(&outStr)
 	t1.Eq(inStr1, outStr)
-	buf.ReadWriteReset()
 
 	Encode(buf, inBoolf)
-	Decode(buf, &outBool)
+	Decoder.Decode(&outBool)
 	t1.Eq(inBoolf, outBool)
-	buf.ReadWriteReset()
 
 	Encode(buf, inBoolt)
-	Decode(buf, &outBool)
+	Decoder.Decode(&outBool)
 	t1.Eq(inBoolt, outBool)
-	buf.ReadWriteReset()
 
 	Encode(buf, inSlice)
-	Decode(buf, &outSlice)
+	Decoder.Decode(&outSlice)
 	t1.Eq(inSlice, outSlice)
-	buf.ReadWriteReset()
 
 	Encode(buf, inStruct)
-	Decode(buf, &outStruct)
+	Decoder.Decode(&outStruct)
 	t1.Eq(inStruct, outStruct)
-	buf.ReadWriteReset()
 
 	Encode(buf, inMap)
-	Decode(buf, &outMap)
+	Decoder.Decode(&outMap)
 	t1.Eq(inMap, outMap)
-	buf.ReadWriteReset()
 
 	Encode(buf, inMap1)
-	Decode(buf, &outMap1)
+	Decoder.Decode(&outMap1)
 	t1.Eq(inMap1, outMap1)
-	buf.ReadWriteReset()
 
 	Encode(buf, inMap2)
-	Decode(buf, &outMap2)
+	Decoder.Decode(&outMap2)
 	t1.Eq(inMap2, outMap2)
-	buf.ReadWriteReset()
 
 	Encode(buf, inMapN)
-	Decode(buf, &outMapN)
+	Decoder.Decode(&outMapN)
 	t1.Eq(inMapN, outMapN)
-	buf.ReadWriteReset()
+
+	Encode(buf, inMapInterface)
+	Decoder.Decode(&outMapInterface)
+	t1.Eq(inMapInterface, outMapInterface)
 }

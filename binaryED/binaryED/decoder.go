@@ -166,13 +166,19 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		}
 	case reflect.Ptr:
 		bt, e = t.buf.ReadByte()
-		// if nil
-		if e != nil || bt == 0 {
+		if e != nil {
 			return
 		}
+		// if nil
+		if bt == 0 {
+			val.Set(reflect.Zero(val.Type()))
+			return
+		}
+		// interface
 		if val.Elem().Kind() == reflect.Invalid {
 			val.Set(reflect.New(val.Type().Elem()))
 		}
+
 		val = val.Elem()
 		e = t.decodeField(val)
 	case reflect.Struct:
@@ -201,12 +207,13 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		if e != nil || bt == 0 {
 			return
 		}
+		// get len
 		part, e = t.buf.ReadNext(WORD32)
 		if e != nil {
 			return
 		}
-
 		ln := int(Pack.Uint32(part))
+
 		vtype := val.Type()
 
 		if val.IsNil() {
@@ -214,20 +221,10 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		}
 		var (
 			mapKey, mapVal reflect.Value
-			ptrVal         bool
 		)
 
-		mapValType := vtype.Elem()
-		if mapValType.Kind() == reflect.Ptr {
-			ptrVal = true
-			mapValType = mapValType.Elem()
-		}
-
 		for i := 0; i < ln; i++ {
-			mapVal = reflect.New(mapValType)
-			if !ptrVal {
-				mapVal = mapVal.Elem()
-			}
+			mapVal = reflect.New(vtype.Elem()).Elem()
 			mapKey = reflect.New(vtype.Key()).Elem()
 			e = t.decodeField(mapKey)
 			if e != nil {
@@ -240,15 +237,26 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 			val.SetMapIndex(mapKey, mapVal)
 		}
 	case reflect.Interface:
+		// check nil
 		bt, e = t.buf.ReadByte()
 		if e != nil {
 			return
 		}
+		if bt == 0 {
+			val.Set(reflect.Zero(val.Type()))
+			return
+		}
+
 		// get type name
+		bt, e = t.buf.ReadByte()
+		if e != nil {
+			return
+		}
 		part, e = t.buf.ReadNext(int(bt))
 		if e != nil {
 			return
 		}
+
 		vType, ok := t.typeBase[string(part)]
 		if !ok {
 			e = errors.New("type '" + string(part) + "' not found, you need to register.")

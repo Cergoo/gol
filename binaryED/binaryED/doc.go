@@ -45,7 +45,7 @@ up to the order of the fields in the description of the structures.
 
 - The free encoding / decoding only a strictly structured data
 custom data types that were present in the sources can type interface is necessary to register the decoder prior to decoding.
-That is to map [string] interfase {} in the decoder will need to register custom data types that may be contained in the fields of type interface.
+That is to map [string] interface {} in the decoder will need to register custom data types that may be contained in the fields of type interface.
 
 ======================================================================
 Ru Lang
@@ -91,6 +91,6 @@ uint8, uint16, uint32, uint64, uint
 
 - Возможно свободное кодирование/декодирование только строго структурированных данных,
 пользовательские типы данных которые могут присутсвовать в источниках типа interface необходимо регистрировать в декодере перед декодированием.
-То есть для map[string]interfase{} в декодере необходимо будет зарегистрировать пользовательские типы данных которые могут содержаться в полях типа interface.
+То есть для map[string]interface{} в декодере необходимо будет зарегистрировать пользовательские типы данных которые могут содержаться в полях типа interface.
 */
 package binaryED

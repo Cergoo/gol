@@ -46,11 +46,9 @@ func encodeField(buf IBuf, val reflect.Value) {
 		buf.Write([]byte(val.String()))
 	case reflect.Slice, reflect.Array:
 		if val.Kind() == reflect.Slice {
-			if val.IsNil() {
-				buf.WriteByte(0)
+			if encodeNil(buf, val) {
 				return
 			}
-			buf.WriteByte(1)
 		}
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
@@ -62,12 +60,10 @@ func encodeField(buf IBuf, val reflect.Value) {
 			}
 		}
 	case reflect.Ptr:
-		val = val.Elem()
-		if val.Kind() == reflect.Invalid {
-			buf.WriteByte(0) // means nil
+		if encodeNil(buf, val) {
 			return
 		}
-		buf.WriteByte(1) // means not nil
+		val = val.Elem()
 		encodeField(buf, val)
 	case reflect.Struct:
 		vType := val.Type()
@@ -84,11 +80,9 @@ func encodeField(buf IBuf, val reflect.Value) {
 			}
 		}
 	case reflect.Map:
-		if val.IsNil() {
-			buf.WriteByte(0)
+		if encodeNil(buf, val) {
 			return
 		}
-		buf.WriteByte(1)
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		keys := val.MapKeys()
@@ -97,10 +91,23 @@ func encodeField(buf IBuf, val reflect.Value) {
 			encodeField(buf, val.MapIndex(k))
 		}
 	case reflect.Interface:
+		if encodeNil(buf, val) {
+			return
+		}
 		val = val.Elem()
 		tpName := val.Type().String()
 		buf.WriteByte(uint8(len(tpName)))
 		buf.Write([]byte(tpName))
 		encodeField(buf, val)
 	}
+}
+
+// Encode pointered value nil or not nil, if nil return true
+func encodeNil(buf IBuf, val reflect.Value) bool {
+	if val.IsNil() {
+		buf.WriteByte(0)
+		return true
+	}
+	buf.WriteByte(1)
+	return false
 }

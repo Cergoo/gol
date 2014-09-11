@@ -48,22 +48,24 @@ var (
 		},
 		F5: 12,
 	}
-	inMap          = map[int]string{1: "f1", 2: "f2", 4: "f4"}
-	inMap1         = map[int]*t2{1: &t2{"f1", nil, "f2"}, 2: &t2{"f2", nil, "f2"}}
-	inMap2         = map[int]t2{1: t2{"f1", []int{}, "f2"}, 2: t2{"f2", []int{}, "f2"}}
-	inMapN         = map[tt]int{tt{"f1", "f2"}: 1, tt{"f2", "f2"}: 2}
-	inMapInterface = map[int]interface{}{1: 1, 2: tt{"f2", "f2"}, 3: &t2{"f2", nil, "f2"}}
+	inMap            = map[int]string{1: "f1", 2: "f2", 4: "f4"}
+	inMap1           = map[int]*t2{1: &t2{"f1", nil, "f2"}, 2: &t2{"f2", nil, "f2"}, 3: nil}
+	inMap2           = map[int]t2{1: t2{"f1", []int{}, "f2"}, 2: t2{"f2", []int{}, "f2"}}
+	inMapN           = map[tt]int{tt{"f1", "f2"}: 1, tt{"f2", "f2"}: 2}
+	inMapInterface   = map[int]interface{}{1: 1, 2: tt{"f2", "f2"}, 3: &t2{"f2", nil, "f2"}, 4: nil}
+	inSliceInterface = []interface{}{1, "nnnnnn", nil, tt{"f2", "f2"}, &t2{"f2", nil, "f2"}}
 
-	outInt          int
-	outStr          string
-	outBool         bool
-	outSlice        []string
-	outStruct       = &t1{f3: 100}
-	outMap          map[int]string
-	outMap1         map[int]*t2
-	outMap2         map[int]t2
-	outMapN         map[tt]int
-	outMapInterface map[int]interface{}
+	outInt            int
+	outStr            string
+	outBool           bool
+	outSlice          []string
+	outStruct         = &t1{f3: 100}
+	outMap            map[int]string
+	outMap1           map[int]*t2
+	outMap2           map[int]t2
+	outMapN           map[tt]int
+	outMapInterface   map[int]interface{}
+	outSliceInterface []interface{}
 )
 
 func TestED(t *testing.T) {
@@ -119,4 +121,8 @@ func TestED(t *testing.T) {
 	Encode(buf, inMapInterface)
 	Decoder.Decode(&outMapInterface)
 	t1.Eq(inMapInterface, outMapInterface)
+
+	Encode(buf, inSliceInterface)
+	Decoder.Decode(&outSliceInterface)
+	t1.Eq(inSliceInterface, outSliceInterface)
 }

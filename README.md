@@ -7,7 +7,7 @@ Package primitive it's a binary encode/decode primitive elementary implementatio
 http://godoc.org/github.com/Cergoo/gol/binaryED/primitive
 
 ## binaryED/binaryED
-Package binaryED it's a binary structure less format encode/decode implementation  
+Package binaryED it's a binary encode/decode implementation to serialize data.   
 (fork github.com/youtube/vitess/go/bson)    
 http://godoc.org/github.com/Cergoo/gol/binaryED/binaryED
 

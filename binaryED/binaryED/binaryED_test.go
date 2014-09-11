@@ -6,6 +6,7 @@ import (
 	"github.com/Cergoo/gol/test"
 	//"github.com/davecgh/go-spew/spew"
 	"testing"
+	"time"
 )
 
 type (
@@ -52,7 +53,7 @@ var (
 	inMap1           = map[int]*t2{1: &t2{"f1", nil, "f2"}, 2: &t2{"f2", nil, "f2"}, 3: nil}
 	inMap2           = map[int]t2{1: t2{"f1", []int{}, "f2"}, 2: t2{"f2", []int{}, "f2"}}
 	inMapN           = map[tt]int{tt{"f1", "f2"}: 1, tt{"f2", "f2"}: 2}
-	inMapInterface   = map[int]interface{}{1: 1, 2: tt{"f2", "f2"}, 3: &t2{"f2", nil, "f2"}, 4: nil}
+	inMapInterface   = map[int]interface{}{1: 1, 2: tt{"f2", "f2"}, 3: &t2{"f2", nil, "f2"}, 4: nil, 5: time.Now().UTC()}
 	inSliceInterface = []interface{}{1, "nnnnnn", nil, tt{"f2", "f2"}, &t2{"f2", nil, "f2"}}
 
 	outInt            int

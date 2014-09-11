@@ -101,7 +101,9 @@ func PutBool(buf IBuf, val bool) {
 
 // PutTime encode a time into buf
 func PutTime(buf IBuf, val time.Time) {
-	Pack.PutUint64(buf.Reserve(WORD64), uint64(val.UnixNano()/1e6))
+	//Pack.PutUint64(buf.Reserve(WORD64), uint64(val.UnixNano()/1e6))
+	Pack.PutUint64(buf.Reserve(WORD64), uint64(val.UnixNano()))
+	val.UTC()
 }
 
 /* Decoders */
@@ -153,5 +155,5 @@ func Bool(b byte) bool {
 
 // Time decode a time from []byte
 func Time(b []byte) time.Time {
-	return time.Unix(0, int64(Pack.Uint64(b))*1e6).UTC()
+	return time.Unix(0, int64(Pack.Uint64(b))).UTC()
 }

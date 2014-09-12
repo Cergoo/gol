@@ -19,7 +19,7 @@ type (
 	}
 )
 
-// New it's constructor buf
+// New it's constructor buf. If will set linit > 0 then necessarily set w io.Writer
 func New(buf []byte, limit int, w io.Writer) (b *Buf) {
 	b = &Buf{limit: limit, w: w}
 
@@ -83,8 +83,8 @@ func (t *Buf) FlushP() (r []byte) {
 }
 
 // FlushToWriter get slice of all buf to buf io.Writer and clear buf
-func (t *Buf) FlushToWriter() {
-	t.w.Write(t.FlushP())
+func (t *Buf) FlushToWriter() (err error) {
+	_, err = t.w.Write(t.FlushP())
 	return
 }
 

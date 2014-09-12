@@ -47,10 +47,8 @@ func (t *TDecoder) register() {
 }
 
 // Decode decode value fom binary to receiver val
-func (t *TDecoder) Decode(val interface{}) (e error) {
-	e = t.decodeField(reflect.ValueOf(val).Elem())
-	t.buf.ReadWriteReset()
-	return
+func (t *TDecoder) Decode(val interface{}) error {
+	return t.decodeField(reflect.ValueOf(val).Elem())
 }
 
 func (t *TDecoder) decodeField(val reflect.Value) (e error) {
@@ -114,6 +112,11 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		if e == nil {
 			*(*float32)(val.Ptr()) = math.Float32frombits(Pack.Uint32(part))
 		}
+	case reflect.Float64:
+		part, e = t.buf.ReadNext(WORD64)
+		if e == nil {
+			*(*float64)(val.Ptr()) = math.Float64frombits(Pack.Uint64(part))
+		}
 	case reflect.Bool:
 		bt, e = t.buf.ReadByte()
 		if e == nil {
@@ -123,30 +126,28 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		}
 	case reflect.String:
 		part, e = t.buf.ReadNext(WORD32)
+		if e != nil {
+			return
+		}
+		ln := int(Pack.Uint32(part))
+
+		if ln == 0 {
+			*(*string)(val.Ptr()) = ""
+			return
+		}
+		part, e = t.buf.ReadNext(ln)
 		if e == nil {
-			ln := int(Pack.Uint32(part))
-			if ln == 0 {
-				*(*string)(val.Ptr()) = ""
-				return
-			}
-			part, e = t.buf.ReadNext(ln)
-			if e == nil {
-				*(*string)(val.Ptr()) = string(part)
-			}
+			*(*string)(val.Ptr()) = string(part)
 		}
-	case reflect.Slice, reflect.Array:
-		if val.Kind() == reflect.Slice {
-			bt, e = t.buf.ReadByte()
-			// if nil
-			if e != nil || bt == 0 {
-				return
-			}
-		}
+
+	case reflect.Array:
+		// get length
 		part, e = t.buf.ReadNext(WORD32)
 		if e != nil {
 			return
 		}
 		ln := int(Pack.Uint32(part))
+
 		if val.Type().Elem().Kind() == reflect.Uint8 {
 			part, e = t.buf.ReadNext(ln)
 			if e != nil {
@@ -154,8 +155,37 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 			}
 			*(*[]byte)(val.Ptr()) = part
 		} else {
-			if val.IsNil() {
+			for i := 0; i < ln; i++ {
+				e = t.decodeField(val.Index(i))
+				if e != nil {
+					return
+				}
+			}
+		}
+	case reflect.Slice:
+		// check nil
+		bt, e = t.buf.ReadByte()
+		if e != nil || bt == 0 {
+			return
+		}
+		// get length
+		part, e = t.buf.ReadNext(WORD32)
+		if e != nil {
+			return
+		}
+		ln := int(Pack.Uint32(part))
+
+		if val.Type().Elem().Kind() == reflect.Uint8 {
+			part, e = t.buf.ReadNext(ln)
+			if e != nil {
+				return
+			}
+			*(*[]byte)(val.Ptr()) = part
+		} else {
+			if val.IsNil() || val.Cap() < ln {
 				val.Set(reflect.MakeSlice(val.Type(), ln, ln))
+			} else {
+				val.SetLen(ln)
 			}
 			for i := 0; i < ln; i++ {
 				e = t.decodeField(val.Index(i))

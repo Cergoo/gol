@@ -101,8 +101,8 @@ func PutBool(buf IBuf, val bool) {
 
 // PutString encode a bool into buf
 func PutString(buf IBuf, val string) {
-	Pack.PutUint32(buf.Reserve(WORD32), uint32(val.Len()))
-	buf.Write([]byte(val.String()))
+	Pack.PutUint32(buf.Reserve(WORD32), uint32(len(val)))
+	buf.Write([]byte(val))
 }
 
 // PutTime encode a time into buf

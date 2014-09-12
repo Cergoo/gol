@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	fastBuf  = fastbuf.New(nil)
+	fastBuf  = fastbuf.New(nil, 0, nil)
 	bytesBuf bytes.Buffer
 	r1, r2   testing.BenchmarkResult
 	p        = []byte("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")

@@ -14,12 +14,15 @@ type (
 		buf      []byte //
 		writeoff int    // writeoff - index buffer is filled
 		readeoff int    // readeoff - index subtracts buffer
+		limit    int
+		w        io.Writer
 	}
 )
 
 // New it's constructor buf
-func New(buf []byte) (b *Buf) {
-	b = new(Buf)
+func New(buf []byte, limit int, w io.Writer) (b *Buf) {
+	b = &Buf{limit: limit, w: w}
+
 	if buf == nil {
 		buf = make([]byte, 64)
 	} else {
@@ -53,6 +56,10 @@ func (t *Buf) Write(p []byte) (n int, err error) {
 	t.grow(len(p))
 	copy(t.buf[t.writeoff:], p)
 	t.writeoff += len(p)
+
+	if t.limit > 0 && t.writeoff > t.limit {
+		_, err = t.w.Write(t.FlushP())
+	}
 	return
 }
 
@@ -61,13 +68,23 @@ func (t *Buf) WriteByte(p byte) (err error) {
 	t.grow(1)
 	t.buf[t.writeoff] = p
 	t.writeoff++
+
+	if t.limit > 0 && t.writeoff > t.limit {
+		_, err = t.w.Write(t.FlushP())
+	}
 	return
 }
 
 // FlushP get slice of all buf and clear buf
 func (t *Buf) FlushP() (r []byte) {
 	r = t.buf[:t.writeoff]
-	t.writeoff = 0
+	t.ReadWriteReset()
+	return
+}
+
+// FlushToWriter get slice of all buf to buf io.Writer and clear buf
+func (t *Buf) FlushToWriter() {
+	t.w.Write(t.FlushP())
 	return
 }
 
@@ -79,7 +96,7 @@ func (t *Buf) Show() []byte {
 // Flush get value all buf and clear buf
 func (t *Buf) Flush() (r []byte) {
 	r = append(r, t.buf[:t.writeoff]...)
-	t.writeoff = 0
+	t.ReadWriteReset()
 	return
 }
 

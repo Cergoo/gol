@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var fb = New(nil)
+var fb = New(nil, 0, nil)
 
 func Test1(t *testing.T) {
 	v := []byte("12")

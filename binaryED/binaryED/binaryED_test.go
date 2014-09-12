@@ -30,7 +30,7 @@ type (
 )
 
 var (
-	buf = fastbuf.New(nil)
+	buf = fastbuf.New(nil, 0, nil)
 
 	inInt    = int(17)
 	inStr    = "tested string"

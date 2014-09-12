@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	buf := fastbuf.New(nil)
+	buf := fastbuf.New(nil, 0, nil)
 
 	primitive.PutInt32(buf, 2)
 	primitive.PutInt32(buf, 4)

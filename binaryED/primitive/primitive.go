@@ -99,6 +99,12 @@ func PutBool(buf IBuf, val bool) {
 
 }
 
+// PutString encode a bool into buf
+func PutString(buf IBuf, val string) {
+	Pack.PutUint32(buf.Reserve(WORD32), uint32(val.Len()))
+	buf.Write([]byte(val.String()))
+}
+
 // PutTime encode a time into buf
 func PutTime(buf IBuf, val time.Time) {
 	Pack.PutUint64(buf.Reserve(WORD64), uint64(val.UnixNano()))

@@ -41,8 +41,7 @@ func encodeField(buf IBuf, val reflect.Value) {
 	case reflect.Bool:
 		PutBool(buf, val.Bool())
 	case reflect.String:
-		vLen := val.Len()
-		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
+		Pack.PutUint32(buf.Reserve(WORD32), uint32(val.Len()))
 		buf.Write([]byte(val.String()))
 	case reflect.Slice, reflect.Array:
 		if val.Kind() == reflect.Slice {

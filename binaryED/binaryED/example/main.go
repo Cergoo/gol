@@ -23,7 +23,6 @@ func main() {
 	fp.Close()
 
 	data = data[:0]
-	//data1 := []interface{}{}
 	dump, _ := ioutil.ReadFile(filename)
 	buf = fastbuf.New(dump, 0, nil)
 	decoder := binaryED.NewDecoder(buf)

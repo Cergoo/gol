@@ -11,10 +11,11 @@ Package binaryED it's a binary encode/decode implementation to serialize data.
 (fork github.com/youtube/vitess/go/bson)    
 http://godoc.org/github.com/Cergoo/gol/binaryED/binaryED
 
-## cache
-Package cache it's a in-memory key-value store based of the thread-safe hasmap implementation similar to memcached that is suitable for applications running on a single machine.    
+## cache/cacheStr, cache/cacheUint
+Package cache it's a in-memory key-value store based of the thread-safe hasmap implementation (key type string and key type uint64) similar to memcached that is suitable for applications running on a single machine.    
 Automatic lifetime management of records can be enabled or disabled. LRU caches are affected by the problem leaching records in intensive add, i.e. the records  permanently pushed do not linger in the cach. This package does not implement the LRU. In this implementation the time life records indicated for all the generated cache, specified time value is the size of time interval during which a new record is guaranteed to live in the cache. Then have a record of lives at least one time interval maximum of two time interval + can be implemented for the "if it's read then it lives" if a record is requested that her life is prolonged for the next time interval.  
-http://godoc.org/github.com/Cergoo/gol/cache
+http://godoc.org/github.com/Cergoo/gol/cache/cacheUint    
+http://godoc.org/github.com/Cergoo/gol/cache/cacheStr    
 
 ### Feature:
 - thread-safe
@@ -30,14 +31,14 @@ go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cac
 go version go1.3, single thread      
 <pre>
 Set
-Cergoo.cache:    5000	    456282 ns/op   23200 B/op	    1450 allocs/op
-go-cache:        5000	    734426 ns/op   66266 B/op	    2956 allocs/op
+Cergoo.cacheStr:    5000	    456282 ns/op   23200 B/op	    1450 allocs/op
+go-cache:           5000	    734426 ns/op   66266 B/op	    2956 allocs/op
 Get
-Cergoo.cache:    5000	    359400 ns/op   23200 B/op	    1450 allocs/op
-go-cache:        5000	    362525 ns/op   15184 B/op	     949 allocs/op
+Cergoo.cacheStr:    5000	    359400 ns/op   23200 B/op	    1450 allocs/op
+go-cache:           5000	    362525 ns/op   15184 B/op	     949 allocs/op
 Inc
-Cergoo.cache:    5000	    406278 ns/op   23200 B/op	    1450 allocs/op
-go-cache:        5000	    428155 ns/op   15184 B/op	     949 allocs/op
+Cergoo.cacheStr:    5000	    406278 ns/op   23200 B/op	    1450 allocs/op
+go-cache:           5000	    428155 ns/op   15184 B/op	     949 allocs/op
 </pre>
 
 ## chansubscriber

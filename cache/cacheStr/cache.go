@@ -1,7 +1,7 @@
 // (c) 2013 Cergoo
 // under terms of ISC license
 
-package cache
+package cacheStr
 
 /*
 TODO :
@@ -43,14 +43,14 @@ const (
 )
 
 type (
-	tItem struct {
+	TItem struct {
 		r   uint8
 		Key string
 		Val interface{}
 	}
 
 	tBucket struct {
-		items []*tItem
+		items []*TItem
 		sync.RWMutex
 	}
 
@@ -65,7 +65,7 @@ type (
 		janitorIfReadThenLive bool             // janitorIfReadThenLive enable
 		count                 counter.TCounter // limit items count in cache, 0 - unlimit
 		growlock              uint32
-		janitorCh             chan<- *TCortege
+		janitorFn             func(*TItem) bool
 		stopCh                chan bool
 	}
 
@@ -74,20 +74,14 @@ type (
 		*tCache
 	}
 
-	// TCortege struct (key, value) cortege
-	TCortege struct {
-		Key string
-		Val interface{}
-	}
-
 	// Cache interface
 	Cache interface {
-		GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int)
+		GetBucketsStat() (counTItem uint64, countbucket uint32, stat [][2]int)
 		Get(string) interface{}
 		Set(key string, val interface{}, live, mode uint8) (rval interface{}, actionResult uint8)
 		Del(string) (val interface{})
 		DelAll()
-		Range(chan<- *TCortege)
+		Range(chan<- *TItem)
 		Inc(string, float64) interface{}
 		Save(io.Writer) error
 		SaveFile(string) error
@@ -113,21 +107,21 @@ func New(
 	hash func([]byte) uint32,
 	janitorIfReadThenLive bool,
 	janitorDuration time.Duration,
-	janitorCh chan<- *TCortege) Cache {
+	janitorFn func(*TItem) bool) Cache {
 
 	ht := new(tHash)
 	ht.ht = make([]*tBucket, 1024)
 	ht.hash = hash
 	for i := range ht.ht {
 		ht.ht[i] = &tBucket{
-			items: make([]*tItem, 0, initbucketscap),
+			items: make([]*TItem, 0, initbucketscap),
 		}
 	}
 
 	t := &tCache{
 		janitorDuration:       janitorDuration,
 		janitorIfReadThenLive: janitorIfReadThenLive,
-		janitorCh:             janitorCh,
+		janitorFn:             janitorFn,
 		t:                     ht,
 	}
 
@@ -152,7 +146,7 @@ func (t *tCache) Len() counter.ICounter {
 }
 
 // GetBucketsStat get statistics of a buckets
-func (t *tCache) GetBucketsStat() (countitem uint64, countbucket uint32, stat [][2]int) {
+func (t *tCache) GetBucketsStat() (counTItem uint64, countbucket uint32, stat [][2]int) {
 	var i int
 	ht := (*tHash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	tmp1 := make(map[int]int)
@@ -173,7 +167,7 @@ func (t *tCache) GetBucketsStat() (countitem uint64, countbucket uint32, stat []
 	for i = range tmp2 {
 		stat = append(stat, [2]int{tmp2[i], tmp1[tmp2[i]]})
 	}
-	countitem = t.count.Get()
+	counTItem = t.count.Get()
 	return
 }
 
@@ -184,7 +178,7 @@ func (t *tCache) Get(key string) (val interface{}) {
 	bucket.RLock()
 	for _, v := range bucket.items {
 		if v.Key == key {
-			if t.janitorIfReadThenLive {
+			if t.janitorIfReadThenLive && v.r < 1 {
 				v.r = 1
 			}
 			val = v.Val
@@ -204,7 +198,7 @@ Set:
 */
 func (t *tCache) Set(key string, val interface{}, live uint8, mode uint8) (rval interface{}, actionResult uint8) {
 	var (
-		v *tItem
+		v *TItem
 	)
 	rval = val
 	ht := (*tHash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
@@ -230,7 +224,7 @@ func (t *tCache) Set(key string, val interface{}, live uint8, mode uint8) (rval 
 	// Add
 	if mode != OnlyUpdate && t.count.Check() {
 		lenbucket := len(bucket.items)
-		bucket.items = append(bucket.items, &tItem{Key: key, Val: val, r: live})
+		bucket.items = append(bucket.items, &TItem{Key: key, Val: val, r: live})
 		bucket.Unlock()
 		if lenbucket > growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
 			go t.grow()
@@ -324,7 +318,7 @@ func (t *tCache) DelAll() {
 }
 
 // Range interface range function, for breack range close a channel
-func (t *tCache) Range(ch chan<- *TCortege) {
+func (t *tCache) Range(ch chan<- *TItem) {
 	go t.rangeCache(ch)
 }
 
@@ -334,17 +328,16 @@ func (t *tCache) Range(ch chan<- *TCortege) {
 
 	Use buffer for unlock bucket
 */
-func (t *tCache) rangeCache(ch chan<- *TCortege) {
+func (t *tCache) rangeCache(ch chan<- *TItem) {
 	var (
-		i   int
-		buf []*TCortege
-		v   *TCortege
+		buf []*TItem
+		v   *TItem
 	)
 	ht := (*tHash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t)))).ht
 	for _, bucket := range ht {
 		bucket.RLock()
-		for i = range bucket.items {
-			buf = append(buf, &TCortege{Key: bucket.items[i].Key, Val: bucket.items[i].Val})
+		for _, v = range bucket.items {
+			buf = append(buf, v)
 		}
 		bucket.RUnlock()
 		for _, v = range buf {
@@ -362,7 +355,7 @@ func nopanic() {
 // Save write the cache's items (using Gob) to an io.Writer.
 func (t *tCache) Save(w io.Writer) (err error) {
 	var (
-		item   *tItem
+		item   *TItem
 		bucket *tBucket
 	)
 	enc := gob.NewEncoder(w)
@@ -410,7 +403,7 @@ func (t *tCache) SaveFile(fname string) error {
 func (t *tCache) Load(r io.Reader) error {
 	var (
 		err  error
-		item tItem
+		item TItem
 	)
 	dec := gob.NewDecoder(r)
 	for err = dec.Decode(&item); err == nil; err = dec.Decode(&item) {
@@ -450,7 +443,7 @@ func (t *tCache) LoadFile(fname string) error {
 func (t *tCache) grow() {
 	var (
 		i, j int
-		val  *tItem
+		val  *TItem
 	)
 
 	oldht := (*tHash)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
@@ -478,8 +471,8 @@ func (t *tCache) grow() {
 
 	j = oldlen
 	for i = 0; i < oldlen; i++ {
-		itemsold := make([]*tItem, 0, initbucketscap)
-		itemsnew := make([]*tItem, 0, initbucketscap)
+		itemsold := make([]*TItem, 0, initbucketscap)
+		itemsnew := make([]*TItem, 0, initbucketscap)
 		newht.ht[i].Lock()
 		for _, val = range newht.ht[i].items {
 			if newht.keyToID([]byte(val.Key)) == uint32(i) {
@@ -506,8 +499,6 @@ func (t *tCache) janitor(stop <-chan bool) {
 		ht           *tHash
 		bucket       *tBucket
 		countDel     uint32
-		buf          []*TCortege
-		v            *TCortege
 	)
 	tick := time.Tick(t.janitorDuration)
 	for {
@@ -522,12 +513,11 @@ func (t *tCache) janitor(stop <-chan bool) {
 				lenbucket = len(bucket.items)
 				for i = 0; i < lenbucket; {
 					if bucket.items[i].r == 0 {
-						if t.janitorCh != nil {
-							buf = append(buf, &TCortege{Key: bucket.items[i].Key, Val: bucket.items[i].Val})
+						if t.janitorFn == nil || t.janitorFn(bucket.items[i]) {
+							lenbucket--
+							bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], nil
+							countDel++
 						}
-						lenbucket--
-						bucket.items[i], bucket.items[lenbucket] = bucket.items[lenbucket], nil
-						countDel++
 					} else {
 						if bucket.items[i].r < 255 {
 							bucket.items[i].r--
@@ -537,10 +527,6 @@ func (t *tCache) janitor(stop <-chan bool) {
 				}
 				bucket.items = bucket.items[:lenbucket]
 				bucket.Unlock()
-				for _, v = range buf {
-					t.janitorCh <- v
-				}
-				buf = buf[:0]
 			}
 			t.count.Add(int64(-countDel))
 		}

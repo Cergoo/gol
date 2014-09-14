@@ -17,6 +17,14 @@ import (
 * == 42
 */
 
+// Save config to json format file
+func Save(fromVar interface{}, toPath string) {
+	data, e := json.Marshal(fromVar)
+	err.Panic(e)
+	e = ioutil.WriteFile(toPath, data, 0664)
+	err.Panic(e)
+}
+
 // Load load & remove comments from source .json file
 func Load(fromPath string, toVar interface{}) {
 	file, e := ioutil.ReadFile(fromPath)
@@ -25,7 +33,7 @@ func Load(fromPath string, toVar interface{}) {
 	err.Panic(json.Unmarshal(file, toVar))
 }
 
-// RemoveComment remove comments from source .json
+// RemoveComment remove comments from a source .json
 func RemoveComment(source []byte) (result []byte) {
 	var (
 		stateBlok, stateComment1, stateComment2 bool

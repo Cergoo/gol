@@ -73,6 +73,7 @@ type (
 	Cache interface {
 		GetBucketsStat() (counTItem uint64, countbucket uint32, stat [][2]int)
 		Get(uint64) interface{}
+		Func(key uint64, f func(*interface{})) interface{}
 		Set(key uint64, val interface{}, live, mode uint8) (rval interface{}, actionResult uint8)
 		Del(uint64) (val interface{})
 		DelAll()
@@ -166,6 +167,27 @@ func (t *tCache) Get(key uint64) (val interface{}) {
 		if v.Key == key {
 			if t.janitorIfReadThenLive && v.r < 1 {
 				v.r = 1
+			}
+			val = v.Val
+			break
+		}
+	}
+	bucket.RUnlock()
+	return
+}
+
+// Get get item value or nil
+func (t *tCache) Func(key uint64, f func(val *interface{})) (val interface{}) {
+	ht := *(*[]*tBucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
+	bucket := ht[key%uint64(len(ht))]
+	bucket.RLock()
+	for _, v := range bucket.items {
+		if v.Key == key {
+			if t.janitorIfReadThenLive && v.r < 1 {
+				v.r = 1
+			}
+			if f != nil {
+				f(&v.Val)
 			}
 			val = v.Val
 			break

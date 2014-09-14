@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+func f(v *interface{}) {
+	n := (*v).(int)
+	n *= 5
+	*v = n
+}
+
 func main() {
 	var (
 		t int
@@ -15,8 +21,13 @@ func main() {
 	for t = 0; t < 200000; t++ {
 		n.Set(uint64(t), t, 1, cacheUint.UpdateOrInsert)
 	}
-	fmt.Print(n.GetBucketsStat())
+	fmt.Println(n.GetBucketsStat())
+	fmt.Println(n.Get(1))
+	fmt.Println(n.Func(1, f))
+	fmt.Println(n.Get(1))
+
 	n = nil
+
 	//runtime.GC()
 	//runtime.Gosched()
 	//time.Sleep(10 * time.Second)

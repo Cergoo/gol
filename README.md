@@ -136,6 +136,14 @@ http://godoc.org/github.com/Cergoo/gol/reflect/lookup
 Package stack it's a implementation lockfree LIFO stack under counter & limiter items    
 http://godoc.org/github.com/Cergoo/gol/stack
 
+## sync/lock 
+Package lock it's a simple spin lock structure implementation     
+http://godoc.org/github.com/Cergoo/gol/sync/lock
+
+## sync/mrsw 
+Package mrsw it's a simple multi reade single write dispatcher     
+http://godoc.org/github.com/Cergoo/gol/sync/mrsw
+
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  
 http://godoc.org/github.com/Cergoo/gol/jsonConfig

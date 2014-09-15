@@ -5,29 +5,28 @@
 package mrswd
 
 import (
-	"github.com/Cergoo/gol/lockfree/stack"
 	"github.com/Cergoo/gol/sync/mrsw"
 )
 
 type (
 	TDispatcher struct {
-		threadstack stack.Tstack
-		control     mrsw.TControl
+		chThread chan uint16
+		control  mrsw.TControl
 	}
 )
 
 // New construct new dispatcher
 func New(threadcount uint16) (t TDispatcher) {
-	t = TDispatcher{threadstack: stack.Tstack{}, control: mrsw.New(threadcount)}
+	t = TDispatcher{chThread: make(chan uint16, threadcount), control: mrsw.New(threadcount)}
 	for i := uint16(0); i < threadcount; i++ {
-		t.threadstack.Push(i)
+		t.chThread <- i
 	}
 	return
 }
 
 // RLock readlock resurs from thread
 func (t *TDispatcher) RLock(resursId uint64) (threadid uint16) {
-	threadid = t.threadstack.PopWait().(uint16)
+	threadid = <-t.chThread
 	t.control.RLock(threadid, resursId)
 	return
 }
@@ -35,7 +34,7 @@ func (t *TDispatcher) RLock(resursId uint64) (threadid uint16) {
 // RUnlock readunlock resurs from thread
 func (t *TDispatcher) RUnlock(threadid uint16) {
 	t.control.RUnlock(threadid)
-	t.threadstack.Push(threadid)
+	t.chThread <- threadid
 }
 
 // Lock writer

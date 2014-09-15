@@ -8,19 +8,40 @@ import (
 	"math"
 	"runtime"
 	"sync/atomic"
+	"time"
 )
 
 type TControl struct {
 	readers []uint64
 	writer  uint64
+	sleep   func()
+}
+
+func spinlock() func() {
+	return runtime.Gosched
+}
+
+func sleep(n time.Duration) func() {
+	n *= time.Microsecond
+	return func() {
+		time.Sleep(n)
+	}
 }
 
 // New construct new dispatcher
-func New(readersCount uint16) TControl {
+func New(readersCount uint16, timetosleep uint8) TControl {
 	t := TControl{writer: math.MaxUint64, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
 		t.readers[i] = math.MaxUint64
 	}
+
+	// resolution of collision
+	if timetosleep == 0 {
+		t.sleep = spinlock()
+	} else {
+		t.sleep = sleep(time.Duration(timetosleep))
+	}
+
 	return t
 }
 
@@ -38,7 +59,7 @@ func (t *TControl) RLock(threadId uint16, resursId uint64) {
 			}
 			atomic.StoreUint64(&t.readers[threadId], math.MaxUint64)
 		}
-		runtime.Gosched()
+		t.sleep()
 	}
 }
 
@@ -57,7 +78,7 @@ func (t *TControl) Lock(resursId uint64) {
 			if rlock != resursId {
 				break
 			}
-			runtime.Gosched()
+			t.sleep()
 		}
 	}
 }

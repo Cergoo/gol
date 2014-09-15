@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package mrsw it's a simple multi reade single write dispatcher
+// Package mrsw it's a simple multi reade single write controller
 package mrsw
 
 import (
@@ -10,14 +10,14 @@ import (
 	"sync/atomic"
 )
 
-type TDispatcher struct {
+type TControl struct {
 	readers []uint64
 	writer  uint64
 }
 
 // New construct new dispatcher
-func New(readersCount int) *TDispatcher {
-	t := &TDispatcher{writer: math.MaxUint64, readers: make([]uint64, readersCount)}
+func New(readersCount uint16) TControl {
+	t := TControl{writer: math.MaxUint64, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
 		t.readers[i] = math.MaxUint64
 	}
@@ -26,7 +26,7 @@ func New(readersCount int) *TDispatcher {
 
 // RLock readlock resurs from thread
 // uses double check
-func (t *TDispatcher) RLock(threadId int, resursId uint64) {
+func (t *TControl) RLock(threadId uint16, resursId uint64) {
 	var wlock uint64
 	for {
 		wlock = atomic.LoadUint64(&t.writer)
@@ -43,12 +43,12 @@ func (t *TDispatcher) RLock(threadId int, resursId uint64) {
 }
 
 // RUnlock readunlock resurs from thread
-func (t *TDispatcher) RUnlock(threadId int) {
+func (t *TControl) RUnlock(threadId uint16) {
 	atomic.StoreUint64(&t.readers[threadId], math.MaxUint64)
 }
 
 // Lock resurs
-func (t *TDispatcher) Lock(resursId uint64) {
+func (t *TControl) Lock(resursId uint64) {
 	var rlock uint64
 	atomic.StoreUint64(&t.writer, resursId)
 	for i := range t.readers {
@@ -63,6 +63,6 @@ func (t *TDispatcher) Lock(resursId uint64) {
 }
 
 // Unlock resurs
-func (t *TDispatcher) Unlock() {
+func (t *TControl) Unlock() {
 	atomic.StoreUint64(&t.writer, math.MaxUint64)
 }

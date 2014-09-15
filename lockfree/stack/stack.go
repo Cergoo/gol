@@ -5,6 +5,7 @@
 package stack
 
 import (
+	"runtime"
 	"sync/atomic"
 	"unsafe"
 )
@@ -40,4 +41,16 @@ func (t *Tstack) Pop() (v interface{}, ok bool) {
 		}
 	}
 	return (*tnode)(top).val, true
+}
+
+// PopWait get item from stack, if stack empty then wait
+func (t *Tstack) PopWait() (v interface{}) {
+	var ok bool
+	for {
+		v, ok = t.Pop()
+		if ok {
+			return
+		}
+		runtime.Gosched()
+	}
 }

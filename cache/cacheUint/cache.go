@@ -78,7 +78,7 @@ type (
 		Del(uint64) (val interface{})
 		DelAll()
 		Range(chan<- *TItem)
-		Inc(uint64, float64) interface{}
+		Inc(key uint64, n interface{}, mode uint8) interface{}
 		Save(io.Writer) error
 		SaveFile(string) error
 		Load(io.Reader) error
@@ -268,43 +268,54 @@ func (t *tCache) Del(key uint64) (val interface{}) {
 }
 
 // Inc incremet/decrement any numeric type, return modified value or nil
-func (t *tCache) Inc(key uint64, n float64) interface{} {
+func (t *tCache) Inc(key uint64, n interface{}, mode uint8) interface{} {
 	ht := *(*[]*tBucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	bucket := ht[key%uint64(len(ht))]
+
 	bucket.Lock()
 	for _, v := range bucket.items {
 		if v.Key == key {
 			switch value := v.Val.(type) {
 			case int:
-				v.Val = value + int(n)
+				v.Val = value + n.(int)
 			case int8:
-				v.Val = value + int8(n)
+				v.Val = value + n.(int8)
 			case int16:
-				v.Val = value + int16(n)
+				v.Val = value + n.(int16)
 			case int32:
-				v.Val = value + int32(n)
+				v.Val = value + n.(int32)
 			case int64:
-				v.Val = value + int64(n)
+				v.Val = value + n.(int64)
 			case uint:
-				v.Val = value + uint(n)
+				v.Val = value + n.(uint)
 			case uint8:
-				v.Val = value + uint8(n)
+				v.Val = value + n.(uint8)
 			case uint16:
-				v.Val = value + uint16(n)
+				v.Val = value + n.(uint16)
 			case uint32:
-				v.Val = value + uint32(n)
+				v.Val = value + n.(uint32)
 			case uint64:
-				v.Val = value + uint64(n)
+				v.Val = value + n.(uint64)
 			case float32:
-				v.Val = value + float32(n)
+				v.Val = value + n.(float32)
 			case float64:
-				v.Val = value + n
+				v.Val = value + n.(float64)
 			}
 
 			v.r = 1
 			bucket.Unlock()
 			return v.Val
 		}
+	}
+	if mode == UpdateOrInsert && t.count.Check() {
+		lenbucket := len(bucket.items)
+		bucket.items = append(bucket.items, &TItem{Key: key, Val: n, r: 1})
+		bucket.Unlock()
+		if lenbucket > growcountgo && atomic.CompareAndSwapUint32(&t.growlock, 0, 2) {
+			go t.grow()
+		}
+		t.count.Inc()
+		return n
 	}
 	bucket.Unlock()
 	return nil

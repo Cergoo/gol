@@ -34,13 +34,13 @@ func Test_Inc(t *testing.T) {
 	var (
 		v interface{}
 	)
-	cache1.Inc(uint64(101), 10)
+	cache1.Inc(uint64(101), 10, cacheUint.UpdateOrInsert)
 	v = cache1.Get(uint64(101))
 	if v != 111 {
 		t.Error("err")
 		return
 	}
-	cache1.Inc(uint64(101), -11)
+	cache1.Inc(uint64(101), -11, cacheUint.UpdateOrInsert)
 	v = cache1.Get(uint64(101))
 	if v != 100 {
 		t.Error("err")

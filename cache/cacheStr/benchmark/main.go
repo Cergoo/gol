@@ -80,7 +80,7 @@ func Benchmark_gocacheGet(b *testing.B) {
 func Benchmark_cacheInc(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := 0; i < count; i++ {
-			_cache.Inc("item"+strconv.Itoa(i), 25)
+			_cache.Inc("item"+strconv.Itoa(i), 25, cacheStr.UpdateOrInsert)
 		}
 	}
 }

@@ -31,17 +31,17 @@ func sleep(n time.Duration) func() {
 // New construct new dispatcher
 // readersCount - count of a threads reader;
 // timetosleep  - time a microsecond on wait of lock, zero - spinlock;
-func New(readersCount uint16, timetosleep uint8) TControl {
+func New(readersCount uint16, timeOnSleep uint8) TControl {
 	t := TControl{writer: math.MaxUint64, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
 		t.readers[i] = math.MaxUint64
 	}
 
 	// resolution of collision
-	if timetosleep == 0 {
+	if timeOnSleep == 0 {
 		t.sleep = spinlock()
 	} else {
-		t.sleep = sleep(time.Duration(timetosleep))
+		t.sleep = sleep(time.Duration(timeOnSleep))
 	}
 
 	return t

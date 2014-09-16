@@ -16,7 +16,7 @@ type (
 )
 
 // New construct new dispatcher
-func New(threadcount uint16, timeOnSleep uint8) (t TDispatcher) {
+func New(threadcount uint16, timeOnSleep uint16) (t TDispatcher) {
 	t = TDispatcher{chThread: make(chan uint16, threadcount), control: mrsw.New(threadcount, timeOnSleep)}
 	for i := uint16(0); i < threadcount; i++ {
 		t.chThread <- i

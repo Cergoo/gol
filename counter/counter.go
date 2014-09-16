@@ -53,12 +53,12 @@ func (t *TCounter) SetLimit(v uint64) {
 
 // Check check limit value
 func (t *TCounter) Check() bool {
-	limit := t.GetLimit()
-	return limit == 0 || limit > t.Get()
+	limit := atomic.LoadUint64(&t.limit)
+	return limit == 0 || limit > atomic.LoadUint64(&t.value)
 }
 
 // Check1 check limit value
 func (t *TCounter) Check1(v uint64) bool {
-	limit := t.GetLimit()
+	limit := atomic.LoadUint64(&t.limit)
 	return limit == 0 || limit > v
 }

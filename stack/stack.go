@@ -12,16 +12,16 @@ import (
 type (
 	// Tstack it's main structure
 	Tstack struct {
-		counter *counter.TCounter
-		stack   *stack.Tstack
+		counter counter.TCounter
+		stack   stack.Tstack
 	}
 )
 
 // New it's constructor of new stack
 func New() *Tstack {
 	return &Tstack{
-		counter: new(counter.TCounter),
-		stack:   new(stack.Tstack),
+		counter: counter.TCounter{},
+		stack:   stack.Tstack{},
 	}
 }
 
@@ -44,7 +44,14 @@ func (t *Tstack) Pop() (v interface{}, ok bool) {
 	return
 }
 
+// PopWait get item from stack, if stack empty then wait
+func (t *Tstack) PopWait() (v interface{}) {
+	v = t.stack.PopWait()
+	t.counter.Dec()
+	return
+}
+
 // Counter get counter stack
 func (t *Tstack) Counter() counter.ICounter {
-	return t.counter
+	return &t.counter
 }

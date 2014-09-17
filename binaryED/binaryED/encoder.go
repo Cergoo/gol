@@ -38,6 +38,10 @@ func encodeField(buf IBuf, val reflect.Value) {
 		Pack.PutUint32(buf.Reserve(WORD32), math.Float32bits(float32(val.Float())))
 	case reflect.Float64:
 		Pack.PutUint64(buf.Reserve(WORD64), math.Float64bits(val.Float()))
+	case reflect.Complex64:
+		PutComplex64(buf, complex64(val.Complex()))
+	case reflect.Complex128:
+		PutComplex128(buf, val.Complex())
 	case reflect.Bool:
 		PutBool(buf, val.Bool())
 	case reflect.String:

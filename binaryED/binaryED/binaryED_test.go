@@ -32,14 +32,15 @@ type (
 var (
 	buf = fastbuf.New(nil, 0, nil)
 
-	inInt    = int(17)
-	inStr    = "tested string"
-	inStr1   = ""
-	inBoolt  = true
-	inBoolf  = false
-	inSlice  = []string{"1", "2", "3", "nnnn1", "nn2", "", "n1"}
-	inArray  = [4]string{"1", "2", "3"}
-	inStruct = &t1{
+	inInt        = int(17)
+	inStr        = "tested string"
+	inStr1       = ""
+	inBoolt      = true
+	inBoolf      = false
+	inCopmlex128 = complex(float64(17.2), float64(112.1))
+	inSlice      = []string{"1", "2", "3", "nnnn1", "nn2", "", "n1"}
+	inArray      = [4]string{"1", "2", "3"}
+	inStruct     = &t1{
 		F1: -12,
 		F2: "test1",
 		f3: 100,
@@ -60,6 +61,7 @@ var (
 	outInt            int
 	outStr            string
 	outBool           bool
+	outComplex128     complex128
 	outSlice          []string
 	outArray          [4]string
 	outStruct         = &t1{f3: 100}
@@ -100,6 +102,11 @@ func TestED(t *testing.T) {
 	Encode(buf, inBoolt)
 	Decoder.Decode(&outBool)
 	t1.Eq(inBoolt, outBool)
+	buf.ReadWriteReset()
+
+	Encode(buf, inCopmlex128)
+	Decoder.Decode(&outComplex128)
+	t1.Eq(inCopmlex128, outComplex128)
 	buf.ReadWriteReset()
 
 	Encode(buf, inSlice)

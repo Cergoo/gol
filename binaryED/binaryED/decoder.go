@@ -39,10 +39,12 @@ func (t *TDecoder) register() {
 	t.Register(uint8(0), uint16(0), uint32(0), uint64(0), uint(0))
 	t.Register(int8(0), int16(0), int32(0), int64(0), int(0))
 	t.Register(float32(0), float64(0))
+	t.Register(complex64(complex(0, 0)), complex128(complex(0, 0)))
 	t.Register(string(""), time.Time{})
 	t.Register([]uint8{}, []uint16{}, []uint32{}, []uint64{}, []uint{})
 	t.Register([]int8{}, []int16{}, []int32{}, []int64{}, []int{})
 	t.Register([]float32{}, []float64{})
+	t.Register([]complex64{}, []complex128{})
 	t.Register([]string{}, []time.Time{})
 }
 
@@ -116,6 +118,16 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		part, e = t.buf.ReadNext(WORD64)
 		if e == nil {
 			*(*float64)(val.Ptr()) = math.Float64frombits(Pack.Uint64(part))
+		}
+	case reflect.Complex64:
+		part, e = t.buf.ReadNext(WORD64)
+		if e == nil {
+			*(*complex64)(val.Ptr()) = Complex64(part)
+		}
+	case reflect.Complex128:
+		part, e = t.buf.ReadNext(16)
+		if e == nil {
+			*(*complex128)(val.Ptr()) = Complex128(part)
 		}
 	case reflect.Bool:
 		bt, e = t.buf.ReadByte()

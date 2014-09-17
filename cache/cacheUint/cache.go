@@ -75,10 +75,10 @@ type (
 		Get(uint64) interface{}
 		Func(key uint64, f func(*interface{})) interface{}
 		Set(key uint64, val interface{}, live, mode uint8) (rval interface{}, actionResult uint8)
+		Inc(key uint64, n interface{}, mode uint8) interface{}
 		Del(uint64) (val interface{})
 		DelAll()
 		Range(chan<- *TItem)
-		Inc(key uint64, n interface{}, mode uint8) interface{}
 		Save(io.Writer) error
 		SaveFile(string) error
 		Load(io.Reader) error
@@ -176,7 +176,7 @@ func (t *tCache) Get(key uint64) (val interface{}) {
 	return
 }
 
-// Get get item value or nil
+// Func accept function to item value
 func (t *tCache) Func(key uint64, f func(val *interface{})) (val interface{}) {
 	ht := *(*[]*tBucket)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&t.t))))
 	bucket := ht[key%uint64(len(ht))]

@@ -89,6 +89,18 @@ func PutInt64(buf IBuf, val int64) {
 	Pack.PutUint64(buf.Reserve(WORD64), uint64(val))
 }
 
+// PutComplex64 encode a complex64 into buf
+func PutComplex64(buf IBuf, val complex64) {
+	Pack.PutUint32(buf.Reserve(WORD32), math.Float32bits(float32(real(val))))
+	Pack.PutUint32(buf.Reserve(WORD32), math.Float32bits(float32(imag(val))))
+}
+
+// PutComplex128 encode a complex128 into buf
+func PutComplex128(buf IBuf, val complex128) {
+	Pack.PutUint64(buf.Reserve(WORD64), math.Float64bits(float64(real(val))))
+	Pack.PutUint64(buf.Reserve(WORD64), math.Float64bits(float64(imag(val))))
+}
+
 // PutBool encode a bool into buf
 func PutBool(buf IBuf, val bool) {
 	if val {
@@ -150,6 +162,16 @@ func Float32(b []byte) float32 {
 // Float64 decode a float64 from []byte
 func Float64(b []byte) float64 {
 	return math.Float64frombits(Pack.Uint64(b))
+}
+
+// Complex64 decode a complex64 from []byte
+func Complex64(b []byte) complex64 {
+	return complex(math.Float32frombits(Pack.Uint32(b[:4])), math.Float32frombits(Pack.Uint32(b[4:])))
+}
+
+// Complex128 decode a complex128 from []byte
+func Complex128(b []byte) complex128 {
+	return complex(math.Float64frombits(Pack.Uint64(b[:8])), math.Float64frombits(Pack.Uint64(b[8:])))
 }
 
 // Bool decode a bool from byte

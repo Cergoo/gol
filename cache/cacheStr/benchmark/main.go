@@ -34,15 +34,15 @@ func main() {
 	operation_name = "Set"
 	rcache = testing.Benchmark(Benchmark_cacheSet)
 	rgo_cache = testing.Benchmark(Benchmark_gocacheSet)
-	fmt.Print(operation_name, "\n", "Cergoo.cache:", rcache, rcache.MemString(), "\n", "go-cache:", rgo_cache, rgo_cache.MemString(), "\n")
+	fmt.Print(operation_name, "\n", "Cergoo.cache:", rcache, rcache.MemString(), "\n", "go-cache:    ", rgo_cache, rgo_cache.MemString(), "\n")
 	operation_name = "Get"
 	rcache = testing.Benchmark(Benchmark_cacheGet)
 	rgo_cache = testing.Benchmark(Benchmark_gocacheGet)
-	fmt.Print(operation_name, "\n", "Cergoo.cache:", rcache, rcache.MemString(), "\n", "go-cache:", rgo_cache, rgo_cache.MemString(), "\n")
+	fmt.Print(operation_name, "\n", "Cergoo.cache:", rcache, rcache.MemString(), "\n", "go-cache:    ", rgo_cache, rgo_cache.MemString(), "\n")
 	operation_name = "Inc"
 	rcache = testing.Benchmark(Benchmark_cacheInc)
 	rgo_cache = testing.Benchmark(Benchmark_gocacheInc)
-	fmt.Print(operation_name, "\n", "Cergoo.cache:", rcache, rcache.MemString(), "\n", "go-cache:", rgo_cache, rgo_cache.MemString(), "\n")
+	fmt.Print(operation_name, "\n", "Cergoo.cache:", rcache, rcache.MemString(), "\n", "go-cache:    ", rgo_cache, rgo_cache.MemString(), "\n")
 }
 
 func Benchmark_cacheSet(b *testing.B) {

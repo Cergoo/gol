@@ -19,6 +19,7 @@ The package is designed for fast and easy serialization / deserialization:
 	uint8, uint16, uint32, uint64, uint
 	int8, int16, int32, int64, int
 	floate32, floate64
+	complex64, complex128
 	bool
 	string
 	slise, array
@@ -47,14 +48,16 @@ up to the order of the fields in the description of the structures.
 custom data types that were present in the sources can type interface is necessary to register the decoder prior to decoding.
 That is to map [string] interface {} in the decoder will need to register custom data types that may be contained in the fields of type interface.
 Elementary types are registered automatically when you create a decoder and re-register them don't need:
-        t.Register(uint8(0), uint16(0), uint32(0), uint64(0), uint(0))
+    t.Register(uint8(0), uint16(0), uint32(0), uint64(0), uint(0))
 	t.Register(int8(0), int16(0), int32(0), int64(0), int(0))
 	t.Register(float32(0), float64(0))
+	t.Register(complex64(complex(0, 0)), complex128(complex(0, 0)))
 	t.Register(string(""), time.Time{})
 	t.Register([]uint8{}, []uint16{}, []uint32{}, []uint64{}, []uint{})
 	t.Register([]int8{}, []int16{}, []int32{}, []int64{}, []int{})
 	t.Register([]float32{}, []float64{})
-	t.Register([]string{}, []time.Time{}) 
+	t.Register([]complex64{}, []complex128{})
+	t.Register([]string{}, []time.Time{})
 
 ======================================================================
 Ru Lang
@@ -100,15 +103,17 @@ uint8, uint16, uint32, uint64, uint
 
 - Возможно свободное кодирование/декодирование только строго структурированных данных,
 пользовательские типы данных которые могут присутсвовать в источниках типа interface необходимо регистрировать в декодере перед декодированием.
-То есть для map[string]interface{} в декодере необходимо будет зарегистрировать пользовательские типы данных которые могут содержаться в полях типа interface. 
+То есть для map[string]interface{} в декодере необходимо будет зарегистрировать пользовательские типы данных которые могут содержаться в полях типа interface.
 Элементарные типы регистрируются автоматически при создании декодера и повторно их регистрировать не нужно:
 	t.Register(uint8(0), uint16(0), uint32(0), uint64(0), uint(0))
 	t.Register(int8(0), int16(0), int32(0), int64(0), int(0))
 	t.Register(float32(0), float64(0))
+	t.Register(complex64(complex(0, 0)), complex128(complex(0, 0)))
 	t.Register(string(""), time.Time{})
 	t.Register([]uint8{}, []uint16{}, []uint32{}, []uint64{}, []uint{})
 	t.Register([]int8{}, []int16{}, []int32{}, []int64{}, []int{})
 	t.Register([]float32{}, []float64{})
-	t.Register([]string{}, []time.Time{}) 
+	t.Register([]complex64{}, []complex128{})
+	t.Register([]string{}, []time.Time{})
 */
 package binaryED

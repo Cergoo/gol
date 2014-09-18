@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package stack it's a implementation lockfree LIFO stack
+// Package stack it's a implementation thread safe lockfree LIFO stack
 package stack
 
 import (
@@ -20,35 +20,36 @@ type tnode struct {
 	next unsafe.Pointer
 }
 
-// Push set item into stack
+// Push set item into stack if v not nil
 func (t *Tstack) Push(v interface{}) {
-	node := &tnode{val: v, next: t.top}
-	for !atomic.CompareAndSwapPointer(&t.top, node.next, unsafe.Pointer(node)) {
-		node.next = t.top
+	if v != nil {
+		node := &tnode{val: v, next: t.top}
+		for !atomic.CompareAndSwapPointer(&t.top, node.next, unsafe.Pointer(node)) {
+			node.next = t.top
+		}
 	}
 }
 
-// Pop get item from stack, if stack empty then ok == false
-func (t *Tstack) Pop() (v interface{}, ok bool) {
+// Pop get item from stack, if stack empty then return nil
+func (t *Tstack) Pop() interface{} {
 	top := t.top
 	if top == nil {
-		return
+		return nil
 	}
 	for !atomic.CompareAndSwapPointer(&t.top, top, (*tnode)(top).next) {
 		top = t.top
 		if top == nil {
-			return
+			return nil
 		}
 	}
-	return (*tnode)(top).val, true
+	return (*tnode)(top).val
 }
 
 // PopWait get item from stack, if stack empty then wait
 func (t *Tstack) PopWait() (v interface{}) {
-	var ok bool
 	for {
-		v, ok = t.Pop()
-		if ok {
+		v = t.Pop()
+		if v != nil {
 			return
 		}
 		runtime.Gosched()

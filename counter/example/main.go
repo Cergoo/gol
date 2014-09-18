@@ -11,7 +11,8 @@ func main() {
 	n = n - 20
 	fmt.Println(n)
 
-	c := new(counter.T_counter)
+	c := new(counter.TCounter)
 	c.Set(20)
 	fmt.Println(c.Add(-22))
+
 }

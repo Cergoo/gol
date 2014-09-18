@@ -15,16 +15,9 @@ func Test_MapKeysEq_ok1(t *testing.T) {
 	obj := "nnn"
 
 	v.Push(obj)
-	a, b := v.Pop()
+	a := v.Pop()
 	t1.Eq(a, obj)
-	t1.Eq(b, true)
 
-	v.Push(nil)
-	a, b = v.Pop()
+	a = v.Pop()
 	t1.Eq(a, nil)
-	t1.Eq(b, true)
-
-	a, b = v.Pop()
-	t1.Eq(a, nil)
-	t1.Eq(b, false)
 }

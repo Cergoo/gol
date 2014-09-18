@@ -36,9 +36,9 @@ func (t *Tstack) Push(v interface{}) bool {
 }
 
 // Pop get item & decrement counter
-func (t *Tstack) Pop() (v interface{}, ok bool) {
-	v, ok = t.stack.Pop()
-	if ok {
+func (t *Tstack) Pop() (v interface{}) {
+	v = t.stack.Pop()
+	if v != nil {
 		t.counter.Dec()
 	}
 	return

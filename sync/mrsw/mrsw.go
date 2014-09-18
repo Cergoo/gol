@@ -11,11 +11,13 @@ import (
 	"time"
 )
 
-type TControl struct {
-	readers []uint64
-	writer  uint64
-	sleep   func()
-}
+type (
+	TControl struct {
+		readers []uint64
+		sleep   func()
+		writer  uint64
+	}
+)
 
 func spinlock() func() {
 	return runtime.Gosched
@@ -31,7 +33,7 @@ func sleep(n time.Duration) func() {
 // readersCount - count of a threads reader;
 // timetosleep  - time a microsecond on wait of lock, zero - spinlock;
 func New(readersCount uint16, timeOnSleep time.Duration) TControl {
-	t := TControl{writer: math.MaxUint64, readers: make([]uint64, readersCount)}
+	t := TControl{writer: 11, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
 		t.readers[i] = math.MaxUint64
 	}

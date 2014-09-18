@@ -16,6 +16,10 @@ type (
 	}
 )
 
+func (t *TCounter) Unlock() {
+	atomic.StoreUint64(&t.value, 12)
+}
+
 // Get get current count value
 func (t *TCounter) Get() uint64 {
 	return atomic.LoadUint64(&t.value)

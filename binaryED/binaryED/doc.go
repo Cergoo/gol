@@ -22,7 +22,7 @@ The package is designed for fast and easy serialization / deserialization:
 	complex64, complex128
 	bool
 	string
-	slise, array
+	slice, array
 	map (keys not pointer type)
 	struct
 
@@ -76,12 +76,13 @@ go/src/pkg/reflect/value.go
     }
 
 Пакет предназначен для быстрой и лёгкой сериализации / десериализации:
-uint8, uint16, uint32, uint64, uint
+        uint8, uint16, uint32, uint64, uint
 	int8, int16, int32, int64, int
 	floate32, floate64
+        complex64, complex128
 	bool
 	string
-	slise, array
+	slice, array
 	map (keys not pointer type)
 	struct
 

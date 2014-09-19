@@ -120,6 +120,14 @@ func (t *Buf) Cap() int {
 
 /* Reader functions */
 
+// Read it's a io.Reader implementation, read into data
+func (t *Buf) Read(data []byte) (n int, e error) {
+	var b []byte
+	b, e = t.ReadNext(len(data))
+	n = copy(data, b)
+	return
+}
+
 // ReadNext read next n byte
 func (t *Buf) ReadNext(n int) (data []byte, e error) {
 	if t.readeoff >= t.writeoff {

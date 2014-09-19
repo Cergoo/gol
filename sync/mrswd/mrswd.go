@@ -1,7 +1,10 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package mrswd it's a multi reade single write control dispatcher
+/*
+Package mrswd it's a dispatcher of a multi reade single write controller for resources with
+ID in the range of 0, maxUint64-1
+*/
 package mrswd
 
 import (

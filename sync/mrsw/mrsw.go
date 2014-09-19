@@ -1,7 +1,10 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package mrsw it's a simple multi reade single write controller
+/*
+Package mrsw it's a simple multi reade single write controller for resources with
+ID in the range of 0, maxUint64-1
+*/
 package mrsw
 
 import (

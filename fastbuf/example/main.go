@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	b := fastbuf.New(nil)
+	b := fastbuf.New(nil, 0, nil)
 	b.Write([]byte("12"))
 	fmt.Print(b.FlushP())
 

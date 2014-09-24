@@ -7,8 +7,7 @@ Package primitive it's a binary encode/decode primitive elementary implementatio
 http://godoc.org/github.com/Cergoo/gol/binaryED/primitive
 
 ## binaryED/binaryED
-Package binaryED it's a binary encode/decode implementation to serialize data.   
-(fork github.com/youtube/vitess/go/bson)    
+Package binaryED it's a binary encode/decode implementation to faste and easy serialize data.   
 http://godoc.org/github.com/Cergoo/gol/binaryED/binaryED
 
 ## cache/cacheStr, cache/cacheUint
@@ -116,9 +115,7 @@ http://godoc.org/github.com/Cergoo/gol/jsonConfig
 String key to uint id and uint id to string key association pack. No save thread.
 http://godoc.org/github.com/Cergoo/gol/keyid
 
-## lockfree/stack
-Package stack it's a implementation lockfree LIFO stack  
-http://godoc.org/github.com/Cergoo/gol/lockfree/stack
+
 
 ## reflect/refl
 Additional reflection functions  
@@ -132,9 +129,17 @@ http://godoc.org/github.com/Cergoo/gol/reflect/caller
 Package lookup it's a lookup reflection functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/lookup
 
-## stack 
-Package stack it's a implementation lockfree LIFO stack under counter & limiter items    
-http://godoc.org/github.com/Cergoo/gol/stack
+## stack/stack 
+Package stack it's a easy stack implementation. No thread safe.    
+http://godoc.org/github.com/Cergoo/gol/stack/stack
+ 
+## stack/stacklf
+Package stacklf it's a implementation lockfree LIFO stack  
+http://godoc.org/github.com/Cergoo/gol/stack/stacklf
+
+## stack/stackCounter
+Package stackCounter it's a implementation lockfree LIFO stack under counter & limiter items    
+http://godoc.org/github.com/Cergoo/gol/stack/stackCounter
 
 ## sync/lock 
 Package lock it's a simple spin lock structure implementation     

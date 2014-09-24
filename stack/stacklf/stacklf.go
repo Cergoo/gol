@@ -1,8 +1,8 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package stack it's a implementation thread safe lockfree LIFO stack
-package stack
+// Package stacklf it's a implementation thread safe lockfree LIFO stack
+package stacklf
 
 import (
 	"runtime"

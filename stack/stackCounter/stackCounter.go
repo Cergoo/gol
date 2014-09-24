@@ -1,19 +1,19 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package stack it's a implementation lock free LIFO stack under counter & limiter items
-package stack
+// Package stackCounter it's a implementation lock free LIFO stack under counter & limiter items
+package stackCounter
 
 import (
 	"github.com/Cergoo/gol/counter"
-	"github.com/Cergoo/gol/lockfree/stack"
+	"github.com/Cergoo/gol/stack/stacklf"
 )
 
 type (
 	// Tstack it's main structure
 	Tstack struct {
 		counter counter.TCounter
-		stack   stack.Tstack
+		stack   stacklf.Tstack
 	}
 )
 
@@ -21,7 +21,7 @@ type (
 func New() *Tstack {
 	return &Tstack{
 		counter: counter.TCounter{},
-		stack:   stack.Tstack{},
+		stack:   stacklf.Tstack{},
 	}
 }
 

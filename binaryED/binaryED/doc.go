@@ -29,7 +29,7 @@ The package is designed for fast and easy serialization / deserialization:
 Description of the coding format
 
 1. Binary encoding of the data on the basis of binary.LittleEndian.
-2. Before the reference types: slices, maps, pointers, added byte: 0-nil, 1-not nil.
+2. Before the reference types: slices, maps, pointers, interface added byte: 0-nil, 1-not nil.
 3. Before the strings, arrays, slices, maps, added uint32 number of items.
 4. Before the data encoded from the source type Interface real name is added to the string type:
 in the following format: uint8 length of the string, the string itself is the name of the type.
@@ -89,7 +89,7 @@ go/src/pkg/reflect/value.go
 Описание формата кодирования
 
 1. Бинарное кодирование данных на основе binary.LittleEndian.
-2. Перед ссылочными типами: срезами, отображениями, указателями, добавляется байт: 0-nil, 1-not nil.
+2. Перед ссылочными типами: срезами, отображениями, указателями, интерфейсами добавляется байт: 0-nil, 1-not nil.
 3. Перед строками, массивами, срезами, отображениями, добавляется uint32 количество элементов.
 4. Перед данными кодируемыми из источника типа Interface дабавляется строковое реальное наименование типа:
 в следующем формате: uint8 длина строки, сама строка наименования типа.

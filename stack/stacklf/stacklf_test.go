@@ -1,4 +1,4 @@
-package stack
+package stacklf
 
 import (
 	"github.com/Cergoo/gol/test"

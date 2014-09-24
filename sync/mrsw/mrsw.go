@@ -14,6 +14,10 @@ import (
 	"time"
 )
 
+const (
+	unlocked = math.MaxUint64
+)
+
 type (
 	TControl struct {
 		readers []uint64
@@ -38,7 +42,7 @@ func sleep(n time.Duration) func() {
 func New(readersCount uint16, timeOnSleep time.Duration) TControl {
 	t := TControl{writer: 11, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
-		t.readers[i] = math.MaxUint64
+		t.readers[i] = unlocked
 	}
 
 	// resolution of collision
@@ -63,7 +67,7 @@ func (t *TControl) RLock(threadId uint16, resursId uint64) {
 			if wlock != resursId {
 				return
 			}
-			atomic.StoreUint64(&t.readers[threadId], math.MaxUint64)
+			atomic.StoreUint64(&t.readers[threadId], unlocked)
 		}
 		t.sleep()
 	}
@@ -71,7 +75,7 @@ func (t *TControl) RLock(threadId uint16, resursId uint64) {
 
 // RUnlock readunlock resurs from thread
 func (t *TControl) RUnlock(threadId uint16) {
-	atomic.StoreUint64(&t.readers[threadId], math.MaxUint64)
+	atomic.StoreUint64(&t.readers[threadId], unlocked)
 }
 
 // Lock resurs
@@ -91,5 +95,5 @@ func (t *TControl) Lock(resursId uint64) {
 
 // Unlock resurs
 func (t *TControl) Unlock() {
-	atomic.StoreUint64(&t.writer, math.MaxUint64)
+	atomic.StoreUint64(&t.writer, unlocked)
 }

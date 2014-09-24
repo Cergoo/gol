@@ -15,13 +15,13 @@ import (
 type (
 	TDispatcher struct {
 		chThread chan uint16
-		control  mrsw.TControl
+		mrsw.TControl
 	}
 )
 
 // New construct new dispatcher
 func New(threadcount uint16, timeOnSleep time.Duration) (t TDispatcher) {
-	t = TDispatcher{chThread: make(chan uint16, threadcount), control: mrsw.New(threadcount, timeOnSleep)}
+	t = TDispatcher{chThread: make(chan uint16, threadcount), TControl: mrsw.New(threadcount, timeOnSleep)}
 	for i := uint16(0); i < threadcount; i++ {
 		t.chThread <- i
 	}
@@ -31,22 +31,12 @@ func New(threadcount uint16, timeOnSleep time.Duration) (t TDispatcher) {
 // RLock readlock resurs from thread
 func (t *TDispatcher) RLock(resursId uint64) (threadid uint16) {
 	threadid = <-t.chThread
-	t.control.RLock(threadid, resursId)
+	t.TControl.RLock(threadid, resursId)
 	return
 }
 
 // RUnlock readunlock resurs from thread
 func (t *TDispatcher) RUnlock(threadid uint16) {
-	t.control.RUnlock(threadid)
+	t.TControl.RUnlock(threadid)
 	t.chThread <- threadid
-}
-
-// Lock writer
-func (t *TDispatcher) Lock(resursId uint64) {
-	t.control.Lock(resursId)
-}
-
-// Unlock writer
-func (t *TDispatcher) Unlock() {
-	t.control.Unlock()
 }

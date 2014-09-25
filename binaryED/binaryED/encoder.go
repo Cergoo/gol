@@ -64,7 +64,6 @@ func encodeField(buf IBuf, val reflect.Value) {
 		}
 	case reflect.Array:
 		vLen := val.Len()
-		val.Ptr()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		for i := 0; i < vLen; i++ {
 			encodeField(buf, val.Index(i))

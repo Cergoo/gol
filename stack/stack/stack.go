@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package stack it's a easy stack implementation. No thread safe.
+// Package stack it's a simple stack implementation. No thread safe.
 package stack
 
 type (
@@ -31,4 +31,9 @@ func (t TStack) Peek() (val interface{}, ok bool) {
 	}
 	val, ok = t[len(t)-1], true
 	return
+}
+
+// Clear clear stack
+func (t *TStack) Clear() {
+	*t = (*t)[:0]
 }

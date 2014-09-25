@@ -159,19 +159,10 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 			return
 		}
 		ln := int(Pack.Uint32(part))
-
-		if val.Type().Elem().Kind() == reflect.Uint8 {
-			part, e = t.buf.ReadNext(ln)
+		for i := 0; i < ln; i++ {
+			e = t.decodeField(val.Index(i))
 			if e != nil {
 				return
-			}
-			*(*[]byte)(val.Ptr()) = part
-		} else {
-			for i := 0; i < ln; i++ {
-				e = t.decodeField(val.Index(i))
-				if e != nil {
-					return
-				}
 			}
 		}
 	case reflect.Slice:

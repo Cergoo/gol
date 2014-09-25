@@ -47,22 +47,27 @@ func encodeField(buf IBuf, val reflect.Value) {
 	case reflect.String:
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(val.Len()))
 		buf.Write([]byte(val.String()))
-	case reflect.Slice, reflect.Array:
-		if val.Kind() == reflect.Slice {
-			if val.IsNil() {
-				buf.WriteByte(0)
-				return
-			}
-			buf.WriteByte(1)
+	case reflect.Slice:
+		if val.IsNil() {
+			buf.WriteByte(0)
+			return
 		}
+		buf.WriteByte(1)
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		if val.Type().Elem().Kind() == reflect.Uint8 {
-			buf.Write(val.Interface().([]byte))
+			buf.Write(val.Bytes())
 		} else {
 			for i := 0; i < vLen; i++ {
 				encodeField(buf, val.Index(i))
 			}
+		}
+	case reflect.Array:
+		vLen := val.Len()
+		val.Ptr()
+		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
+		for i := 0; i < vLen; i++ {
+			encodeField(buf, val.Index(i))
 		}
 	case reflect.Ptr:
 		if val.IsNil() {

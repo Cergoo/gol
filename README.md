@@ -130,7 +130,7 @@ Package lookup it's a lookup reflection functions
 http://godoc.org/github.com/Cergoo/gol/reflect/lookup
 
 ## stack/stack 
-Package stack it's a easy stack implementation. No thread safe.    
+Package stack it's a simple stack implementation. No thread safe.    
 http://godoc.org/github.com/Cergoo/gol/stack/stack
  
 ## stack/stacklf

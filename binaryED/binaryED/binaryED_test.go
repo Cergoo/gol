@@ -10,6 +10,8 @@ import (
 )
 
 type (
+	tlickeByte byte
+
 	t1 struct {
 		F1 int
 		F2 string
@@ -17,6 +19,7 @@ type (
 		F4 []int
 		F  *t2
 		F5 int
+		FN [4]byte
 	}
 	t2 struct {
 		F1 string
@@ -39,7 +42,9 @@ var (
 	inBoolf      = false
 	inCopmlex128 = complex(float64(17.2), float64(112.1))
 	inSlice      = []string{"1", "2", "3", "nnnn1", "nn2", "", "n1"}
+	inSlice1     = []tlickeByte{1, 2, 3, 4}
 	inArray      = [4]string{"1", "2", "3"}
+	inArray1     = [4]uint8{1, 2, 3, 4}
 	inStruct     = &t1{
 		F1: -12,
 		F2: "test1",
@@ -50,6 +55,7 @@ var (
 			F2: "test_str2",
 		},
 		F5: 12,
+		FN: [4]byte{1, 2, 3, 4},
 	}
 	inMap            = map[int]string{1: "f1", 2: "f2", 4: "f4"}
 	inMap1           = map[int]*t2{1: &t2{"f1", nil, "f2"}, 2: &t2{"f2", nil, "f2"}, 3: nil}
@@ -63,7 +69,9 @@ var (
 	outBool           bool
 	outComplex128     complex128
 	outSlice          []string
+	outSlice1         []tlickeByte
 	outArray          [4]string
+	outArray1         [4]uint8
 	outStruct         = &t1{f3: 100}
 	outMap            map[int]string
 	outMap1           map[int]*t2
@@ -114,9 +122,19 @@ func TestED(t *testing.T) {
 	t1.Eq(inSlice, outSlice)
 	buf.ReadWriteReset()
 
+	Encode(buf, inSlice1)
+	Decoder.Decode(&outSlice1)
+	t1.Eq(inSlice1, outSlice1)
+	buf.ReadWriteReset()
+
 	Encode(buf, inArray)
 	Decoder.Decode(&outArray)
 	t1.Eq(inArray, outArray)
+	buf.ReadWriteReset()
+
+	Encode(buf, inArray1)
+	Decoder.Decode(&outArray1)
+	t1.Eq(inArray1, outArray1)
 	buf.ReadWriteReset()
 
 	Encode(buf, inStruct)

@@ -131,10 +131,8 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		}
 	case reflect.Bool:
 		bt, e = t.buf.ReadByte()
-		if e == nil {
-			if bt != 0 {
-				*(*bool)(val.Ptr()) = true
-			}
+		if bt != 0 {
+			*(*bool)(val.Ptr()) = true
 		}
 	case reflect.String:
 		part, e = t.buf.ReadNext(WORD32)

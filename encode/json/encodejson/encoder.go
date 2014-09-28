@@ -39,9 +39,7 @@ func encode(val reflect.Value, buf []byte) []byte {
 			buf = append(buf, []byte("false")...)
 		}
 	case reflect.String:
-		buf = append(buf, '"')
-		buf = append(buf, []byte(val.String())...)
-		buf = append(buf, '"')
+		buf = WriteJsonString(buf, []byte(val.String()))
 	case reflect.Array:
 		buf = append(buf, '[')
 		vLen := val.Len()
@@ -59,10 +57,7 @@ func encode(val reflect.Value, buf []byte) []byte {
 			return append(buf, null...)
 		}
 		if val.Type().Elem().Kind() == reflect.Uint8 {
-			buf = append(buf, '"')
-			buf = append(buf, val.Bytes()...)
-			buf = append(buf, '"')
-			return buf
+			return WriteJsonString(buf, val.Bytes())
 		}
 		buf = append(buf, '[')
 		vLen := val.Len()

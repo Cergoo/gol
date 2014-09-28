@@ -107,9 +107,8 @@ func encode(val reflect.Value, buf []byte) []byte {
 		if val.Type().Key().Kind() == reflect.String {
 			buf = append(buf, '{')
 			for _, k := range keys {
-				buf = append(buf, '"')
-				buf = append(buf, k.Bytes()...)
-				buf = append(buf, '"', ':')
+				buf = WriteJsonString(buf, k.Bytes())
+				buf = append(buf, ':')
 				buf = encode(val.MapIndex(k), buf)
 				buf = append(buf, ',')
 			}

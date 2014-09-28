@@ -2,7 +2,7 @@
 // under terms of ISC license
 
 /*
-Package binaryED it's a binary encode/decode implementation
+Package encodebinary it's a binary encode/decode implementation
 fork github.com/youtube/vitess/go/bson
 
 Attention!
@@ -62,7 +62,7 @@ Elementary types are registered automatically when you create a decoder and re-r
 ======================================================================
 Ru Lang
 
-Пакет binaryED это реализация бинарного кодирования / декодирования на языке Go
+Пакет encodebinary это реализация бинарного кодирования / декодирования на языке Go
 fork github.com/youtube/vitess/go/bson
 
 Внимание!
@@ -117,4 +117,4 @@ go/src/pkg/reflect/value.go
 	t.Register([]complex64{}, []complex128{})
 	t.Register([]string{}, []time.Time{})
 */
-package binaryED
+package encodebinary

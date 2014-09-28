@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/Cergoo/gol/binaryED/fastED/example/encoderdecoder"
-	"github.com/Cergoo/gol/binaryED/fastED/example/exportedtypes"
+	"github.com/Cergoo/gol/encode/binary/encodebinaryFast/example/encoderdecoder"
+	"github.com/Cergoo/gol/encode/binary/encodebinaryFast/example/exportedtypes"
 	"github.com/Cergoo/gol/fastbuf"
 	//"github.com/davecgh/go-spew/spew"
 	"reflect"
@@ -26,9 +26,9 @@ func main() {
 
 	buf := fastbuf.New(nil, 0, nil)
 
-	encoderdecoder.Encode(inVar, buf)
+	encoderdecoder.Encode(buf, inVar)
 	outVar, e := encoderdecoder.Decode(buf)
-
+	//spew.Dump(outVar)
 	if reflect.DeepEqual(inVar, outVar) {
 		fmt.Println("ok")
 	} else {

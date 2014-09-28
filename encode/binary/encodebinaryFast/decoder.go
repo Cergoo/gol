@@ -1,16 +1,16 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-package fastED
+package encodebinaryFast
 
 import (
 	//"fmt"
-	"github.com/Cergoo/gol/binaryED/primitive"
+	"github.com/Cergoo/gol/encode/binary/primitive"
 	"github.com/Cergoo/gol/err"
 	"reflect"
 )
 
-// Encode encode value to binary
+// Decode generate decode function from value
 func (t *TGen) Decode(val interface{}) {
 	valType := reflect.TypeOf(val)
 	t.src = "\nfunc Decode(buf IBuf) (t " + typeName(valType.String(), true) + ", e error) {\n"
@@ -100,7 +100,7 @@ func (t *TGen) decNilEnd() {
 
 func (t *TGen) decPtr(name string, val reflect.Type) {
 	t.decNilBegin(name)
-	t.src += "if " + name + "==nil { " + name + "= new(" + typeName(val.String(), false) + ")}\n"
+	t.src += name + "= new(" + typeName(val.String(), false) + ")\n"
 	t.stackName.Push("(*" + name + ")")
 	t.decode(val.Elem())
 	t.decNilEnd()

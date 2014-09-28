@@ -1,4 +1,4 @@
-package fastED
+package encodebinaryFast
 
 import (
 	"strings"

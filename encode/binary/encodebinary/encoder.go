@@ -1,11 +1,11 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-package binaryED
+package encodebinary
 
 import (
 	//"fmt"
-	. "github.com/Cergoo/gol/binaryED/primitive"
+	. "github.com/Cergoo/gol/encode/binary/primitive"
 	"math"
 	"reflect"
 	"time"
@@ -13,10 +13,10 @@ import (
 
 // Encode encode value to binary
 func Encode(buf IBuf, val interface{}) {
-	encodeField(buf, reflect.ValueOf(val))
+	encode(buf, reflect.ValueOf(val))
 }
 
-func encodeField(buf IBuf, val reflect.Value) {
+func encode(buf IBuf, val reflect.Value) {
 	switch val.Kind() {
 	case reflect.Uint8:
 		buf.WriteByte(uint8(val.Uint()))
@@ -59,14 +59,14 @@ func encodeField(buf IBuf, val reflect.Value) {
 			buf.Write(val.Bytes())
 		} else {
 			for i := 0; i < vLen; i++ {
-				encodeField(buf, val.Index(i))
+				encode(buf, val.Index(i))
 			}
 		}
 	case reflect.Array:
 		vLen := val.Len()
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		for i := 0; i < vLen; i++ {
-			encodeField(buf, val.Index(i))
+			encode(buf, val.Index(i))
 		}
 	case reflect.Ptr:
 		if val.IsNil() {
@@ -74,8 +74,7 @@ func encodeField(buf IBuf, val reflect.Value) {
 			return
 		}
 		buf.WriteByte(1)
-		val = val.Elem()
-		encodeField(buf, val)
+		encode(buf, val.Elem())
 	case reflect.Struct:
 		vType := val.Type()
 		if vType == TimeType {
@@ -87,7 +86,7 @@ func encodeField(buf IBuf, val reflect.Value) {
 				if vType.Field(i).PkgPath != "" {
 					continue
 				}
-				encodeField(buf, val.Field(i))
+				encode(buf, val.Field(i))
 			}
 		}
 	case reflect.Map:
@@ -100,8 +99,8 @@ func encodeField(buf IBuf, val reflect.Value) {
 		Pack.PutUint32(buf.Reserve(WORD32), uint32(vLen))
 		keys := val.MapKeys()
 		for _, k := range keys {
-			encodeField(buf, k)
-			encodeField(buf, val.MapIndex(k))
+			encode(buf, k)
+			encode(buf, val.MapIndex(k))
 		}
 	case reflect.Interface:
 		if val.IsNil() {
@@ -113,6 +112,6 @@ func encodeField(buf IBuf, val reflect.Value) {
 		tpName := val.Type().String()
 		buf.WriteByte(uint8(len(tpName)))
 		buf.Write([]byte(tpName))
-		encodeField(buf, val)
+		encode(buf, val)
 	}
 }

@@ -12,7 +12,6 @@ type (
 	// Buf struct of a buf
 	Buf struct {
 		buf      []byte //
-		writeoff int    // writeoff - index buffer is filled
 		readeoff int    // readeoff - index subtracts buffer
 		limit    int
 		w        io.Writer
@@ -21,43 +20,29 @@ type (
 
 // New it's constructor buf. If will set linit > 0 then necessarily set w io.Writer
 func New(buf []byte, limit int, w io.Writer) (b *Buf) {
-	b = &Buf{limit: limit, w: w}
-
 	if buf == nil {
-		buf = make([]byte, 64)
-	} else {
-		b.writeoff = len(buf)
-		buf = buf[:cap(buf)]
+		buf = make([]byte, 0, 64)
 	}
-	b.buf = buf
-	return
+	return &Buf{limit: limit, w: w, buf: buf}
 }
 
 /* Writer functions */
 
 // Grow resize cap
 func (t *Buf) Grow(n int) {
-	newbuf := make([]byte, cap(t.buf)+n)
+	t.grow(cap(t.buf) + n)
+}
+
+func (t *Buf) grow(n int) {
+	newbuf := make([]byte, n)
 	copy(newbuf, t.buf)
 	t.buf = newbuf
 }
 
-func (t *Buf) grow(n int) {
-	if cap(t.buf) < t.writeoff+n {
-		if cap(t.buf) < n {
-			t.Grow(n)
-		}
-		t.Grow(cap(t.buf))
-	}
-}
-
 // Write write slice into buf
 func (t *Buf) Write(p []byte) (n int, err error) {
-	t.grow(len(p))
-	copy(t.buf[t.writeoff:], p)
-	t.writeoff += len(p)
-
-	if t.limit > 0 && t.writeoff > t.limit {
+	t.buf = append(t.buf, p...)
+	if t.limit > 0 && len(t.buf) > t.limit {
 		_, err = t.w.Write(t.FlushP())
 	}
 	return
@@ -65,11 +50,8 @@ func (t *Buf) Write(p []byte) (n int, err error) {
 
 // WriteByte write byte into buf
 func (t *Buf) WriteByte(p byte) (err error) {
-	t.grow(1)
-	t.buf[t.writeoff] = p
-	t.writeoff++
-
-	if t.limit > 0 && t.writeoff > t.limit {
+	t.buf = append(t.buf, p)
+	if t.limit > 0 && len(t.buf) > t.limit {
 		_, err = t.w.Write(t.FlushP())
 	}
 	return
@@ -77,7 +59,7 @@ func (t *Buf) WriteByte(p byte) (err error) {
 
 // FlushP get slice of all buf and clear buf
 func (t *Buf) FlushP() (r []byte) {
-	r = t.buf[:t.writeoff]
+	r = t.buf
 	t.ReadWriteReset()
 	return
 }
@@ -88,29 +70,40 @@ func (t *Buf) FlushToWriter() (err error) {
 	return
 }
 
-// Show get show current buffer
-func (t *Buf) Show() []byte {
-	return t.buf[:t.writeoff]
+// GetBuf get current buffer slice
+func (t *Buf) GetBuf() []byte {
+	return t.buf
+}
+
+// SetBuf set a slice into current buffer
+func (t *Buf) SetBuf(val []byte) {
+	t.buf = val
+	if t.readeoff > len(val) {
+		t.readeoff = len(val)
+	}
 }
 
 // Flush get value all buf and clear buf
 func (t *Buf) Flush() (r []byte) {
-	r = append(r, t.buf[:t.writeoff]...)
+	r = append(r, t.buf...)
 	t.ReadWriteReset()
 	return
 }
 
 // Reserve reserve slice size n
-func (t *Buf) Reserve(n int) []byte {
-	t.grow(n)
-	oldoff := t.writeoff
-	t.writeoff += n
-	return t.buf[oldoff:t.writeoff]
+func (t *Buf) Reserve(n int) (r []byte) {
+	oldln := len(t.buf)
+	n += oldln
+	if n > cap(t.buf) {
+		t.grow(n + int(n/3))
+	}
+	t.buf = t.buf[:n]
+	return t.buf[oldln:n]
 }
 
 // Len get buffer length
 func (t *Buf) Len() int {
-	return t.writeoff
+	return len(t.buf)
 }
 
 // Cap get buffer capacity
@@ -130,13 +123,9 @@ func (t *Buf) Read(data []byte) (n int, e error) {
 
 // ReadNext read next n byte
 func (t *Buf) ReadNext(n int) (data []byte, e error) {
-	if t.readeoff >= t.writeoff {
-		e = io.EOF
-		return
-	}
 	n += t.readeoff
-	if n > t.writeoff {
-		n = t.writeoff
+	if n > len(t.buf) {
+		n = len(t.buf)
 		e = io.EOF
 	}
 	data = t.buf[t.readeoff:n]
@@ -146,7 +135,7 @@ func (t *Buf) ReadNext(n int) (data []byte, e error) {
 
 // ReadByte read next byte
 func (t *Buf) ReadByte() (b byte, e error) {
-	if t.readeoff < t.writeoff {
+	if t.readeoff < len(t.buf) {
 		b = t.buf[t.readeoff]
 		t.readeoff++
 		return
@@ -163,5 +152,5 @@ func (t *Buf) ReadReset() {
 // ReadWriteReset reset reader and writer indexs
 func (t *Buf) ReadWriteReset() {
 	t.readeoff = 0
-	t.writeoff = 0
+	t.buf = t.buf[:0]
 }

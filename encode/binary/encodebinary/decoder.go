@@ -1,12 +1,11 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-package binaryED
+package encodebinary
 
 import (
 	"errors"
-	//"fmt"
-	. "github.com/Cergoo/gol/binaryED/primitive"
+	. "github.com/Cergoo/gol/encode/binary/primitive"
 	"math"
 	"reflect"
 	"time"
@@ -50,10 +49,10 @@ func (t *TDecoder) register() {
 
 // Decode decode value fom binary to receiver val
 func (t *TDecoder) Decode(val interface{}) error {
-	return t.decodeField(reflect.ValueOf(val).Elem())
+	return t.decode(reflect.ValueOf(val).Elem())
 }
 
-func (t *TDecoder) decodeField(val reflect.Value) (e error) {
+func (t *TDecoder) decode(val reflect.Value) (e error) {
 	var (
 		part []byte
 		bt   byte
@@ -158,7 +157,7 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		}
 		ln := int(Pack.Uint32(part))
 		for i := 0; i < ln; i++ {
-			e = t.decodeField(val.Index(i))
+			e = t.decode(val.Index(i))
 			if e != nil {
 				return
 			}
@@ -189,7 +188,7 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 				val.SetLen(ln)
 			}
 			for i := 0; i < ln; i++ {
-				e = t.decodeField(val.Index(i))
+				e = t.decode(val.Index(i))
 				if e != nil {
 					return
 				}
@@ -211,7 +210,7 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		}
 
 		val = val.Elem()
-		e = t.decodeField(val)
+		e = t.decode(val)
 	case reflect.Struct:
 		vType := val.Type()
 		if vType == TimeType {
@@ -226,7 +225,7 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 				if vType.Field(i).PkgPath != "" {
 					continue
 				}
-				e = t.decodeField(val.Field(i))
+				e = t.decode(val.Field(i))
 				if e != nil {
 					return
 				}
@@ -257,11 +256,11 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 		for i := 0; i < ln; i++ {
 			mapVal = reflect.New(vtype.Elem()).Elem()
 			mapKey = reflect.New(vtype.Key()).Elem()
-			e = t.decodeField(mapKey)
+			e = t.decode(mapKey)
 			if e != nil {
 				return
 			}
-			e = t.decodeField(mapVal)
+			e = t.decode(mapVal)
 			if e != nil {
 				return
 			}
@@ -294,7 +293,7 @@ func (t *TDecoder) decodeField(val reflect.Value) (e error) {
 			return
 		}
 		valInner := reflect.New(vType).Elem()
-		e = t.decodeField(valInner)
+		e = t.decode(valInner)
 		if e != nil {
 			return
 		}

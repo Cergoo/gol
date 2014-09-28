@@ -2,17 +2,17 @@
 (c) 2013-2014 Cergoo   
 under terms of ISC license
 
-## binaryED/primitive
+## encode/binary/primitive
 Package primitive it's a binary encode/decode primitive elementary implementation
-http://godoc.org/github.com/Cergoo/gol/binaryED/primitive
+http://godoc.org/github.com/Cergoo/gol/encode/binary/primitive
 
-## binaryED/binaryED
-Package binaryED it's a binary encode/decode implementation to faste and easy serialize data.   
-http://godoc.org/github.com/Cergoo/gol/binaryED/binaryED
+## encode/binary/encodebinary
+Package encodebinary it's a binary encode/decode implementation to fast and easy serialize data.   
+http://godoc.org/github.com/Cergoo/gol/encode/binary/encodebinary
 
-## binaryED/fastED
-Package fasteED it's a like protobuf encoder/decoder genarator from binaryED protocol. See example.     
-http://godoc.org/github.com/Cergoo/gol/binaryED/fastED
+## encode/binary/encodebinaryFast
+Package encodebinaryFast it's a like protobuf encoder/decoder genarator from encodebinary protocol. See example.     
+http://godoc.org/github.com/Cergoo/gol/encode/binary/encodebinaryFast
 
 ## cache/cacheStr, cache/cacheUint
 Package cache it's a in-memory key-value store based of the thread-safe hasmap implementation (key type string and key type uint64) similar to memcached that is suitable for applications running on a single machine.    

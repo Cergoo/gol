@@ -3,11 +3,11 @@
 package encoderdecoder
 
 import (
-	"github.com/Cergoo/gol/binaryED/fastED/example/exportedtypes"
-	. "github.com/Cergoo/gol/binaryED/primitive"
+	"github.com/Cergoo/gol/encode/binary/encodebinaryFast/example/exportedtypes"
+	. "github.com/Cergoo/gol/encode/binary/primitive"
 )
 
-func Encode(t *exportedtypes.T1, buf IBuf) {
+func Encode(buf IBuf, t *exportedtypes.T1) {
 	if t == nil {
 		buf.WriteByte(0)
 	} else {
@@ -77,9 +77,7 @@ func Decode(buf IBuf) (t *exportedtypes.T1, e error) {
 	if bt == 0 {
 		t = nil
 	} else {
-		if t == nil {
-			t = new(exportedtypes.T1)
-		}
+		t = new(exportedtypes.T1)
 		part, e = buf.ReadNext(WORD64)
 		if e != nil {
 			return
@@ -108,9 +106,7 @@ func Decode(buf IBuf) (t *exportedtypes.T1, e error) {
 		if bt == 0 {
 			(*t).N4 = nil
 		} else {
-			if (*t).N4 == nil {
-				(*t).N4 = new(exportedtypes.T2)
-			}
+			(*t).N4 = new(exportedtypes.T2)
 			part, e = buf.ReadNext(WORD64)
 			if e != nil {
 				return
@@ -229,9 +225,7 @@ func Decode(buf IBuf) (t *exportedtypes.T1, e error) {
 					if bt == 0 {
 						tmp10 = nil
 					} else {
-						if tmp10 == nil {
-							tmp10 = new(exportedtypes.T3)
-						}
+						tmp10 = new(exportedtypes.T3)
 						part, e = buf.ReadNext(WORD64)
 						if e != nil {
 							return

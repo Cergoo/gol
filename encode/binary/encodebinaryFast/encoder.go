@@ -1,21 +1,22 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-package fastED
+package encodebinaryFast
 
 import (
 	//"fmt"
-	"github.com/Cergoo/gol/binaryED/primitive"
-	"github.com/Cergoo/gol/binaryED/tmpName"
+	"github.com/Cergoo/gol/encode/binary/primitive"
 	"github.com/Cergoo/gol/err"
 	extfilepath "github.com/Cergoo/gol/filepath"
 	"github.com/Cergoo/gol/stack/stack"
+	"github.com/Cergoo/gol/tmpName"
 	"os"
 	"path/filepath"
 	"reflect"
 )
 
 type (
+	// TGen it's a main struct
 	TGen struct {
 		stackName  stack.TStack
 		tmpNameGen *tmpName.TtmpName
@@ -24,6 +25,7 @@ type (
 	}
 )
 
+// New create new generator
 func New(outputFile string, imported ...string) *TGen {
 	os.Remove(outputFile)
 	f, e := os.Create(outputFile)
@@ -33,7 +35,7 @@ func New(outputFile string, imported ...string) *TGen {
 	f.Write([]byte("// It's file auto generate \n\n"))
 	f.Write([]byte("package " + outputFile + "\n\n"))
 
-	resultImport := ". \"github.com/Cergoo/gol/binaryED/primitive\"\n"
+	resultImport := ". \"github.com/Cergoo/gol/encode/binary/primitive\"\n"
 	for i := range imported {
 		resultImport += "\"" + imported[i] + "\"\n"
 	}
@@ -46,14 +48,15 @@ func New(outputFile string, imported ...string) *TGen {
 	}
 }
 
+// Close end work generator
 func (t *TGen) Close() {
 	t.f.Close()
 }
 
-// Encode encode value to binary
+// Encode generate encode function from value
 func (t *TGen) Encode(val interface{}) {
 	valType := reflect.TypeOf(val)
-	t.src = "\nfunc Encode(t " + typeName(valType.String(), true) + ", buf IBuf) {\n"
+	t.src = "\nfunc Encode(buf IBuf, t " + typeName(valType.String(), true) + ") {\n"
 	t.stackName.Push("t")
 	t.encode(valType)
 	t.src += "}\n\n"

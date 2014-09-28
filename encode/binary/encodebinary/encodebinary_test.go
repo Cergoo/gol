@@ -1,7 +1,6 @@
-package binaryED
+package encodebinary
 
 import (
-	//"fmt"
 	"github.com/Cergoo/gol/fastbuf"
 	"github.com/Cergoo/gol/test"
 	//"github.com/davecgh/go-spew/spew"

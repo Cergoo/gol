@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/gob"
 	"fmt"
 	"github.com/Cergoo/gol/binaryED/binaryED"
 	"github.com/Cergoo/gol/binaryED/fastED/example/encoderdecoder"
@@ -43,8 +42,8 @@ func init() {
 
 func main() {
 	var (
-		binaryEDt, fastEDt, gobt testing.BenchmarkResult
-		operation_name           string
+		binaryEDt, fastEDt testing.BenchmarkResult
+		operation_name     string
 	)
 
 	operation_name = "Encode"
@@ -52,12 +51,6 @@ func main() {
 	fastEDt = testing.Benchmark(Benchmark_FastED_Encode)
 	gobt = testing.Benchmark(Benchmark_gob_Encode)
 	fmt.Print(operation_name, "\n", "binaryED:", binaryEDt, binaryEDt.MemString(), "\n", "fastED:", fastEDt, fastEDt.MemString(), "\n", "gob:", gobt, gobt.MemString(), "\n")
-	operation_name = "Decode"
-	binaryEDt = testing.Benchmark(Benchmark_BinaryED_Decode)
-	fastEDt = testing.Benchmark(Benchmark_FastED_Decode)
-	gobt = testing.Benchmark(Benchmark_gob_Decode)
-	fmt.Print(operation_name, "\n", "binaryED:", binaryEDt, binaryEDt.MemString(), "\n", "fastED:", fastEDt, fastEDt.MemString(), "\n", "gob:", gobt, gobt.MemString(), "\n")
-
 }
 
 func Benchmark_BinaryED_Encode(b *testing.B) {

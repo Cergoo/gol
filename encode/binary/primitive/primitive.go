@@ -35,7 +35,7 @@ var (
 	Pack = binary.LittleEndian
 	// TimeType reflection type time
 	TimeType = reflect.TypeOf(time.Time{})
-	ByteType = reflect.TypeOf([]byte{})
+	ByteType = reflect.TypeOf([]byte(nil))
 )
 
 /* Encoders */
@@ -105,11 +105,10 @@ func PutComplex128(buf IBuf, val complex128) {
 // PutBool encode a bool into buf
 func PutBool(buf IBuf, val bool) {
 	if val {
-		buf.Reserve(1)[0] = 1
+		buf.WriteByte(1)
 		return
 	}
-	buf.Reserve(1)[0] = 0
-
+	buf.WriteByte(0)
 }
 
 // PutString encode a bool into buf

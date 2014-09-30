@@ -91,7 +91,7 @@ func (t *Buf) Flush() (r []byte) {
 }
 
 // Reserve reserve slice size n
-func (t *Buf) Reserve(n int) (r []byte) {
+func (t *Buf) Reserve(n int) []byte {
 	oldln := len(t.buf)
 	n += oldln
 	if n > cap(t.buf) {

@@ -126,8 +126,6 @@ func encode(val reflect.Value, buf []byte) []byte {
 		}
 		// remove last ','
 		buf[len(buf)-1] = ']'
-	case reflect.Invalid:
-		buf = append(buf, null...)
 	}
 	return buf
 }

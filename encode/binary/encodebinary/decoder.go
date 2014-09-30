@@ -38,13 +38,13 @@ func (t *TDecoder) register() {
 	t.Register(uint8(0), uint16(0), uint32(0), uint64(0), uint(0))
 	t.Register(int8(0), int16(0), int32(0), int64(0), int(0))
 	t.Register(float32(0), float64(0))
-	t.Register(complex64(complex(0, 0)), complex128(complex(0, 0)))
-	t.Register(string(""), time.Time{})
+	t.Register(complex64(0i), complex128(0i))
+	t.Register(string(""), time.Time{}, false)
 	t.Register([]uint8{}, []uint16{}, []uint32{}, []uint64{}, []uint{})
 	t.Register([]int8{}, []int16{}, []int32{}, []int64{}, []int{})
 	t.Register([]float32{}, []float64{})
 	t.Register([]complex64{}, []complex128{})
-	t.Register([]string{}, []time.Time{})
+	t.Register([]string{}, []time.Time{}, []bool(nil))
 }
 
 // Decode decode value fom binary to receiver val

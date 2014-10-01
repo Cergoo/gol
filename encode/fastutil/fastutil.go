@@ -1,11 +1,14 @@
-package encodebinaryFast
+/*
+Package fastutil it's a util from fast geneate encoder/decoder
+*/
+package fastutil
 
 import (
 	"strings"
 )
 
-//
-func typeName(val string, pointered bool) string {
+// TypeName get name pkg variable
+func TypeName(val string, pointered bool) string {
 	if !pointered && val[0] == '*' {
 		val = val[1:]
 	}

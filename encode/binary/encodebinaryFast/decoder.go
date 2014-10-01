@@ -4,8 +4,8 @@
 package encodebinaryFast
 
 import (
-	//"fmt"
 	"github.com/Cergoo/gol/encode/binary/primitive"
+	. "github.com/Cergoo/gol/encode/fastutil"
 	"github.com/Cergoo/gol/err"
 	"reflect"
 )
@@ -13,7 +13,7 @@ import (
 // Decode generate decode function from value
 func (t *TGen) Decode(val interface{}) {
 	valType := reflect.TypeOf(val)
-	t.src = "\nfunc Decode(buf IBuf) (t " + typeName(valType.String(), true) + ", e error) {\n"
+	t.src = "\nfunc Decode(buf IBuf) (t " + TypeName(valType.String(), true) + ", e error) {\n"
 	t.src += "var (\npart []byte\nbt byte\nln uint32\n)\n\n"
 	t.stackName.Push("t")
 	t.decode(valType)
@@ -100,7 +100,7 @@ func (t *TGen) decNilEnd() {
 
 func (t *TGen) decPtr(name string, val reflect.Type) {
 	t.decNilBegin(name)
-	t.src += name + "= new(" + typeName(val.String(), false) + ")\n"
+	t.src += name + "= new(" + TypeName(val.String(), false) + ")\n"
 	t.stackName.Push("(*" + name + ")")
 	t.decode(val.Elem())
 	t.decNilEnd()
@@ -132,7 +132,7 @@ func (t *TGen) decSlice(name string, val reflect.Type) {
 	if val.Elem().Kind() == reflect.Uint8 && val.Elem().String() == "uint8" {
 		t.src += name + ", e = buf.ReadNext(int(" + lnname + "))\n if e != nil { return }\n"
 	} else {
-		t.src += name + "=make(" + typeName(val.String(), true) + ", " + lnname + ")\n"
+		t.src += name + "=make(" + TypeName(val.String(), true) + ", " + lnname + ")\n"
 		t.src += "for " + idname + " := uint32(0); " + idname + "<" + lnname + "; " + idname + "++ {\n"
 		t.stackName.Push(name + "[" + idname + "]")
 		t.decode(val.Elem())
@@ -160,8 +160,8 @@ func (t *TGen) decMap(name string, val reflect.Type) {
 	tmpkey := t.tmpNameGen.Get()
 	tmpval := t.tmpNameGen.Get()
 	t.decUint32(lnname + ":")
-	t.src += name + "=make(" + typeName(val.String(), true) + ", " + lnname + ")\n"
-	t.src += "var (\n" + tmpkey + " " + typeName(val.Key().String(), true) + "\n" + tmpval + " " + typeName(val.Elem().String(), true) + "\n)\n"
+	t.src += name + "=make(" + TypeName(val.String(), true) + ", " + lnname + ")\n"
+	t.src += "var (\n" + tmpkey + " " + TypeName(val.Key().String(), true) + "\n" + tmpval + " " + TypeName(val.Elem().String(), true) + "\n)\n"
 	t.src += "for " + idname + " := uint32(0); " + idname + "<" + lnname + "; " + idname + "++ {\n"
 	t.stackName.Push(tmpkey)
 	t.decode(val.Key())

@@ -6,6 +6,7 @@ package encodebinaryFast
 import (
 	//"fmt"
 	"github.com/Cergoo/gol/encode/binary/primitive"
+	. "github.com/Cergoo/gol/encode/fastutil"
 	"github.com/Cergoo/gol/err"
 	extfilepath "github.com/Cergoo/gol/filepath"
 	"github.com/Cergoo/gol/stack/stack"
@@ -32,7 +33,7 @@ func New(outputFile string, imported ...string) *TGen {
 	err.Panic(e)
 	outputFile = filepath.Base(outputFile)
 	outputFile, _ = extfilepath.Ext(outputFile)
-	f.Write([]byte("// It's file auto generate \n\n"))
+	f.Write([]byte("// It's file auto generate encodebinaryFast\n\n"))
 	f.Write([]byte("package " + outputFile + "\n\n"))
 
 	resultImport := ". \"github.com/Cergoo/gol/encode/binary/primitive\"\n"
@@ -56,7 +57,7 @@ func (t *TGen) Close() {
 // Encode generate encode function from value
 func (t *TGen) Encode(val interface{}) {
 	valType := reflect.TypeOf(val)
-	t.src = "\nfunc Encode(buf IBuf, t " + typeName(valType.String(), true) + ") {\n"
+	t.src = "\nfunc Encode(buf IBuf, t " + TypeName(valType.String(), true) + ") {\n"
 	t.stackName.Push("t")
 	t.encode(valType)
 	t.src += "}\n\n"

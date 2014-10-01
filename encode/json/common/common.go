@@ -3,16 +3,19 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-package encodejson
+package common
 
 import (
+	"encoding/json"
+	"reflect"
 	"unicode/utf8"
 )
 
 var (
-	null = []byte("null")
-	tru  = []byte("true")
-	fal  = []byte("false")
+	Null          = []byte("null")
+	Tru           = []byte("true")
+	Fal           = []byte("false")
+	MarshalerType = reflect.TypeOf(new(json.Marshaler)).Elem()
 )
 
 //  fork https://github.com/pquerna/ffjson/blob/master/pills/jsonstring.go

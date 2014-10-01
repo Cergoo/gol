@@ -5,12 +5,9 @@ package encodejson
 
 import (
 	"encoding/json"
+	. "github.com/Cergoo/gol/encode/json/common"
 	"reflect"
 	"strconv"
-)
-
-var (
-	marshalerType = reflect.TypeOf(new(json.Marshaler)).Elem()
 )
 
 // Encode encode into buf
@@ -20,7 +17,7 @@ func Encode(buf []byte, val interface{}) []byte {
 
 func encode(val reflect.Value, buf []byte) []byte {
 	// use json.Marshaler implement
-	if val.Type().Implements(marshalerType) {
+	if val.Type().Implements(MarshalerType) {
 		b, _ := val.Interface().(json.Marshaler).MarshalJSON()
 		return append(buf, []byte(b)...)
 	}
@@ -53,7 +50,7 @@ func encode(val reflect.Value, buf []byte) []byte {
 		}
 	case reflect.Slice:
 		if val.IsNil() {
-			return append(buf, null...)
+			return append(buf, Null...)
 		}
 		if val.Type().Elem().Kind() == reflect.Uint8 {
 			return WriteJsonString(buf, val.Bytes())
@@ -71,7 +68,7 @@ func encode(val reflect.Value, buf []byte) []byte {
 		}
 	case reflect.Ptr, reflect.Interface:
 		if val.IsNil() {
-			return append(buf, null...)
+			return append(buf, Null...)
 		}
 		buf = encode(val.Elem(), buf)
 	case reflect.Struct:
@@ -96,7 +93,7 @@ func encode(val reflect.Value, buf []byte) []byte {
 		}
 	case reflect.Map:
 		if val.IsNil() {
-			return append(buf, null...)
+			return append(buf, Null...)
 		}
 		keys := val.MapKeys()
 		if len(keys) == 0 {

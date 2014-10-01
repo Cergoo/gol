@@ -215,7 +215,7 @@ func (t *TGen) genMap(name string, val reflect.Type) {
 		t.src += "buf = append(buf, ',')\n"
 		t.src += "}\n"
 		t.src += "buf[len(buf)-1] = ']'\n"
-		t.src += "} else {\nbuf = append(buf, '{', '}')\n}\n"
+		t.src += "} else {\nbuf = append(buf, '[', ']')\n}\n"
 	}
 
 	t.genNilEnd()

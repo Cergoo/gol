@@ -96,11 +96,12 @@ func encode(val reflect.Value, buf []byte) []byte {
 			return append(buf, Null...)
 		}
 		keys := val.MapKeys()
-		if len(keys) == 0 {
-			return append(buf, '{', '}')
-		}
+
 		// as object
 		if val.Type().Key().Kind() == reflect.String {
+			if len(keys) == 0 {
+				return append(buf, '{', '}')
+			}
 			buf = append(buf, '{')
 			for _, k := range keys {
 				buf = WriteJsonString(buf, k.Bytes())
@@ -113,6 +114,9 @@ func encode(val reflect.Value, buf []byte) []byte {
 			return buf
 		}
 		// as array
+		if len(keys) == 0 {
+			return append(buf, '[', ']')
+		}
 		buf = append(buf, '[')
 		for _, k := range keys {
 			buf = encode(k, buf)

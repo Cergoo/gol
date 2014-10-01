@@ -2,15 +2,16 @@
 (c) 2013-2014 Cergoo   
 under terms of ISC license
 
-## encode/binary/primitive
+## encode/binary
+###primitive
 Package primitive it's a binary encode/decode primitive elementary implementation
 http://godoc.org/github.com/Cergoo/gol/encode/binary/primitive
 
-## encode/binary/encodebinary
+### encodebinary
 Package encodebinary it's a binary encode/decode implementation to fast and easy serialize data.   
 http://godoc.org/github.com/Cergoo/gol/encode/binary/encodebinary
 
-## encode/binary/encodebinaryFast
+### encodebinaryFast
 Package encodebinaryFast it's a like protobuf encoder/decoder genarator from encodebinary protocol. See example.     
 http://godoc.org/github.com/Cergoo/gol/encode/binary/encodebinaryFast
 

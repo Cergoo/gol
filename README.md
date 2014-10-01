@@ -17,8 +17,8 @@ http://godoc.org/github.com/Cergoo/gol/encode/binary/encodebinaryFast
 
 ## encode/json
 This is a set of packages to be marshaled from 'go' to .json. 
-Standard unit of refusing to encode json from heshmapy keys which are not strings, 
-This package encode them as arrays and heshmapy whose string keys as objects. 
+Standard unit of refusing to encode json from hash map keys which are not strings, 
+This package encode them as arrays and hash map whose string keys as objects. 
 Also realized rapid encoding json alternative github.com/pquerna/ffjson
 
 ### encodejson

@@ -131,14 +131,13 @@ func (t *TGen) decSlice(name string, val reflect.Type) {
 	t.decUint32(lnname + ":")
 	if val.Elem().Kind() == reflect.Uint8 && val.Elem().String() == "uint8" {
 		t.src += name + ", e = buf.ReadNext(int(" + lnname + "))\n if e != nil { return }\n"
-		return
+	} else {
+		t.src += name + "=make(" + typeName(val.String(), true) + ", " + lnname + ")\n"
+		t.src += "for " + idname + " := uint32(0); " + idname + "<" + lnname + "; " + idname + "++ {\n"
+		t.stackName.Push(name + "[" + idname + "]")
+		t.decode(val.Elem())
+		t.src += "}\n"
 	}
-
-	t.src += name + "=make(" + typeName(val.String(), true) + ", " + lnname + ")\n"
-	t.src += "for " + idname + " := uint32(0); " + idname + "<" + lnname + "; " + idname + "++ {\n"
-	t.stackName.Push(name + "[" + idname + "]")
-	t.decode(val.Elem())
-	t.src += "}\n"
 	t.decNilEnd()
 }
 

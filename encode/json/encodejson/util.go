@@ -9,6 +9,12 @@ import (
 	"unicode/utf8"
 )
 
+var (
+	null = []byte("null")
+	tru  = []byte("true")
+	fal  = []byte("false")
+)
+
 //  fork https://github.com/pquerna/ffjson/blob/master/pills/jsonstring.go
 /**
  * Function ported from encoding/json: func (e *encodeState) string(s string) (int, error)

@@ -11,7 +11,6 @@ import (
 
 var (
 	marshalerType = reflect.TypeOf(new(json.Marshaler)).Elem()
-	null          = []byte("null")
 )
 
 // Encode encode into buf

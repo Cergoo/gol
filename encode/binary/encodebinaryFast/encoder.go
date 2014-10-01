@@ -159,19 +159,21 @@ func (t *TGen) genSlice(name string, val reflect.Type) {
 	t.src += "// slice encode\n"
 	t.genNilBegin(name)
 	t.genUint32("uint32(len(" + name + "))")
+
 	if val.Elem().Kind() == reflect.Uint8 {
 		if val.Elem().String() != "uint8" {
 			t.src += "buf.Write(*(*[]byte)(unsafe.Pointer(&" + name + ")))\n"
 		} else {
 			t.src += "buf.Write(" + name + ")\n"
 		}
-		return
+	} else {
+		tmp := t.tmpNameGen.Get() // get tmp var name
+		t.src += "for _, " + tmp + " := range " + name + " {\n"
+		t.stackName.Push(tmp)
+		t.encode(val.Elem())
+		t.src += "}\n"
 	}
-	tmp := t.tmpNameGen.Get() // get tmp var name
-	t.src += "for _, " + tmp + " := range " + name + " {\n"
-	t.stackName.Push(tmp)
-	t.encode(val.Elem())
-	t.src += "}\n"
+
 	t.genNilEnd()
 }
 

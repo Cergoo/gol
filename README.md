@@ -98,36 +98,37 @@ http://godoc.org/github.com/Cergoo/gol/filepath
 Hash functions library.  
 http://godoc.org/github.com/Cergoo/gol/hash
   
-## http/genid
+## http
+### genid
 Generate http compatible ID.
 http://godoc.org/github.com/Cergoo/gol/http/genid  
   
-## http/method
+### method
 Http methods name.  
 http://godoc.org/github.com/Cergoo/gol/http/method
 
-## http/clientCache
+### clientCache
 http/1.1 client side cache control pkg.  
 http://godoc.org/github.com/Cergoo/gol/http/clientCache
 
-## http/cookie
+### cookie
 Cookie pkg.  
 http://godoc.org/github.com/Cergoo/gol/http/cookie
         
-## http/session
+### session
 Cookie based session engin implementation.  
 http://godoc.org/github.com/Cergoo/gol/http/session
 
-## http/router
+### router
 Routing a path url to action or file. First elemet path is action name, others elemets is a request parameters.  
 http://godoc.org/github.com/Cergoo/gol/http/router
 
-###Features:
+####Features:
 - routing to file;
 - suppart http method for REST routing;
 - logging a errors action to stderr.
 
-###Route example:
+####Route example:
     pubic/1/en
     ------- ---- --
     actionName/:id/:lang
@@ -142,29 +143,29 @@ http://godoc.org/github.com/Cergoo/gol/jsonConfig
 String key to uint id and uint id to string key association pack. No save thread.
 http://godoc.org/github.com/Cergoo/gol/keyid
 
-
-
-## reflect/refl
+## reflect
+### refl
 Additional reflection functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/refl
 
-## reflect/caller
+### caller
 Universal caller of functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/caller
 
-## reflect/lookup
+### lookup
 Package lookup it's a lookup reflection functions  
 http://godoc.org/github.com/Cergoo/gol/reflect/lookup
 
-## stack/stack 
+## stack
+### stack 
 Package stack it's a simple stack implementation. No thread safe.    
 http://godoc.org/github.com/Cergoo/gol/stack/stack
  
-## stack/stacklf
+### stacklf
 Package stacklf it's a implementation lockfree LIFO stack  
 http://godoc.org/github.com/Cergoo/gol/stack/stacklf
 
-## stack/stackCounter
+### stackCounter
 Package stackCounter it's a implementation lockfree LIFO stack under counter & limiter items    
 http://godoc.org/github.com/Cergoo/gol/stack/stackCounter
 

@@ -53,8 +53,7 @@ http://godoc.org/github.com/Cergoo/gol/cache/cacheStr
 - mechanism of managing the lifetime data: time expirations (set for the entire cache) and options "if read then life", support callback function on a remove 
 - items count limiter
 - use your hash function.
-
-### Benchmark test  
+  
 go-cache [https://github.com/pmylund/go-cache](https://github.com/pmylund/go-cache)  
 go version go1.3, single thread      
 <pre>
@@ -85,7 +84,6 @@ http://godoc.org/github.com/Cergoo/gol/err
 io.Writer implementation.  
 http://godoc.org/github.com/Cergoo/gol/fastbuf
 
-###Comparition benchmark test
 <pre>
 Write
 fastbuf:      10000000	       169 ns/op       0 B/op	       0 allocs/op

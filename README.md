@@ -19,7 +19,17 @@ http://godoc.org/github.com/Cergoo/gol/encode/binary/encodebinaryFast
 This is a set of packages to be marshaled from 'go' to .json. 
 Standard unit of refusing to encode json from hash map keys which are not strings, 
 This package encode them as arrays and hash map whose string keys as objects. 
-Also realized rapid encoding json alternative github.com/pquerna/ffjson
+Also realized rapid encoding json alternative github.com/pquerna/ffjson    
+features:   
+- coding without error    
+- supported json.Marshaler interface    
+<pre>
+Encode
+std_json:            500000	      7325 ns/op     error json: unsupported type: map[int]string
+gol_encodejson:      100000	     20641 ns/op     540 B/op	      27 allocs/op
+gol_encodejsonFast:  500000	      3507 ns/op      88 B/op	       5 allocs/op
+</pre>
+
 
 ### encodejson
 http://godoc.org/github.com/Cergoo/gol/encode/json/encodejson

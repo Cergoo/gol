@@ -68,7 +68,7 @@ func Encode(buf []byte, t *exportedtypes.T1) []byte {
 					}
 					buf[len(buf)-1] = ']'
 				} else {
-					buf = append(buf, '{', '}')
+					buf = append(buf, '[', ']')
 				}
 			}
 			buf = append(buf, ',')
@@ -94,7 +94,7 @@ func Encode(buf []byte, t *exportedtypes.T1) []byte {
 					}
 					buf[len(buf)-1] = ']'
 				} else {
-					buf = append(buf, '{', '}')
+					buf = append(buf, '[', ']')
 				}
 			}
 			buf = append(buf, '}')

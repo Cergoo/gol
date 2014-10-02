@@ -19,7 +19,7 @@ func encode(val reflect.Value, buf []byte) []byte {
 	// use json.Marshaler implement
 	if val.Type().Implements(MarshalerType) {
 		b, _ := val.Interface().(json.Marshaler).MarshalJSON()
-		return append(buf, []byte(b)...)
+		return append(buf, b...)
 	}
 	switch val.Kind() {
 	case reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uint:

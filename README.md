@@ -21,8 +21,9 @@ Standard unit of refusing to encode json from hash map keys which are not string
 This package encode them as arrays and hash map whose string keys as objects. 
 Also realized rapid encoding json alternative github.com/pquerna/ffjson    
 features:   
-- coding without error    
-- supported json.Marshaler interface    
+- coding without error;    
+- supported json.Marshaler interface.
+
 <pre>
 Encode
 std_json:            500000	      7325 ns/op     error json: unsupported type: map[int]string

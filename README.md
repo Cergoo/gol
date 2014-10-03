@@ -23,12 +23,13 @@ Also realized rapid encoding json alternative github.com/pquerna/ffjson
 features:   
 - coding without error;    
 - supported json.Marshaler interface.
+- tag json supported
 
 <pre>
 Encode
-std_json:            500000	      7325 ns/op     error json: unsupported type: map[int]string
-gol_encodejson:      100000	     20641 ns/op     540 B/op	      27 allocs/op
-gol_encodejsonFast:  500000	      3507 ns/op      88 B/op	       5 allocs/op
+std_json:  			500000	      4525 ns/op     error json: unsupported type: map[int]str
+gol_encodejson:  	200000	     13359 ns/op     844 B/op	      45 allocs/op
+gol_encodejsonFast: 1000000	      2062 ns/op      88 B/op	       5 allocs/op
 </pre>
 
 

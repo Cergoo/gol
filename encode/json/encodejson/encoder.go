@@ -6,8 +6,10 @@ package encodejson
 import (
 	"encoding/json"
 	. "github.com/Cergoo/gol/encode/json/common"
+	"github.com/Cergoo/gol/reflect/refl"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 // Encode encode into buf
@@ -72,6 +74,11 @@ func encode(val reflect.Value, buf []byte) []byte {
 		}
 		buf = encode(val.Elem(), buf)
 	case reflect.Struct:
+		var (
+			tag      string
+			name     []byte
+			tagParts []string
+		)
 		buf = append(buf, '{')
 		ln := val.NumField()
 		vType := val.Type()
@@ -80,8 +87,24 @@ func encode(val reflect.Value, buf []byte) []byte {
 			if vType.Field(i).PkgPath != "" {
 				continue
 			}
+
+			// support tag json
+			tag = vType.Field(i).Tag.Get("json")
+			if tag == "-" {
+				continue
+			}
+			tagParts = strings.SplitN(tag, ",", 2)
+			if len(tagParts) > 1 && tagParts[1] == "omitempty" && refl.IsEmpty(val) {
+				continue
+			}
+			if len(tagParts) > 0 && len(tagParts[0]) > 0 {
+				name = []byte(tagParts[0])
+			} else {
+				name = []byte(vType.Field(i).Name)
+			}
+
 			buf = append(buf, '"')
-			buf = append(buf, []byte(vType.Field(i).Name)...)
+			buf = append(buf, name...)
 			buf = append(buf, '"', ':')
 			buf = encode(val.Field(i), buf)
 			buf = append(buf, ',')

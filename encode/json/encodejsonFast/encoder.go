@@ -14,6 +14,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 )
 
 type (
@@ -73,7 +74,25 @@ func (t *TGen) genNilBegin(name string) {
 	t.src += "if " + name + " == nil { buf=append(buf, Null...) } else {\n"
 }
 
-func (t *TGen) genNilEnd() {
+// Empty
+func (t *TGen) genEmptyBegin(name string, val reflect.Type) {
+	var str string
+	switch val.Kind() {
+	case reflect.Map, reflect.Slice, reflect.Chan:
+		str = name + "!=nil && len(" + name + ") != 0"
+	case reflect.Func, reflect.Ptr, reflect.Interface:
+		str = name + "!=nil"
+	case reflect.Array, reflect.String:
+		str = "len(" + name + ") != 0"
+	case reflect.Bool:
+		str = name + "==true"
+	default:
+		str = name + "!=0"
+	}
+	t.src += "if " + str + "{\n"
+}
+
+func (t *TGen) genEnd() {
 	t.src += "}\n"
 }
 
@@ -101,28 +120,55 @@ func (t *TGen) genPtr(name string, val reflect.Type) {
 	t.genNilBegin(name)
 	t.stackName.Push("(*" + name + ")")
 	t.encode(val.Elem())
-	t.genNilEnd()
+	t.genEnd()
 }
 
 func (t *TGen) genInterface(name string, val reflect.Type) {
 	t.genNilBegin(name)
 	t.stackName.Push(name)
 	t.encode(val.Elem())
-	t.genNilEnd()
+	t.genEnd()
 }
 
 func (t *TGen) genStruct(name string, val reflect.Type) {
+	var (
+		tag       []string
+		fname     []byte
+		omitempty bool
+	)
 	t.src += "buf = append(buf, '{')\n"
 	var f reflect.StructField
 	ln := val.NumField()
 	for i := 0; i < ln; i++ {
 		f = val.Field(i)
+		// no exported field
 		if f.PkgPath != "" {
 			continue
 		}
 
+		fname = []byte(f.Name)
+
+		// tag json
+		tag = strings.SplitN(f.Tag.Get("json"), ",", 2)
+		if len(tag) > 0 {
+			tag[0] = strings.TrimSpace(tag[0])
+			if tag[0] == "-" {
+				continue
+			}
+			if len(tag[0]) > 0 {
+				fname = []byte(tag[0])
+			}
+		}
+		if len(tag) > 1 {
+			tag[1] = strings.TrimSpace(tag[1])
+			if tag[1] == "omitempty" {
+				omitempty = true
+				t.genEmptyBegin(name+"."+f.Name, f.Type)
+			}
+		}
+
 		var tmp []byte
-		for _, n := range f.Name[:] {
+		for _, n := range fname {
 			tmp = append(tmp, '\'', byte(n), '\'', ',')
 		}
 		t.src += "buf = append(buf, '\"'," + string(tmp) + "'\"',':')\n"
@@ -130,6 +176,11 @@ func (t *TGen) genStruct(name string, val reflect.Type) {
 		t.encode(f.Type)
 		if i < ln-1 {
 			t.src += "buf = append(buf, ',')\n"
+		}
+
+		if omitempty {
+			omitempty = false
+			t.genEnd()
 		}
 	}
 	t.src += "buf = append(buf, '}')\n"
@@ -157,7 +208,7 @@ func (t *TGen) genSlice(name string, val reflect.Type) {
 	t.src += "}\n"
 	t.src += "buf[len(buf)-1] = ']'\n"
 	t.src += "} else {\nbuf = append(buf, '[', ']')\n}\n"
-	t.genNilEnd()
+	t.genEnd()
 }
 
 func (t *TGen) genArray(name string, val reflect.Type) {
@@ -218,7 +269,7 @@ func (t *TGen) genMap(name string, val reflect.Type) {
 		t.src += "} else {\nbuf = append(buf, '[', ']')\n}\n"
 	}
 
-	t.genNilEnd()
+	t.genEnd()
 }
 
 func (t *TGen) encode(val reflect.Type) {

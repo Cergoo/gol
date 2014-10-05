@@ -9,6 +9,7 @@ import (
 	"math"
 	"reflect"
 	"time"
+	"unsafe"
 )
 
 type (
@@ -38,6 +39,15 @@ var (
 	ByteType = reflect.TypeOf([]byte(nil))
 )
 
+// EndianBig get current endian, if Big return true
+func EndianBig() bool {
+	var x uint16 = 0x0102
+	if *(*byte)(unsafe.Pointer(&x)) == 0x01 {
+		return true // big
+	}
+	return false // litle
+}
+
 /* Encoders */
 
 // PutUint8 encode a uint8 into buf
@@ -48,6 +58,15 @@ func PutUint8(buf IBuf, val uint8) {
 // PutUint16 encode a uint16 into buf
 func PutUint16(buf IBuf, val uint16) {
 	Pack.PutUint16(buf.Reserve(WORD16), val)
+}
+
+// PutUint16 encode a uint16 into buf
+func PutUint16v1(buf []byte, val uint16) []byte {
+	b := *(*[2]byte)(unsafe.Pointer(&val))
+	if false {
+		return append(buf, b[1], b[0])
+	}
+	return append(buf, b[:]...)
 }
 
 // PutUint32 encode a uint32 into buf

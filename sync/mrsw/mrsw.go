@@ -39,8 +39,8 @@ func sleep(n time.Duration) func() {
 // New construct new dispatcher
 // readersCount - count of a threads reader;
 // timetosleep  - time a microsecond on wait of lock, zero - spinlock;
-func New(readersCount uint16, timeOnSleep time.Duration) TControl {
-	t := TControl{writer: 11, readers: make([]uint64, readersCount)}
+func New(readersCount uint16, timeOnSleep time.Duration) *TControl {
+	t := TControl{writer: unlocked, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
 		t.readers[i] = unlocked
 	}
@@ -52,13 +52,14 @@ func New(readersCount uint16, timeOnSleep time.Duration) TControl {
 		t.sleep = sleep(time.Duration(timeOnSleep))
 	}
 
-	return t
+	return &t
 }
 
 // RLock readlock resurs from thread
 // uses double check
 func (t *TControl) RLock(threadId uint16, resursId uint64) {
 	var wlock uint64
+
 	for {
 		wlock = atomic.LoadUint64(&t.writer)
 		if wlock != resursId {

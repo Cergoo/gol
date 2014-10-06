@@ -15,13 +15,13 @@ import (
 type (
 	TDispatcher struct {
 		chThread chan uint16
-		mrsw.TControl
+		*mrsw.TControl
 	}
 )
 
 // New construct new dispatcher
-func New(threadcount uint16, timeOnSleep time.Duration) (t TDispatcher) {
-	t = TDispatcher{chThread: make(chan uint16, threadcount), TControl: mrsw.New(threadcount, timeOnSleep)}
+func New(threadcount uint16, timeOnSleep time.Duration) (t *TDispatcher) {
+	t = &TDispatcher{chThread: make(chan uint16, threadcount), TControl: mrsw.New(threadcount, timeOnSleep)}
 	for i := uint16(0); i < threadcount; i++ {
 		t.chThread <- i
 	}

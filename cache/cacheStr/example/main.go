@@ -13,7 +13,7 @@ func main() {
 	var (
 		t int
 	)
-	n := cacheStr.New(hash.HashFAQ6, true, 0*time.Minute, nil)
+	n := cacheStr.New(hash.HashJenkins, true, 0*time.Minute, nil)
 	for t = 0; t < 200000; t++ {
 		n.Set("ind uhgyug e x try"+strconv.Itoa(t), t, 1, cacheStr.UpdateOrInsert)
 	}

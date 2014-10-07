@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	cache1 = cacheStr.New(hash.HashFAQ6, true, 20*time.Second, nil)
+	cache1 = cacheStr.New(hash.HashJenkins, true, 20*time.Second, nil)
 }
 
 func Test_Get(t *testing.T) {

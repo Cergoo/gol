@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	_cache = cacheStr.New(hash.HashFAQ6, true, 10*time.Minute, nil)
+	_cache = cacheStr.New(hash.HashJenkins, true, 10*time.Minute, nil)
 	go_cache = gocache.New(5*time.Minute, 10*time.Minute)
 }
 

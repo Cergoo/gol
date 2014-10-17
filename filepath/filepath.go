@@ -23,5 +23,5 @@ func PathEndSeparator(path string) string {
 	if path[len(path)-1] == os.PathSeparator {
 		return path
 	}
-	return path + os.PathSeparator
+	return path + string(os.PathSeparator)
 }

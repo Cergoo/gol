@@ -33,3 +33,13 @@ func MinSet(a *int, b int) {
 		*a = b
 	}
 }
+
+// Zero check zero
+func Zero(b []byte) bool {
+	for _, n := range b {
+		if n != 0 {
+			return false
+		}
+	}
+	return true
+}

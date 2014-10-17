@@ -17,3 +17,11 @@ func Ext(fullname string) (name, ext string) {
 	}
 	return "", ""
 }
+
+// PathEndSeparator check a PathSeparator into path end
+func PathEndSeparator(path string) string {
+	if path[len(path)-1] == os.PathSeparator {
+		return path
+	}
+	return path + os.PathSeparator
+}

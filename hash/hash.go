@@ -1,7 +1,7 @@
 // (c) 2014 Cergoo
 // under terms of ISC license
 
-// Package hash it's a hash 32 functions library.
+// Package hash it's a non-cryptographic hash 32 functions library.
 package hash
 
 import (
@@ -14,10 +14,7 @@ const (
 )
 
 // Murmur3 hash, get from github.com/spaolacci/murmur3
-func Murmur3(data []byte) uint32 {
-
-	var h1 uint32 = 0
-
+func Murmur3(data []byte) (h uint32) {
 	nblocks := len(data) / 4
 	var p uintptr
 	if len(data) > 0 {
@@ -26,18 +23,15 @@ func Murmur3(data []byte) uint32 {
 	p1 := p + uintptr(4*nblocks)
 	for ; p < p1; p += 4 {
 		k1 := *(*uint32)(unsafe.Pointer(p))
-
 		k1 *= c1_32
 		k1 = (k1 << 15) | (k1 >> 17) // rotl32(k1, 15)
 		k1 *= c2_32
-
-		h1 ^= k1
-		h1 = (h1 << 13) | (h1 >> 19) // rotl32(h1, 13)
-		h1 = h1*5 + 0xe6546b64
+		h ^= k1
+		h = (h << 13) | (h >> 19) // rotl32(h1, 13)
+		h = h*5 + 0xe6546b64
 	}
 
 	tail := data[nblocks*4:]
-
 	var k1 uint32
 	switch len(tail) & 3 {
 	case 3:
@@ -51,18 +45,17 @@ func Murmur3(data []byte) uint32 {
 		k1 *= c1_32
 		k1 = (k1 << 15) | (k1 >> 17) // rotl32(k1, 15)
 		k1 *= c2_32
-		h1 ^= k1
+		h ^= k1
 	}
 
-	h1 ^= uint32(len(data))
+	h ^= uint32(len(data))
+	h ^= h >> 16
+	h *= 0x85ebca6b
+	h ^= h >> 13
+	h *= 0xc2b2ae35
+	h ^= h >> 16
 
-	h1 ^= h1 >> 16
-	h1 *= 0x85ebca6b
-	h1 ^= h1 >> 13
-	h1 *= 0xc2b2ae35
-	h1 ^= h1 >> 16
-
-	return h1
+	return
 }
 
 // Jenkins hash

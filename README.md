@@ -170,6 +170,10 @@ http://godoc.org/github.com/Cergoo/gol/stack/stacklf
 Package stackCounter it's a implementation lockfree LIFO stack under counter & limiter items    
 http://godoc.org/github.com/Cergoo/gol/stack/stackCounter
 
+### bytestack
+Package bytestack it's a simple fixed length slice stack implementation. No thread safe.    
+http://godoc.org/github.com/Cergoo/gol/stack/bytestack
+
 ## sync/lock 
 Package lock it's a simple spin lock structure implementation     
 http://godoc.org/github.com/Cergoo/gol/sync/lock

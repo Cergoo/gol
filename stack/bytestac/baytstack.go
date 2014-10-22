@@ -24,7 +24,7 @@ func New(lenElement int) *TStack {
 // Push push item into stack
 func (t *TStack) Push(val []byte) error {
 	if len(val) != t.LenElement {
-		return fmt.Errorf("Mismatch length stac element %d, and length value %d", t.LenElement, len(val))
+		return fmt.Errorf("Mismatch length stack element %d, and length value %d", t.LenElement, len(val))
 	}
 	t.Stack = append(t.Stack, val...)
 	return nil

@@ -51,6 +51,16 @@ func (t *TStack) PopVal() (val []byte) {
 	return
 }
 
+// Pop pop from stack into slice, not pop if stack empty
+func (t *TStack) Pop(val []byte) []byte {
+	n := len(t.Stack) - t.LenElement
+	if n >= 0 {
+		val = append(val, t.Stack[n:]...)
+		t.Stack = t.Stack[:n]
+	}
+	return val
+}
+
 // Clear clear stack
 func (t *TStack) Clear() {
 	t.Stack = t.Stack[:0]

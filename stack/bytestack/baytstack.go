@@ -30,11 +30,22 @@ func (t *TStack) Push(val []byte) error {
 	return nil
 }
 
-// Pop pop item from stack, nil if stack empty
-func (t *TStack) Pop() (val []byte) {
+// PopPoint pop slice as pointer to value item from stack, nil if stack empty
+func (t *TStack) PopPoint() (val []byte) {
 	n := len(t.Stack) - t.LenElement
 	if n >= 0 {
 		val = t.Stack[n:]
+		t.Stack = t.Stack[:n]
+	}
+	return
+}
+
+// PopVal pop slice as copy value item from stack, nil if stack empty
+func (t *TStack) PopVal() (val []byte) {
+	n := len(t.Stack) - t.LenElement
+	if n >= 0 {
+		val = make([]byte, t.LenElement)
+		copy(val, t.Stack[n:])
 		t.Stack = t.Stack[:n]
 	}
 	return

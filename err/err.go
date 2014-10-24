@@ -33,3 +33,8 @@ func PanicBool(ok bool, e string, code int) {
 		panic(New(e, code))
 	}
 }
+
+// Nopanic
+func Nopanic() {
+	recover()
+}

@@ -6,6 +6,7 @@ package bytestack
 
 import (
 	"fmt"
+	"github.com/Cergoo/gol/err"
 )
 
 type (
@@ -59,6 +60,36 @@ func (t *TStack) Pop(val []byte) []byte {
 		t.Stack = t.Stack[:n]
 	}
 	return val
+}
+
+// Range range from last to first element of a stack and return point to element as a PopPoint
+func (t *TStack) Range() chan []byte {
+	defer err.Nopanic()
+	ch := make(chan []byte)
+	n2 := len(t.Stack)
+	n1 := n2 - t.LenElement
+	go func() {
+		for n1 >= 0 {
+			ch <- t.Stack[n1:n2]
+			n2 = n1
+			n1 -= t.LenElement
+		}
+	}()
+	return ch
+}
+
+// DelLast del elememt if it == val
+func (t *TStack) DelLast(val []byte) {
+	n2 := len(t.Stack)
+	n1 := n2 - t.LenElement
+	for n1 >= 0 {
+		if string(val) == string(t.Stack[n1:n2]) {
+			t.Stack = append(t.Stack[:n1], t.Stack[n2:]...)
+			return
+		}
+		n2 = n1
+		n1 -= t.LenElement
+	}
 }
 
 // Clear clear stack

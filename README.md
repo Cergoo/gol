@@ -174,13 +174,19 @@ http://godoc.org/github.com/Cergoo/gol/stack/stackCounter
 Package bytestack it's a simple fixed length slice stack implementation. No thread safe.    
 http://godoc.org/github.com/Cergoo/gol/stack/bytestack
 
-## sync/lock 
-Package lock it's a simple spin lock structure implementation     
-http://godoc.org/github.com/Cergoo/gol/sync/lock
+## sync
 
-## sync/mrsw 
-Package mrsw it's a simple multi reade single write dispatcher     
-http://godoc.org/github.com/Cergoo/gol/sync/mrsw
+### spinlock 
+Package spinlock it's a simple spin lock implementation     
+http://godoc.org/github.com/Cergoo/gol/sync/spinlock
+
+### mrswUint 
+Package mrswUint it's a multi reade single write dispatcher for uint key resurce     
+http://godoc.org/github.com/Cergoo/gol/sync/mrswUint
+
+### mrswString 
+Package mrswString it's a multi reade single write dispatcher for string key resurce     
+http://godoc.org/github.com/Cergoo/gol/sync/mrswString
 
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  

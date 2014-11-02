@@ -2,20 +2,19 @@
 // under terms of ISC license
 
 /*
-Package mrswd it's a dispatcher of a multi reade single write controller for resources with
-ID in the range of 0, maxUint64-1
+Package mrswd it's a dispatcher of a multi reade single write controller for resources with ID a type string
 */
 package mrswd
 
 import (
-	"github.com/Cergoo/gol/sync/mrsw"
+	"github.com/Cergoo/gol/sync/mrswString/mrsw"
 	"time"
 )
 
 type (
 	TDispatcher struct {
 		chThread chan uint16
-		*mrsw.TControl
+		mrsw.TControl
 	}
 )
 
@@ -29,7 +28,7 @@ func New(threadcount uint16, timeOnSleep time.Duration) (t *TDispatcher) {
 }
 
 // RLock readlock resurs from thread
-func (t *TDispatcher) RLock(resursId uint64) (threadid uint16) {
+func (t *TDispatcher) RLock(resursId string) (threadid uint16) {
 	threadid = <-t.chThread
 	t.TControl.RLock(threadid, resursId)
 	return

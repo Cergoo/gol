@@ -2,7 +2,7 @@
 // under terms of ISC license
 
 // Package lock it's a simple spin lock structure implementation
-package lock
+package spinlock
 
 import (
 	"runtime"

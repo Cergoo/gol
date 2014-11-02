@@ -39,7 +39,7 @@ func sleep(n time.Duration) func() {
 // New construct new dispatcher
 // readersCount - count of a threads reader;
 // timetosleep  - time a microsecond on wait of lock, zero - spinlock;
-func New(readersCount uint16, timeOnSleep time.Duration) *TControl {
+func New(readersCount uint16, timeOnSleep time.Duration) TControl {
 	t := TControl{writer: unlocked, readers: make([]uint64, readersCount)}
 	for i := range t.readers {
 		t.readers[i] = unlocked
@@ -52,20 +52,16 @@ func New(readersCount uint16, timeOnSleep time.Duration) *TControl {
 		t.sleep = sleep(time.Duration(timeOnSleep))
 	}
 
-	return &t
+	return t
 }
 
 // RLock readlock resurs from thread
 // uses double check
 func (t *TControl) RLock(threadId uint16, resursId uint64) {
-	var wlock uint64
-
 	for {
-		wlock = atomic.LoadUint64(&t.writer)
-		if wlock != resursId {
+		if atomic.LoadUint64(&t.writer) != resursId {
 			atomic.StoreUint64(&t.readers[threadId], resursId)
-			wlock = atomic.LoadUint64(&t.writer)
-			if wlock != resursId {
+			if atomic.LoadUint64(&t.writer) != resursId {
 				return
 			}
 			atomic.StoreUint64(&t.readers[threadId], unlocked)
@@ -81,14 +77,11 @@ func (t *TControl) RUnlock(threadId uint16) {
 
 // Lock resurs
 func (t *TControl) Lock(resursId uint64) {
-	var rlock uint64
-	atomic.StoreUint64(&t.writer, resursId)
+	for !atomic.CompareAndSwapUint64(&t.writer, unlocked, resursId) {
+		t.sleep()
+	}
 	for i := range t.readers {
-		for {
-			rlock = atomic.LoadUint64(&t.readers[i])
-			if rlock != resursId {
-				break
-			}
+		for atomic.LoadUint64(&t.readers[i]) == resursId {
 			t.sleep()
 		}
 	}

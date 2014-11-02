@@ -182,11 +182,13 @@ http://godoc.org/github.com/Cergoo/gol/sync/spinlock
 
 ### mrswUint 
 Package mrswUint it's a multi reade single write dispatcher for uint key resource     
-http://godoc.org/github.com/Cergoo/gol/sync/mrswUint
+controller http://godoc.org/github.com/Cergoo/gol/sync/mrswUint/mrsw    
+dispatche http://godoc.org/github.com/Cergoo/gol/sync/mrswUint/mrswd    
 
 ### mrswString 
 Package mrswString it's a multi reade single write dispatcher for string key resource     
-http://godoc.org/github.com/Cergoo/gol/sync/mrswString
+controller http://godoc.org/github.com/Cergoo/gol/sync/mrswString/mrsw
+dispatche http://godoc.org/github.com/Cergoo/gol/sync/mrswString/mrswd
 
 ## test  
 Test helper functions is a simple assertion wrapper for Go's built in "testing" package, fork jmervine/GoT  

@@ -181,11 +181,11 @@ Package spinlock it's a simple spin lock implementation
 http://godoc.org/github.com/Cergoo/gol/sync/spinlock
 
 ### mrswUint 
-Package mrswUint it's a multi reade single write dispatcher for uint key resurce     
+Package mrswUint it's a multi reade single write dispatcher for uint key resource     
 http://godoc.org/github.com/Cergoo/gol/sync/mrswUint
 
 ### mrswString 
-Package mrswString it's a multi reade single write dispatcher for string key resurce     
+Package mrswString it's a multi reade single write dispatcher for string key resource     
 http://godoc.org/github.com/Cergoo/gol/sync/mrswString
 
 ## test  

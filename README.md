@@ -187,7 +187,7 @@ dispatche http://godoc.org/github.com/Cergoo/gol/sync/mrswUint/mrswd
 
 ### mrswString 
 Package mrswString it's a multi reade single write dispatcher for string key resource     
-controller http://godoc.org/github.com/Cergoo/gol/sync/mrswString/mrsw
+controller http://godoc.org/github.com/Cergoo/gol/sync/mrswString/mrsw    
 dispatche http://godoc.org/github.com/Cergoo/gol/sync/mrswString/mrswd
 
 ## test  

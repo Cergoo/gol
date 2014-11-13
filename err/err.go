@@ -4,6 +4,11 @@
 // Package err it's a editable error implementation.
 package err
 
+import (
+	"errors"
+	"fmt"
+)
+
 // OpenErr editable error struct.
 type OpenErr struct {
 	Text string
@@ -35,6 +40,8 @@ func PanicBool(ok bool, e string, code int) {
 }
 
 // Nopanic
-func Nopanic() {
-	recover()
+func Nopanic(e *error) {
+	if v := recover(); v != nil && e != nil {
+		*e = errors.New(fmt.Sprintln(v))
+	}
 }

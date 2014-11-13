@@ -64,7 +64,7 @@ func (t *TStack) Pop(val []byte) []byte {
 
 // Range range from last to first element of a stack and return point to element as a PopPoint
 func (t *TStack) Range() chan []byte {
-	defer err.Nopanic()
+	defer err.Nopanic(nil)
 	ch := make(chan []byte)
 	n2 := len(t.Stack)
 	n1 := n2 - t.LenElement

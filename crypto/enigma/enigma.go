@@ -1,3 +1,7 @@
+// (c) 2016 Cergoo
+// under terms of ISC license
+
+// Package enigma its a crypto encripter/decripter, base64.URL safety from web, with periodically changes key
 package enigma
 
 import (
@@ -31,6 +35,7 @@ type (
 	}
 )
 
+// New create new enigma box
 func New(periodDuration time.Duration) (*TBox, error) {
 	var e error
 	t := &TBox{
@@ -88,6 +93,7 @@ func (t *TBox) changState(periodDuration time.Duration) {
 	}
 }
 
+// Encryp []byte to string
 func (t *TBox) Encrypt(b []byte) string {
 
 	l := len(t.label) + int(1) + len(b)
@@ -109,6 +115,7 @@ func (t *TBox) Encrypt(b []byte) string {
 	return base64.URLEncoding.EncodeToString(crypt)
 }
 
+// Decrypt string to []byte
 func (t *TBox) Decrypt(b string) ([]byte, error) {
 	dec, e := base64.URLEncoding.DecodeString(b)
 	if e != nil {

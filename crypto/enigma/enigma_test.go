@@ -1,7 +1,7 @@
 // (c) 2016 Cergoo
 // under terms of ISC license
 
-// Package enigma its a crypto encripter/decripter with periodically changes key
+// Package enigma its a crypto encripter/decripter, base64.URL safety from web, with periodically changes key
 package enigma
 
 import (

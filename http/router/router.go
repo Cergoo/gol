@@ -78,7 +78,7 @@ func fileServer(prefix, root string) http.HandlerFunc {
 }
 
 // Handler set hadler
-func (t *Trouter) Handler(method, patch string, action func(w http.ResponseWriter, r *http.Request)) {
+func (t *Trouter) Handler(method, patch string, action http.HandlerFunc) {
 	r := &troute{
 		action:     action,
 		actionType: actionTypeAction,

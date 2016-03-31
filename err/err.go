@@ -7,6 +7,7 @@ package err
 import (
 	"errors"
 	"fmt"
+	"log"
 )
 
 // OpenErr editable error struct.
@@ -29,6 +30,13 @@ func (t *OpenErr) Error() string {
 func Panic(e error) {
 	if e != nil {
 		panic(e)
+	}
+}
+
+// Panic gen.
+func LogPanic(e error) {
+	if e != nil {
+		log.Panic(e)
 	}
 }
 

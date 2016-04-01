@@ -1,6 +1,6 @@
 # gol (Go Library)
-(c) 2013-2014 Cergoo   
-under terms of ISC license
+(c) 2013-2016 Cergoo   
+under terms of MIT license
 
 ## encode/binary
 ###primitive
@@ -77,6 +77,10 @@ http://godoc.org/github.com/Cergoo/gol/chansubscriber
 Easy atomic counter type.    
 http://godoc.org/github.com/Cergoo/gol/counter      
 
+## crypto/enigma 
+Package enigma its a crypto encripter/decripter, base64.URL safety from web, with periodically changes key   
+http://godoc.org/github.com/Cergoo/gol/crypto/enigma 
+
 ## err
 Editable error implementation.  
 http://godoc.org/github.com/Cergoo/gol/err
@@ -114,8 +118,12 @@ http://godoc.org/github.com/Cergoo/gol/http/clientCache
 
 ### cookie
 Cookie pkg.  
-http://godoc.org/github.com/Cergoo/gol/http/cookie
+http://godoc.org/github.com/Cergoo/gol/http/cookie/cookie
         
+### cryptedcookie
+CryptedCookie pkg.  
+http://godoc.org/github.com/Cergoo/gol/http/cookie/cryptedcookie
+
 ### session
 Cookie based session engin implementation.  
 http://godoc.org/github.com/Cergoo/gol/http/session

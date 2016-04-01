@@ -6,7 +6,7 @@ package session
 
 import (
 	"github.com/Cergoo/gol/err"
-	"github.com/Cergoo/gol/http/cookie"
+	"github.com/Cergoo/gol/http/cookie/cookie"
 	"github.com/Cergoo/gol/http/genid"
 	"math"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 )
 
 type (
-  // TSession it's session engin struct 
+	// TSession it's session engin struct
 	TSession struct {
 		ipProtect bool            // session ip protect
 		gen       genid.HTTPGenID // id generator
@@ -35,7 +35,7 @@ type (
 )
 
 const (
-  // SID session id cookie name
+	// SID session id cookie name
 	SID = "sid"
 )
 

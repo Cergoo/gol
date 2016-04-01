@@ -10,13 +10,15 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	cip "golang.org/x/crypto/twofish"
+	//cip "golang.org/x/crypto/twofish"
+	cip "crypto/aes"
 	"io"
 	"runtime"
 	"sync"
 	"time"
 )
 
+// 16, 24, or 32 aes
 const cipherlen = 16
 
 type (
@@ -64,7 +66,7 @@ func stop(t *TBox) {
 }
 
 func (t *TBox) create() {
-	iv := make([]byte, cipherlen)
+	iv := make([]byte, t.b.BlockSize())
 	io.ReadFull(rand.Reader, iv)
 	t.endecr[1] = t.endecr[0]
 	t.endecr[0] = &tendecr{
@@ -131,7 +133,7 @@ func (t *TBox) Decrypt(b string) ([]byte, error) {
 		id = 1
 	default:
 		t.rwmu.RUnlock()
-		return nil, errors.New("not found decrypter")
+		return nil, errors.New("Enigma: not found decrypter")
 	}
 
 	dec = dec[:len(dec)-1]
@@ -139,7 +141,7 @@ func (t *TBox) Decrypt(b string) ([]byte, error) {
 	t.rwmu.RUnlock()
 
 	if bytes.Compare(t.label, dec[:len(t.label)]) != 0 {
-		return nil, errors.New("decrypte not correct")
+		return nil, errors.New("Enigma: decrypte not correct")
 	}
 
 	return dec[len(t.label)+1 : len(dec)-int(dec[len(t.label)])], e
